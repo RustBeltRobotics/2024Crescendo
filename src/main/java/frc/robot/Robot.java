@@ -24,9 +24,10 @@ public class Robot extends TimedRobot {
     private Command autonomousCommand;
 
     private ShuffleboardTab matchTab = Shuffleboard.getTab("Competition");
-    private GenericEntry timeEntry = matchTab.add("Time Left", 0.)
-    .withWidget(BuiltInWidgets.kTextView)
+    private GenericEntry timeEntry = matchTab.add("Time Left", 0.0)
+    .withWidget(BuiltInWidgets.kNumberBar)
     .withPosition(4, 0)
+    .withSize(2, 1)
     .getEntry();
     /**
      * This function is run once when the robot is first started up and should be
@@ -86,7 +87,9 @@ public class Robot extends TimedRobot {
 
     /** This function is called periodically during operator control. */
     @Override
-    public void teleopPeriodic() {}
+    public void teleopPeriodic() {
+        RobotContainer.pollEventLoop();
+    }
 
     /** This function is called once when the robot is disabled. */
     @Override

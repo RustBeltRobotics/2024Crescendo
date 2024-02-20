@@ -27,25 +27,25 @@ public class Shooter extends SubsystemBase {
         .getLayout("Shooter PID", BuiltInLayouts.kList)
         .withSize(2, 2);
     private static GenericEntry kP =
-        pidvals.add("skP", 7e-5)
+        pidvals.add("shkP", 7e-5)
         .getEntry();
     private static GenericEntry kI =
-        pidvals.add("skI", 0.0)
+        pidvals.add("shkI", 0.0)
         .getEntry();
     private static GenericEntry kD =
-        pidvals.add("skD", 0.0)
+        pidvals.add("shkD", 0.0)
         .getEntry();
     private static GenericEntry kIz =
-        pidvals.add("skIz", 0.0)
+        pidvals.add("shkIz", 0.0)
         .getEntry();
     private static GenericEntry kFF =
-        pidvals.add("sdrive_kFF", 0.0)
+        pidvals.add("shkFF", 0.0)
         .getEntry();
     private static GenericEntry kMaxOutput =
-        pidvals.add("skMaxOutput", 1)
+        pidvals.add("shkMaxOutput", 1)
         .getEntry();
     private static GenericEntry kMinOutput =
-        pidvals.add("skMinOutput", -1)
+        pidvals.add("shkMinOutput", -1)
         .getEntry();
 
     public Shooter(){
@@ -89,7 +89,7 @@ public class Shooter extends SubsystemBase {
         //shooter1PidController.setReference(velocity, ControlType.kVelocity);
         // shooter2PidController.setReference(velocity, ControlType.kVelocity);
     }
-    public void stop(){
+    public static void stop(){
         shooter1PidController.setReference(0, ControlType.kVelocity);
         // shooter2PidController.setReference(0, ControlType.kVelocity);
     }

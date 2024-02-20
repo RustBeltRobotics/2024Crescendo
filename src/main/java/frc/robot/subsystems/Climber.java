@@ -28,25 +28,25 @@ public class Climber extends SubsystemBase {
         .getLayout("Climber PID", BuiltInLayouts.kList)
         .withSize(2, 2);
     private static GenericEntry kP =
-        pidvals.add("skP", 7e-5)
+        pidvals.add("ckP", 7e-5)
         .getEntry();
     private static GenericEntry kI =
-        pidvals.add("skI", 0.0)
+        pidvals.add("ckI", 0.0)
         .getEntry();
     private static GenericEntry kD =
-        pidvals.add("skD", 0.0)
+        pidvals.add("ckD", 0.0)
         .getEntry();
     private static GenericEntry kIz =
-        pidvals.add("skIz", 0.0)
+        pidvals.add("ckIz", 0.0)
         .getEntry();
     private static GenericEntry kFF =
-        pidvals.add("sdrive_kFF", 0.0)
+        pidvals.add("ckFF", 0.0)
         .getEntry();
     private static GenericEntry kMaxOutput =
-        pidvals.add("skMaxOutput", 1)
+        pidvals.add("ckMaxOutput", 1)
         .getEntry();
     private static GenericEntry kMinOutput =
-        pidvals.add("skMinOutput", -1)
+        pidvals.add("ckMinOutput", -1)
         .getEntry();
 
     public Climber(){
@@ -85,11 +85,11 @@ public class Climber extends SubsystemBase {
         // shooter2PidController.setOutputRange(kMinOutput, kMaxOutput);
         // shooter2PidController.setPositionPIDWrappingEnabled(true);
     }
-    public void spinShooter(double velocity){
+    public void climb(double velocity){
         climber1PidController.setReference(velocity, ControlType.kVelocity);
         // shooter2PidController.setReference(velocity, ControlType.kVelocity);
     }
-    public void stopShooter(){
+    public void stop(){
         climber1PidController.setReference(0, ControlType.kVelocity);
         // shooter2PidController.setReference(0, ControlType.kVelocity);
     }

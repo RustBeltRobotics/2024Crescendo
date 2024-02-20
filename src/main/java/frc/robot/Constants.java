@@ -158,4 +158,9 @@ public final class Constants {
 
     //Shooter
     public static final double SPOOL_VELOCITY = 4257; //75% of max velocity
+
+    //Arm
+    public static final double AMP_POSITION = 0; //TODO: get this encoder reading
+    public static final double SOURCE_POSITION = 0; //TODO: get this encoder reading
+    public static final double GROUND_POSITION = 0; //TODO: get this encoder reading
 }
