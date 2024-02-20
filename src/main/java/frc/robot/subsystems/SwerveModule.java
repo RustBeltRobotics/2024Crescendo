@@ -180,7 +180,6 @@ public class SwerveModule {
         double currentSparkAngle = steerMotor.getEncoder().getPosition();
         double sparkRelativeTargetAngle = reboundValue(targetAngleInDegrees, currentSparkAngle);
         steerPidController.setReference(sparkRelativeTargetAngle, ControlType.kPosition);
-        System.out.println(sparkRelativeTargetAngle);
     }
     public double reboundValue(double value, double anchor){
         double lowerBound = anchor - 180;

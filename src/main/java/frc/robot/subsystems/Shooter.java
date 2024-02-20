@@ -85,8 +85,7 @@ public class Shooter extends SubsystemBase {
         // shooter2PidController.setPositionPIDWrappingEnabled(true);
     }
     public static void spool(double velocity){
-        System.out.println("spooling imaginary shooter");
-        //shooter1PidController.setReference(velocity, ControlType.kVelocity);
+        shooter1PidController.setReference(velocity, ControlType.kVelocity);
         // shooter2PidController.setReference(velocity, ControlType.kVelocity);
     }
     public static void stop(){

@@ -180,7 +180,6 @@ public class RobotContainer {
     }
 
     public void speedThrottle() {
-        System.out.println(driverController.getRightTriggerAxis());
         if (driverController.getRightTriggerAxis() != 0) {
             maxSpeedFactor = driverController.getRightTriggerAxis();
             maxSpeedFactor = MathUtil.clamp(maxSpeedFactor, 0.1, 1.0);

@@ -144,8 +144,7 @@ public class AprilTagAimCommand extends Command {
             }
             // auto shoot
             if (autonomous && aimCommand.getBoolean(false) == true) {
-                System.out.println("shooting imaginary note");
-                // Intake.feedShooter();
+                Intake.feedShooter();
             }
         } else { // just normal drive with no rotation
             if (autonomous) {
