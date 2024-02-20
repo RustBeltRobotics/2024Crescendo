@@ -57,7 +57,7 @@ public class SwerveModule {
             pidvals.add("ssteer_kFF", 0.0)
             .getEntry();
 
-    public SwerveModule(int driveID, int steerID, int encoderID, double offset) {
+    public SwerveModule(int driveID, int steerID, int encoderID) {
         // Setup drive motor SparkMax
         driveMotor = new CANSparkMax(driveID, MotorType.kBrushless);
         driveMotor.restoreFactoryDefaults();
@@ -122,7 +122,7 @@ public class SwerveModule {
 
     /** @return Absolute steer position, degrees, -inf to +inf */
     public double getAbsolutePosition() {
-        return absoluteSteerEncoder.getPosition().getValueAsDouble() * 360.;
+        return absoluteSteerEncoder.getAbsolutePosition().getValueAsDouble();
     }
 
     /** @return Drive encoder (meters) and steer encoder (Rotation2d) positions */
@@ -180,6 +180,7 @@ public class SwerveModule {
         double currentSparkAngle = steerMotor.getEncoder().getPosition();
         double sparkRelativeTargetAngle = reboundValue(targetAngleInDegrees, currentSparkAngle);
         steerPidController.setReference(sparkRelativeTargetAngle, ControlType.kPosition);
+        System.out.println(sparkRelativeTargetAngle);
     }
     public double reboundValue(double value, double anchor){
         double lowerBound = anchor - 180;
@@ -208,7 +209,9 @@ public class SwerveModule {
         steerPidController.setD(STEER_D);
         steerPidController.setIZone(kIz.getDouble(0));
         steerPidController.setFF(steer_kFF.getDouble(0));
-        steerPidController.setOutputRange(kMinOutput.getDouble(0), kMaxOutput.getDouble(0));
+        steerPidController.setOutputRange(kMinOutput.getDouble(0), kMaxOutput.getDouble(1));
         steerPidController.setPositionPIDWrappingEnabled(true);
+        steerPidController.setPositionPIDWrappingMaxInput(360);
+        steerPidController.setPositionPIDWrappingMinInput(0);
     }
 }

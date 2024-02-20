@@ -3,19 +3,15 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.BACK_LEFT_MODULE_DRIVE_MOTOR;
 import static frc.robot.Constants.BACK_LEFT_MODULE_STEER_ENCODER;
 import static frc.robot.Constants.BACK_LEFT_MODULE_STEER_MOTOR;
-import static frc.robot.Constants.BACK_LEFT_MODULE_STEER_OFFSET;
 import static frc.robot.Constants.BACK_RIGHT_MODULE_DRIVE_MOTOR;
 import static frc.robot.Constants.BACK_RIGHT_MODULE_STEER_ENCODER;
 import static frc.robot.Constants.BACK_RIGHT_MODULE_STEER_MOTOR;
-import static frc.robot.Constants.BACK_RIGHT_MODULE_STEER_OFFSET;
 import static frc.robot.Constants.FRONT_LEFT_MODULE_DRIVE_MOTOR;
 import static frc.robot.Constants.FRONT_LEFT_MODULE_STEER_ENCODER;
 import static frc.robot.Constants.FRONT_LEFT_MODULE_STEER_MOTOR;
-import static frc.robot.Constants.FRONT_LEFT_MODULE_STEER_OFFSET;
 import static frc.robot.Constants.FRONT_RIGHT_MODULE_DRIVE_MOTOR;
 import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_ENCODER;
 import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_MOTOR;
-import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_OFFSET;
 import static frc.robot.Constants.KINEMATICS;
 import static frc.robot.Constants.MAX_VELOCITY_METERS_PER_SECOND;
 import static frc.robot.Constants.limelightName;
@@ -173,26 +169,22 @@ public class Drivetrain extends SubsystemBase {
         backRightModule = new SwerveModule(
                 BACK_RIGHT_MODULE_DRIVE_MOTOR,
                 BACK_RIGHT_MODULE_STEER_MOTOR,
-                BACK_RIGHT_MODULE_STEER_ENCODER,
-                BACK_RIGHT_MODULE_STEER_OFFSET);
+                BACK_RIGHT_MODULE_STEER_ENCODER);
 
         backLeftModule = new SwerveModule(
                 BACK_LEFT_MODULE_DRIVE_MOTOR,
                 BACK_LEFT_MODULE_STEER_MOTOR,
-                BACK_LEFT_MODULE_STEER_ENCODER,
-                BACK_LEFT_MODULE_STEER_OFFSET);
+                BACK_LEFT_MODULE_STEER_ENCODER);
 
         frontRightModule = new SwerveModule(
                 FRONT_RIGHT_MODULE_DRIVE_MOTOR,
                 FRONT_RIGHT_MODULE_STEER_MOTOR,
-                FRONT_RIGHT_MODULE_STEER_ENCODER,
-                FRONT_RIGHT_MODULE_STEER_OFFSET);
+                FRONT_RIGHT_MODULE_STEER_ENCODER);
 
         frontLeftModule = new SwerveModule(
                 FRONT_LEFT_MODULE_DRIVE_MOTOR,
                 FRONT_LEFT_MODULE_STEER_MOTOR,
-                FRONT_LEFT_MODULE_STEER_ENCODER,
-                FRONT_LEFT_MODULE_STEER_OFFSET);
+                FRONT_LEFT_MODULE_STEER_ENCODER);
 
         // Zero all relative encoders
         frontLeftModule.resetEncoders();
@@ -379,10 +371,10 @@ public class Drivetrain extends SubsystemBase {
         updateOdometry();
 
         // Diagnostics
-        FRA.setDouble(frontLeftModule.getAbsolutePosition());
-        FLA.setDouble(frontRightModule.getAbsolutePosition());
-        BRA.setDouble(backLeftModule.getAbsolutePosition());
-        BLA.setDouble(backRightModule.getAbsolutePosition());
+        FRA.setDouble(frontLeftModule.getSteerPosition());
+        FLA.setDouble(frontRightModule.getSteerPosition());
+        BRA.setDouble(backLeftModule.getSteerPosition());
+        BLA.setDouble(backRightModule.getSteerPosition());
         Gyro.setDouble(getGyroscopeAngle());
 
         // Periodically send a set of module states (I hope)

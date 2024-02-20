@@ -4,8 +4,10 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import static frc.robot.Constants.LEFT_ROTATE;
 import static frc.robot.Constants.NEO_SECONDARY_CURRENT_LIMIT;
 import static frc.robot.Constants.NEO_SMART_CURRENT_LIMIT;
+import static frc.robot.Constants.RIGHT_ROTATE;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
@@ -51,14 +53,14 @@ public class Arm extends SubsystemBase {
 
     public Arm(){
         //set motor things
-        armMotor1 = new CANSparkMax(97, MotorType.kBrushless);
+        armMotor1 = new CANSparkMax(LEFT_ROTATE, MotorType.kBrushless);
         armMotor1.restoreFactoryDefaults();
         armMotor1.setIdleMode(IdleMode.kBrake);
-        armMotor1.setInverted(false);
+        armMotor1.setInverted(true);
         armMotor1.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         armMotor1.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
 
-        armMotor2 = new CANSparkMax(97, MotorType.kBrushless);
+        armMotor2 = new CANSparkMax(RIGHT_ROTATE, MotorType.kBrushless);
         armMotor2.restoreFactoryDefaults();
         armMotor2.setIdleMode(IdleMode.kBrake);
         armMotor2.setInverted(false);

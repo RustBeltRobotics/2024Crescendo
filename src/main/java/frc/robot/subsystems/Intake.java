@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.ARM_INTAKE;
+import static frc.robot.Constants.GROUND_INTAKE;
 import static frc.robot.Constants.NEO_SECONDARY_CURRENT_LIMIT;
 import static frc.robot.Constants.NEO_SMART_CURRENT_LIMIT;
 
@@ -14,14 +16,14 @@ public class Intake extends SubsystemBase{
     private static CANSparkMax intakeMotor;
 
     public Intake() {
-        floorMotor = new CANSparkMax(99, MotorType.kBrushless);
+        floorMotor = new CANSparkMax(GROUND_INTAKE, MotorType.kBrushless);
         floorMotor.restoreFactoryDefaults();
         floorMotor.setIdleMode(IdleMode.kBrake);
-        floorMotor.setInverted(false);
+        floorMotor.setInverted(true);
         floorMotor.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         floorMotor.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
 
-        intakeMotor = new CANSparkMax(98, MotorType.kBrushless);
+        intakeMotor = new CANSparkMax(ARM_INTAKE, MotorType.kBrushless);
         intakeMotor.restoreFactoryDefaults();
         intakeMotor.setIdleMode(IdleMode.kBrake);
         intakeMotor.setInverted(false);
