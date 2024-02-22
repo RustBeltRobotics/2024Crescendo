@@ -1,11 +1,12 @@
 package frc.robot.commands;
 
-import static frc.robot.Constants.limelightName;
-import static frc.robot.Constants.speedLimit;
+import static frc.robot.Constants.LL_NAME;
+import static frc.robot.Constants.LL_SPEED_LIMIT;
 
 import java.util.Map;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.Interpolator;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
@@ -23,6 +25,7 @@ import frc.robot.subsystems.Intake;
 
 public class AprilTagAimCommand extends Command {
     private double tx;
+    private double ty;
     private String target;
     private double sightedTID;
     private double targetTID;
@@ -126,21 +129,22 @@ public class AprilTagAimCommand extends Command {
             }
         }
         // determine if the primary tag id matches our target tag id
-        sightedTID = LimelightHelpers.getFiducialID(limelightName);
+        sightedTID = LimelightHelpers.getFiducialID(LL_NAME);
         if (sightedTID == targetTID || sightedTID == targetTID2) {
             steerPID.enableContinuousInput(0.0, 360.0);
-            tx = LimelightHelpers.getTX(limelightName);
+            tx = LimelightHelpers.getTX(LL_NAME);
+            ty = LimelightHelpers.getTY(LL_NAME);
             steeringAdjust = steerPID.calculate(tx);
             if (autonomous) {
                 AUTO_TX = steeringAdjust;
                 validTID = true;
                 autoAimCommand.setBoolean(true);
             } else {
-                armTarget = doubleInterpolator.interpolate(3.0,5.0,0.5); //TODO: change this
+                armTarget = doubleInterpolator.interpolate(3.0,5.0, MathUtil.inverseInterpolate(0,1,(Constants.SPEAKER_HEIGHT-Constants.LL_HEIGHT) / Math.tan(Constants.LL_ANGLE+ty))); //TODO: change this start end vals
                 //arm.setAngle(armTarget);
                 ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                        stickX.getAsDouble() * speedLimit,
-                        stickY.getAsDouble() * speedLimit,
+                        stickX.getAsDouble() * LL_SPEED_LIMIT,
+                        stickY.getAsDouble() * LL_SPEED_LIMIT,
                         steeringAdjust,
                         Rotation2d.fromDegrees(drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()));
 

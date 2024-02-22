@@ -152,9 +152,14 @@ public final class Constants {
     public static final int RIGHT_SHOOTER = 24;
     public static final int LEFT_SHOOTER = 25;
 
+    //Feild
+    public static final double SPEAKER_HEIGHT = 204.0; //cm
+
     //Limelight/vision
-    public static final String limelightName = "limelight";
-    public static final double speedLimit = 1.0;
+    public static final String LL_NAME = "limelight";
+    public static final double LL_SPEED_LIMIT = 1.0;
+    public static final double LL_HEIGHT = 10; //TODO: get the real number
+    public static final double LL_ANGLE = 20; //TODO: get the real number
 
     //Shooter
     public static final double SPOOL_VELOCITY = 4257; //75% of max velocity

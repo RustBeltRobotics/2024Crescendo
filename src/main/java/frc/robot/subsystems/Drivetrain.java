@@ -14,7 +14,7 @@ import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_ENCODER;
 import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_MOTOR;
 import static frc.robot.Constants.KINEMATICS;
 import static frc.robot.Constants.MAX_VELOCITY_METERS_PER_SECOND;
-import static frc.robot.Constants.limelightName;
+import static frc.robot.Constants.LL_NAME;
 import static frc.robot.Constants.rotation_D;
 import static frc.robot.Constants.rotation_I;
 import static frc.robot.Constants.rotation_P;
@@ -311,16 +311,16 @@ public class Drivetrain extends SubsystemBase {
         
         if (alliance.isPresent()) {
             if (alliance.get() == DriverStation.Alliance.Red) {
-                visionPose2d = LimelightHelpers.getBotPose2d_wpiRed(limelightName);
+                visionPose2d = LimelightHelpers.getBotPose2d_wpiRed(LL_NAME);
             } else {
-                visionPose2d = LimelightHelpers.getBotPose2d_wpiBlue(limelightName);
+                visionPose2d = LimelightHelpers.getBotPose2d_wpiBlue(LL_NAME);
             }
         } else {
-            visionPose2d = LimelightHelpers.getBotPose2d(limelightName);
+            visionPose2d = LimelightHelpers.getBotPose2d(LL_NAME);
         }
 
-        double totalVisionLatencyMs = LimelightHelpers.getLatency_Capture(limelightName);
-        totalVisionLatencyMs += LimelightHelpers.getLatency_Pipeline(limelightName);
+        double totalVisionLatencyMs = LimelightHelpers.getLatency_Capture(LL_NAME);
+        totalVisionLatencyMs += LimelightHelpers.getLatency_Pipeline(LL_NAME);
 
         double poseReadingTimestamp = Timer.getFPGATimestamp() - (totalVisionLatencyMs / 1000.0);
         
