@@ -1,0 +1,115 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.4237316700079827,
+        "y": 4.092428687089518
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.4237316700079816,
+        "y": 4.092428687089518
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.605773777395769,
+        "y": 4.092428687089518
+      },
+      "prevControl": {
+        "x": 1.6060396511484263,
+        "y": 4.069370568856466
+      },
+      "nextControl": {
+        "x": 2.6216906228455312,
+        "y": 4.092795797198738
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.471752365379731,
+        "y": 4.746514013117312
+      },
+      "prevControl": {
+        "x": 2.4393417871657173,
+        "y": 4.321059618681738
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "path1end"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": -9.083844960181349,
+      "rotateFast": true
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "pickup and shoot",
+      "waypointRelativePos": 0.75,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "GroundPickUp"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "AprilTagAim"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "spool",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "SpoolShooter"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -16.360073645428074,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

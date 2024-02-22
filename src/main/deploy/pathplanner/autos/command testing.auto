@@ -14,7 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "spoolandataim"
+            "pathName": "path1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "path2"
           }
         }
       ]

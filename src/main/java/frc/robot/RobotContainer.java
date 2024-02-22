@@ -4,7 +4,9 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
@@ -20,6 +22,7 @@ import frc.robot.commands.AprilTagAimCommand;
 import frc.robot.commands.DefaultArmCommand;
 import frc.robot.commands.DefaultIntakeCommand;
 import frc.robot.commands.FieldOrientedDriveCommand;
+import frc.robot.commands.GroundPickUpCommand;
 import frc.robot.commands.RobotOrientedDriveCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Climber;
@@ -55,7 +58,7 @@ public class RobotContainer {
     public static final Shooter shooter = new Shooter();
 
     //this has to be the shittiest code in the whole project
-    private static EventLoop eventLoop = new EventLoop();
+    private static EventLoop triggerEventLoop = new EventLoop();
 
     // The robot's subsystems are defined here
     public static final Drivetrain drivetrain = new Drivetrain();
@@ -111,8 +114,8 @@ public class RobotContainer {
         // register april aim with pathplanner, passing 0,0 as stick suppliers and
         // targeting speaker
         NamedCommands.registerCommand("AprilTagAim", new AprilTagAimCommand(drivetrain, "speaker"));
-        NamedCommands.registerCommand("SpoolShooter",
-                new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
+        NamedCommands.registerCommand("SpoolShooter", new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
+        NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
 
         // Configure the button bindings
         configureButtonBindings();
@@ -140,7 +143,7 @@ public class RobotContainer {
         new Trigger(d_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));
         new Trigger(d_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FR")));
 
-        driverController.leftTrigger(eventLoop).ifHigh(() -> speedDown());
+        driverController.leftTrigger(triggerEventLoop).ifHigh(() -> speedDown());
 
         new Trigger(o_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> climber.climb(0.3)));
         new Trigger(o_dpadDownButton::getAsBoolean).onTrue(new InstantCommand(() -> climber.climb(-0.3)));
@@ -206,5 +209,15 @@ public class RobotContainer {
         maxSpeedFactor = MathUtil.clamp(maxSpeedFactor, .1, 1.);
         speedometer.setValue(maxSpeedFactor);
     }
-    public static void pollEventLoop() { eventLoop.poll(); }
+    public static void pollEventLoop() { triggerEventLoop.poll(); }
+
+    public void rumble() {
+        if(Intake.getSwitch()) { 
+            driverController.setRumble(RumbleType.kLeftRumble, 1.0); 
+            driverController.setRumble(RumbleType.kRightRumble, 1.0);
+        } else { 
+            driverController.setRumble(RumbleType.kLeftRumble, 0.0); 
+            driverController.setRumble(RumbleType.kRightRumble, 0.0);
+        }
+    }
 }

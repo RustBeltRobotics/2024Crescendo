@@ -9,11 +9,13 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase{
     private final CANSparkMax floorMotor;
     private static CANSparkMax intakeMotor;
+    private static DigitalInput noteSwitch = new DigitalInput(1);
 
     public Intake() {
         floorMotor = new CANSparkMax(GROUND_INTAKE, MotorType.kBrushless);
@@ -30,6 +32,10 @@ public class Intake extends SubsystemBase{
         intakeMotor.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         intakeMotor.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
     }
+    @Override
+    public void periodic() {
+        
+    }
     public void runBothIntakes(double speed){
         floorMotor.set(speed);
         intakeMotor.set(speed);
@@ -40,6 +46,10 @@ public class Intake extends SubsystemBase{
     }
     public static void runArmIntake(double speed){
         intakeMotor.set(speed);
+    }
+    public static void runSmartArmIntake(double speed){
+        intakeMotor.set(speed);
+
     }
     public static void stopArmIntake(){
         intakeMotor.set(0);
@@ -52,5 +62,8 @@ public class Intake extends SubsystemBase{
         runArmIntake(1);
         double startTime = System.currentTimeMillis();
         if (System.currentTimeMillis() - startTime < 2.0) { stopArmIntake(); }
+    }
+    public static boolean getSwitch(){
+        return noteSwitch.get();
     }
 }

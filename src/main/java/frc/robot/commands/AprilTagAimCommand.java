@@ -35,6 +35,7 @@ public class AprilTagAimCommand extends Command {
     private DoubleSupplier stickX;
     private DoubleSupplier stickY;
     private boolean autonomous;
+    private boolean finished;
 
     static GenericEntry kP;
     static GenericEntry kI;
@@ -95,11 +96,15 @@ public class AprilTagAimCommand extends Command {
     }
 
     @Override
+    public void initialize() {
+        finished = false;
+    }
+
+    @Override
     public void execute() {
         final PIDController steerPID = new PIDController(kP.getDouble(0.13), kI.getDouble(0.0), kD.getDouble(0.01));
         if (DriverStation.getAlliance().isPresent()) {
             if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-
                 switch (target) {
                     case "speaker":
                         targetTID = 3.0;
@@ -155,10 +160,13 @@ public class AprilTagAimCommand extends Command {
             } else {
                 aimCommand.setBoolean(false);
             }
+
             // auto shoot
             if (autonomous && aimCommand.getBoolean(false) == true) {
                 Intake.feedShooter();
+                finished = true;
             }
+
         } else { // just normal drive with no rotation
             if (autonomous) {
                 validTID = false;
@@ -174,9 +182,12 @@ public class AprilTagAimCommand extends Command {
         }
     }
     }
-
     @Override
     public void end(boolean interrupted) {
         drivetrain.drive(new ChassisSpeeds(stickX.getAsDouble(), stickY.getAsDouble(), 0));
+    }
+    @Override
+    public boolean isFinished() {
+        return finished;
     }
 }
