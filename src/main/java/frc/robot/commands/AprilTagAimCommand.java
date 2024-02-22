@@ -140,7 +140,7 @@ public class AprilTagAimCommand extends Command {
                 validTID = true;
                 autoAimCommand.setBoolean(true);
             } else {
-                armTarget = doubleInterpolator.interpolate(3.0,5.0, MathUtil.inverseInterpolate(0,1,(Constants.SPEAKER_HEIGHT-Constants.LL_HEIGHT) / Math.tan(Constants.LL_ANGLE+ty))); //TODO: change this start end vals
+                armTarget = doubleInterpolator.interpolate(0.0,1.0, MathUtil.inverseInterpolate(0,1,(Constants.SPEAKER_HEIGHT-Constants.LL_HEIGHT) / Math.tan(Constants.LL_ANGLE+ty))); //TODO: change this start end vals
                 //arm.setAngle(armTarget);
                 ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                         stickX.getAsDouble() * LL_SPEED_LIMIT,
@@ -150,7 +150,7 @@ public class AprilTagAimCommand extends Command {
 
                 drivetrain.drive(ChassisSpeeds.discretize(fieldRelativeSpeeds, 0.020));
             }
-            if (tx < 3.0 && (arm.getAngle() < armTarget+1 || arm.getAngle() > armTarget-1)) {
+            if ((tx < 3.0 || tx > -3.0)&& (arm.getAngle() < armTarget+1 || arm.getAngle() > armTarget-1)) {
                 aimCommand.setBoolean(true);
             } else {
                 aimCommand.setBoolean(false);
