@@ -158,6 +158,9 @@ public class RobotContainer {
         new Trigger(operatorController::getXButton).onTrue(new InstantCommand(() -> arm.sourcePose()));
         //ground pose
         new Trigger(operatorController::getAButton).onTrue(new InstantCommand(() -> arm.groundPose()));
+
+        //TODO: remove this
+        new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> arm.zeroBigEncoder()));
     }
 
     public void configureAutos() {

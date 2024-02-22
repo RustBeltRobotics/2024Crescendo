@@ -12,8 +12,9 @@ import static frc.robot.Constants.RIGHT_ROTATE;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -23,8 +24,14 @@ import frc.robot.Constants;
 public class Arm extends SubsystemBase {
     private final CANSparkMax armMotor1;
     private final CANSparkMax armMotor2;
-    private final Encoder arm1AbsEncoder;
+    
+    // Initializes a duty cycle encoder on DIO pins 0
+    private final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(0);
+
     private final SparkPIDController arm1PidController;
+
+    
+
     // private final SparkPIDController arm2PidController;
 
     private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
@@ -44,7 +51,15 @@ public class Arm extends SubsystemBase {
             .getEntry();
     private static GenericEntry kMinOutput = pidvals.add("akMinOutput", -1)
             .getEntry();
+    private static GenericEntry akP = pidvals.add("a_akP", 7e-5)
+            .getEntry();
+    private static GenericEntry akI = pidvals.add("a_akI", 0)
+            .getEntry();
+    private static GenericEntry akD = pidvals.add("a_akD", 0)
+            .getEntry();
 
+    PIDController anglePID = new PIDController(akP.getDouble(0), akI.getDouble(0), akD.getDouble(0));
+    
     public Arm() {
         // set motor things
         armMotor1 = new CANSparkMax(LEFT_ROTATE, MotorType.kBrushless);
@@ -63,7 +78,9 @@ public class Arm extends SubsystemBase {
 
         armMotor2.follow(armMotor1, true); // TODO: check
 
-        arm1AbsEncoder = new Encoder(0, 1);
+        // Configures the encoder to return a distance of 360 for every rotation (setting units to degrees)
+        bigEncoder.setDistancePerRotation(360.0);
+        
 
         // set pid things
         arm1PidController = armMotor1.getPIDController();
@@ -84,10 +101,15 @@ public class Arm extends SubsystemBase {
         // arm2PidController.setOutputRange(kMinOutput, kMaxOutput);
         // arm2PidController.setPositionPIDWrappingEnabled(true);
     }
+    public void setAngle(double angle) {
+        rotate(anglePID.calculate(bigEncoder.getAbsolutePosition(), angle));
+    }
+    public double getAngle() {
+        return bigEncoder.getAbsolutePosition();
+    }
 
     public void rotate(double velocity) {
         arm1PidController.setReference(velocity, ControlType.kVelocity);
-        // arm2PidController.setReference(velocity, ControlType.kVelocity);
     }
 
     public void ampPose() {
@@ -104,6 +126,8 @@ public class Arm extends SubsystemBase {
 
     public void stop() {
         arm1PidController.setReference(0, ControlType.kVelocity);
-        // arm2PidController.setReference(0, ControlType.kVelocity);
+    }
+    public void zeroBigEncoder() {
+        bigEncoder.reset();
     }
 }

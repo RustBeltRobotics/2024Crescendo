@@ -135,7 +135,8 @@ public class SwerveModule {
      * absolute encoder
      */
     public void resetEncoders() {
-        driveEncoder.setPosition(0.);
+        driveEncoder.setPosition(0.0);
+        steerEncoder.setPositionConversionFactor(12.8); //or 0.078125 idk
         steerEncoder.setPosition(getAbsolutePosition());
     }
 

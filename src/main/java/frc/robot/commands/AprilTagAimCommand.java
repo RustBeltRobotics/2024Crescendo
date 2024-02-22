@@ -8,6 +8,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.LimelightHelpers;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 
@@ -26,6 +28,7 @@ public class AprilTagAimCommand extends Command {
     private double targetTID;
     private double targetTID2 = -1;
     private double steeringAdjust;
+    private double armTarget;
     private DoubleSupplier stickX;
     private DoubleSupplier stickY;
     private boolean autonomous;
@@ -41,6 +44,10 @@ public class AprilTagAimCommand extends Command {
     public static boolean validTID = false;
 
     private final Drivetrain drivetrain;
+
+    private final Interpolator<Double> doubleInterpolator = Interpolator.forDouble();
+
+    Arm arm = new Arm();
 
     // constructor for teleop
     public AprilTagAimCommand(Drivetrain drivetrain, String target, DoubleSupplier stickX, DoubleSupplier stickY) {
@@ -129,6 +136,8 @@ public class AprilTagAimCommand extends Command {
                 validTID = true;
                 autoAimCommand.setBoolean(true);
             } else {
+                armTarget = doubleInterpolator.interpolate(3.0,5.0,0.5); //TODO: change this
+                //arm.setAngle(armTarget);
                 ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                         stickX.getAsDouble() * speedLimit,
                         stickY.getAsDouble() * speedLimit,
@@ -137,7 +146,7 @@ public class AprilTagAimCommand extends Command {
 
                 drivetrain.drive(ChassisSpeeds.discretize(fieldRelativeSpeeds, 0.020));
             }
-            if (tx < 3.0) {
+            if (tx < 3.0 && (arm.getAngle() < armTarget+1 || arm.getAngle() > armTarget-1)) {
                 aimCommand.setBoolean(true);
             } else {
                 aimCommand.setBoolean(false);
