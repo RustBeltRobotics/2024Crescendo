@@ -23,11 +23,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Arm extends SubsystemBase {
-    private final CANSparkMax armMotor1;
-    private final CANSparkMax armMotor2;
+    private static final CANSparkMax armMotor1 = new CANSparkMax(LEFT_ROTATE, MotorType.kBrushless);;
+    private static final CANSparkMax armMotor2 = new CANSparkMax(RIGHT_ROTATE, MotorType.kBrushless);;
     
-    // Initializes a duty cycle encoder on DIO pins 0
-    private final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(0);
+    private static final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(0);
 
     private final SparkPIDController arm1PidController;
     // private final SparkPIDController arm2PidController;
@@ -61,16 +60,14 @@ public class Arm extends SubsystemBase {
 
     PIDController anglePID = new PIDController(akP.getDouble(0), akI.getDouble(0), akD.getDouble(0));
     
-    public Arm() {
+    public  Arm() {
         // set motor things
-        armMotor1 = new CANSparkMax(LEFT_ROTATE, MotorType.kBrushless);
         armMotor1.restoreFactoryDefaults();
         armMotor1.setIdleMode(IdleMode.kBrake);
         armMotor1.setInverted(true);
         armMotor1.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         armMotor1.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
 
-        armMotor2 = new CANSparkMax(RIGHT_ROTATE, MotorType.kBrushless);
         armMotor2.restoreFactoryDefaults();
         armMotor2.setIdleMode(IdleMode.kBrake);
         armMotor2.setInverted(false);

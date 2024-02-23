@@ -13,19 +13,18 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase{
-    private final CANSparkMax floorMotor;
-    private static CANSparkMax intakeMotor;
+    private static final CANSparkMax floorMotor = new CANSparkMax(GROUND_INTAKE, MotorType.kBrushless);;
+    private static final CANSparkMax intakeMotor = new CANSparkMax(ARM_INTAKE, MotorType.kBrushless);;
     private static DigitalInput noteSwitch = new DigitalInput(1);
 
     public Intake() {
-        floorMotor = new CANSparkMax(GROUND_INTAKE, MotorType.kBrushless);
         floorMotor.restoreFactoryDefaults();
         floorMotor.setIdleMode(IdleMode.kBrake);
         floorMotor.setInverted(true);
         floorMotor.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         floorMotor.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
 
-        intakeMotor = new CANSparkMax(ARM_INTAKE, MotorType.kBrushless);
+        
         intakeMotor.restoreFactoryDefaults();
         intakeMotor.setIdleMode(IdleMode.kBrake);
         intakeMotor.setInverted(false);

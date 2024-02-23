@@ -5,8 +5,8 @@ import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
@@ -51,6 +51,7 @@ public class RobotContainer {
     POVButton d_dpadRightButton = new POVButton(driverController, 90);
     POVButton o_dpadUpButton = new POVButton(driverController, 0);
     POVButton o_dpadDownButton = new POVButton(driverController, 180);
+    double time;
 
     public static final Intake intake = new Intake();
     public static final Arm arm = new Arm();
@@ -143,7 +144,7 @@ public class RobotContainer {
         new Trigger(d_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));
         new Trigger(d_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FR")));
 
-        driverController.leftTrigger(triggerEventLoop).ifHigh(() -> speedDown());
+        driverController.leftTrigger(triggerEventLoop).ifHigh(() -> speedUp());
 
         new Trigger(o_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> climber.climb(0.3)));
         new Trigger(o_dpadDownButton::getAsBoolean).onTrue(new InstantCommand(() -> climber.climb(-0.3)));
@@ -199,9 +200,12 @@ public class RobotContainer {
     }
 
     public void speedUp() {
-        maxSpeedFactor += .1;
-        maxSpeedFactor = MathUtil.clamp(maxSpeedFactor, .1, 1.);
-        speedometer.setValue(maxSpeedFactor);
+        if (time - Timer.getFPGATimestamp()+.2 < 0){
+            maxSpeedFactor += .1;
+            maxSpeedFactor = MathUtil.clamp(maxSpeedFactor, .1, 1.);
+            speedometer.setValue(maxSpeedFactor);
+            time = Timer.getFPGATimestamp();
+        }
     }
 
     public void speedDown() {
