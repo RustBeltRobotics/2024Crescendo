@@ -85,8 +85,8 @@ public class Climber extends SubsystemBase {
         // shooter2PidController.setOutputRange(kMinOutput, kMaxOutput);
         // shooter2PidController.setPositionPIDWrappingEnabled(true);
     }
-    public void climb(double velocity){
-        climber1PidController.setReference(velocity, ControlType.kVelocity);
+    public void climb(double speed){
+        climber1PidController.setReference(speed, ControlType.kDutyCycle);
         // shooter2PidController.setReference(velocity, ControlType.kVelocity);
     }
     public void stop(){

@@ -106,8 +106,8 @@ public class Arm extends SubsystemBase {
         return bigEncoder.getAbsolutePosition();
     }
 
-    public void rotate(double velocity) {
-        arm1PidController.setReference(velocity, ControlType.kVelocity);
+    public void rotate(double speed) {
+        arm1PidController.setReference(speed, ControlType.kDutyCycle);
     }
 
     public void ampPose() {
