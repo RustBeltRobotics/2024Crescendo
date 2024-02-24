@@ -91,16 +91,16 @@ public final class Constants {
 
     // FIXME: These values for Arno and departure. CRESCENDO uses SDS MK4 L3 modules
     /** Conversion between rotations and degrees */
-    public static final double STEER_POSITION_CONVERSION = 360. * (1 / 12.8); // 12.8:1 ratio
+    public static final double STEER_POSITION_CONVERSION =360*(1 / 12.8); // 12.8:1 ratio
     /** Conversion between rotations per minute and degrees per seconds */
     public static final double STEER_VELOCITY_CONVERSION = STEER_POSITION_CONVERSION / 60.;
 
     // FIXME: These values are probably a solid starting point, given MK4I's and
     // MK4's have a different steering ratio by about 40%
     // Steer PID Constants
-    public static final double STEER_P = .01;
-    public static final double STEER_I = 0.;
-    public static final double STEER_D = 0.0002;
+    public static final double STEER_P = 0.01;
+    public static final double STEER_I = 0.0;
+    public static final double STEER_D = 0.0;
 
     /** Max velocity while following a trajectory. Meters per second */
     public static final double MAX_TRAJECTORY_VELOCITY = 3.;
@@ -165,7 +165,7 @@ public final class Constants {
     public static final double SPOOL_VELOCITY = 4257; //75% of max velocity
 
     //Arm
-    public static final double AMP_POSITION = 0; //TODO: get this encoder reading
-    public static final double SOURCE_POSITION = 0; //TODO: get this encoder reading
-    public static final double GROUND_POSITION = 0; //TODO: get this encoder reading
+    public static final double AMP_POSITION = 0.75; //TODO: get this encoder reading
+    public static final double SOURCE_POSITION = 0.75; //TODO: get this encoder reading
+    public static final double GROUND_POSITION = 0.5; //TODO: get this encoder reading
 }

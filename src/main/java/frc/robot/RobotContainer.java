@@ -35,6 +35,7 @@ import static frc.robot.Utilities.*;
 
 import java.util.Map;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -49,8 +50,8 @@ public class RobotContainer {
     POVButton d_dpadUpButton = new POVButton(driverController, 0);
     POVButton d_dpadLeftButton = new POVButton(driverController, 270);
     POVButton d_dpadRightButton = new POVButton(driverController, 90);
-    POVButton o_dpadUpButton = new POVButton(driverController, 0);
-    POVButton o_dpadDownButton = new POVButton(driverController, 180);
+    POVButton o_dpadUpButton = new POVButton(operatorController, 0);
+    POVButton o_dpadDownButton = new POVButton(operatorController, 180);
     double time;
 
     public static final Intake intake = new Intake();
@@ -81,9 +82,9 @@ public class RobotContainer {
     private ComplexWidget webcamWidget = comp.addCamera("Webcam", "webcam0", "10.4.24.2")
             .withPosition(3, 1)
             .withSize(4, 4);
-    private ComplexWidget limeLightWidget = comp.addCamera("LimeLight", "limelight", "10.4.24.2")
-            .withPosition(7, 1)
-            .withSize(3, 4);
+    //private ComplexWidget limeLightWidget = comp.addCamera("LimeLight", "limelight", "10.4.24.2")
+    //        .withPosition(7, 1)
+    //        .withSize(3, 4);
 
     public static SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
@@ -100,7 +101,7 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(new FieldOrientedDriveCommand(drivetrain,
                 () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+                () -> -modifyAxis(-driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
                         * maxSpeedFactor));
 
         intake.setDefaultCommand(new DefaultIntakeCommand(intake,
@@ -111,6 +112,7 @@ public class RobotContainer {
                 () -> modifyAxis(operatorController.getLeftY())));
 
         AprilTagAimCommand.makeShuffleboard();
+        Intake.makeShuffleboard();
 
         // register april aim with pathplanner, passing 0,0 as stick suppliers and
         // targeting speaker
@@ -140,31 +142,29 @@ public class RobotContainer {
                 () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
                         * maxSpeedFactor,
                 () -> -1));
+        new Trigger(driverController::getBButton).whileTrue(new AprilTagAimCommand(drivetrain,
+                "speaker",
+                () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
+                () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor));
+
         new Trigger(d_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("default")));
         new Trigger(d_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));
         new Trigger(d_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FR")));
 
         driverController.leftTrigger(triggerEventLoop).ifHigh(() -> speedUp());
 
-        new Trigger(o_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> climber.climb(0.3)));
-        new Trigger(o_dpadDownButton::getAsBoolean).onTrue(new InstantCommand(() -> climber.climb(-0.3)));
+        new Trigger(o_dpadUpButton::getAsBoolean).whileTrue(new InstantCommand(() -> climber.climb(0.3)));
+        new Trigger(o_dpadDownButton::getAsBoolean).whileTrue(new InstantCommand(() -> climber.climb(-0.3)));
+        new Trigger(o_dpadDownButton::getAsBoolean).whileFalse(new InstantCommand(() -> climber.stop())).and(() -> !o_dpadDownButton.getAsBoolean());
 
         new Trigger(operatorController::getStartButtonPressed).onTrue(new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
         new Trigger(operatorController::getBackButtonPressed).onTrue(new InstantCommand(() -> Shooter.stop()));
-        //shooter pose
-        new Trigger(operatorController::getBButton).whileTrue(new AprilTagAimCommand(drivetrain,
-                "speaker",
-                () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor));
         //amp pose
         new Trigger(operatorController::getYButton).onTrue(new InstantCommand(() -> arm.ampPose()));
         //source pose
         new Trigger(operatorController::getXButton).onTrue(new InstantCommand(() -> arm.sourcePose()));
         //ground pose
         new Trigger(operatorController::getAButton).onTrue(new InstantCommand(() -> arm.groundPose()));
-
-        //TODO: remove this
-        new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> arm.zeroBigEncoder()));
     }
 
     public void configureAutos() {
@@ -216,12 +216,12 @@ public class RobotContainer {
     public static void pollEventLoop() { triggerEventLoop.poll(); }
 
     public void rumble() {
-        if(Intake.getSwitch()) { 
-            driverController.setRumble(RumbleType.kLeftRumble, 1.0); 
-            driverController.setRumble(RumbleType.kRightRumble, 1.0);
+        if(Intake.getSwitch()) {
+            //driverController.setRumble(RumbleType.kLeftRumble, 1.0); 
+            //driverController.setRumble(RumbleType.kRightRumble, 1.0);
         } else { 
-            driverController.setRumble(RumbleType.kLeftRumble, 0.0); 
-            driverController.setRumble(RumbleType.kRightRumble, 0.0);
+            //driverController.setRumble(RumbleType.kLeftRumble, 0.0); 
+            //driverController.setRumble(RumbleType.kRightRumble, 0.0);
         }
     }
 }

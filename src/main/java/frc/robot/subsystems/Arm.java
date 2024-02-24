@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -32,7 +33,7 @@ public class Arm extends SubsystemBase {
     // private final SparkPIDController arm2PidController;
 
     private static ShuffleboardTab diag = Shuffleboard.getTab("Diag");
-    private static GenericEntry encoderEntry = diag.add("arm encoder", 0.0).getEntry();
+    private static GenericEntry encoderEntry = diag.add("arm encoder", 0.0).withPosition(6,0).getEntry();
 
     private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
             .getLayout("Arm PID", BuiltInLayouts.kList)
@@ -129,6 +130,6 @@ public class Arm extends SubsystemBase {
         bigEncoder.reset();
     }
     public void updateshuffle(){
-        encoderEntry.setString(bigEncoder.getAbsolutePosition() + ", " + bigEncoder.get());
+        SmartDashboard.putString("big encoder", bigEncoder.getAbsolutePosition() + ", " + bigEncoder.get());
     }
 }

@@ -145,7 +145,7 @@ public class AprilTagAimCommand extends Command {
                 validTID = true;
                 autoAimCommand.setBoolean(true);
             } else {
-                armTarget = doubleInterpolator.interpolate(0.0,1.0, MathUtil.inverseInterpolate(0,1,(Constants.SPEAKER_HEIGHT-Constants.LL_HEIGHT) / Math.tan(Constants.LL_ANGLE+ty))); //TODO: change this start end vals
+                armTarget = doubleInterpolator.interpolate(0.5,0.75, MathUtil.inverseInterpolate(0,1,(Constants.SPEAKER_HEIGHT-Constants.LL_HEIGHT) / Math.tan(Constants.LL_ANGLE+ty))); //TODO: change this start end vals
                 //arm.setAngle(armTarget);
                 ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                         stickX.getAsDouble() * LL_SPEED_LIMIT,

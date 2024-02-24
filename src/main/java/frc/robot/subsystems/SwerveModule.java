@@ -62,7 +62,7 @@ public class SwerveModule {
         driveMotor = new CANSparkMax(driveID, MotorType.kBrushless);
         driveMotor.restoreFactoryDefaults();
         driveMotor.setIdleMode(IdleMode.kBrake);
-        driveMotor.setInverted(true);
+        driveMotor.setInverted(false);
         driveMotor.setSmartCurrentLimit(DRIVE_SMART_CURRENT_LIMIT);
         driveMotor.setSecondaryCurrentLimit(DRIVE_SECONDARY_CURRENT_LIMIT);
 
@@ -78,7 +78,7 @@ public class SwerveModule {
         steerMotor = new CANSparkMax(steerID, MotorType.kBrushless);
         steerMotor.restoreFactoryDefaults();
         steerMotor.setIdleMode(IdleMode.kBrake);
-        steerMotor.setInverted(true);
+        steerMotor.setInverted(false);
         steerMotor.setSmartCurrentLimit(STEER_SMART_CURRENT_LIMIT);
         steerMotor.setSecondaryCurrentLimit(STEER_SECONDARY_CURRENT_LIMIT);
 
@@ -122,7 +122,7 @@ public class SwerveModule {
 
     /** @return Absolute steer position, degrees, -inf to +inf */
     public double getAbsolutePosition() {
-        return absoluteSteerEncoder.getPosition().getValueAsDouble();
+        return absoluteSteerEncoder.getPosition().getValueAsDouble()*360;
     }
 
     /** @return Drive encoder (meters) and steer encoder (Rotation2d) positions */

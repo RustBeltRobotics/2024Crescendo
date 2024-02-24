@@ -50,6 +50,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
@@ -207,7 +208,7 @@ public class Drivetrain extends SubsystemBase {
      * robot is currently facing to the 'forwards' direction.
      */
     public void zeroGyroscope() {
-        gyroOffset = -getGyroscopeAngle();
+        gyroOffset = getGyroscopeAngle()+180;
     }
 
     public double getGyroOffset() {
@@ -375,6 +376,10 @@ public class Drivetrain extends SubsystemBase {
         FLA.setDouble(frontRightModule.getSteerPosition());
         BRA.setDouble(backLeftModule.getSteerPosition());
         BLA.setDouble(backRightModule.getSteerPosition());
+        SmartDashboard.putNumber("br",backRightModule.getAbsolutePosition());
+        SmartDashboard.putNumber("bl",backLeftModule.getAbsolutePosition());
+        SmartDashboard.putNumber("fr",frontRightModule.getAbsolutePosition());
+        SmartDashboard.putNumber("fl",frontLeftModule.getAbsolutePosition());
         Gyro.setDouble(getGyroscopeAngle());
 
         // Periodically send a set of module states (I hope)

@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
-    private final CANSparkMax shooterMotor1;
+    private static CANSparkMax shooterMotor1;
     private final CANSparkMax shooterMotor2;
     private static SparkPIDController shooter1PidController;
     // private final SparkPIDController shooter2PidController;    
@@ -56,6 +56,7 @@ public class Shooter extends SubsystemBase {
         shooterMotor1.setInverted(false);
         shooterMotor1.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         shooterMotor1.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
+        updatepid();
 
         shooterMotor2 = new CANSparkMax(RIGHT_SHOOTER, MotorType.kBrushless);
         shooterMotor2.restoreFactoryDefaults();
@@ -64,16 +65,6 @@ public class Shooter extends SubsystemBase {
         shooterMotor2.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         shooterMotor2.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
         shooterMotor2.follow(shooterMotor1, false); //TODO: check
-
-        //set pid things
-        shooter1PidController = shooterMotor1.getPIDController();
-        shooter1PidController.setP(kP.getDouble(7e-5));
-        shooter1PidController.setI(kI.getDouble(0));
-        shooter1PidController.setD(kD.getDouble(0));
-        shooter1PidController.setIZone(kIz.getDouble(0));
-        shooter1PidController.setFF(kFF.getDouble(0));
-        shooter1PidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(1));
-        shooter1PidController.setPositionPIDWrappingEnabled(true);
 
         // shooter2PidController = shooterMotor2.getPIDController();
         // shooter2PidController.setP(kP);
@@ -84,12 +75,26 @@ public class Shooter extends SubsystemBase {
         // shooter2PidController.setOutputRange(kMinOutput, kMaxOutput);
         // shooter2PidController.setPositionPIDWrappingEnabled(true);
     }
+    public double shooterVelocity() {
+        return shooterMotor1.getEncoder().getVelocity();
+    }
     public static void spool(double velocity){
-        shooter1PidController.setReference(velocity, ControlType.kVelocity);
+        shooter1PidController.setReference(velocity*4, ControlType.kVelocity);
         // shooter2PidController.setReference(velocity, ControlType.kVelocity);
     }
     public static void stop(){
         shooter1PidController.setReference(0, ControlType.kVelocity);
         // shooter2PidController.setReference(0, ControlType.kVelocity);
+    }
+    public static void updatepid(){
+        //set pid things
+        shooter1PidController = shooterMotor1.getPIDController();
+        shooter1PidController.setP(kP.getDouble(1));
+        shooter1PidController.setI(kI.getDouble(0));
+        shooter1PidController.setD(kD.getDouble(0));
+        shooter1PidController.setIZone(kIz.getDouble(0));
+        shooter1PidController.setFF(kFF.getDouble(0));
+        shooter1PidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(5000));
+        shooter1PidController.setPositionPIDWrappingEnabled(true);
     }
 }
