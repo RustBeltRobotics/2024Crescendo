@@ -15,11 +15,11 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -28,12 +28,13 @@ public class Arm extends SubsystemBase {
     private static final CANSparkMax armMotor2 = new CANSparkMax(RIGHT_ROTATE, MotorType.kBrushless);;
     
     private static final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(0);
+    private static final Encoder medEncoder = new Encoder(2, 3);
 
     private final SparkPIDController arm1PidController;
-    // private final SparkPIDController arm2PidController;
 
     private static ShuffleboardTab diag = Shuffleboard.getTab("Diag");
-    private static GenericEntry encoderEntry = diag.add("arm encoder", 0.0).withPosition(6,0).getEntry();
+    private static GenericEntry encoderEntry = diag.add("arm encoder", 0.0).getEntry();
+    private double medOffset;
 
     private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
             .getLayout("Arm PID", BuiltInLayouts.kList)
@@ -75,11 +76,9 @@ public class Arm extends SubsystemBase {
         armMotor2.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         armMotor2.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
 
-        armMotor2.follow(armMotor1, true); // TODO: check
-
-        // Configures the encoder to return a distance of 360 for every rotation (setting units to degrees)
-        bigEncoder.setDistancePerRotation(360.0);
-        
+        armMotor2.follow(armMotor1, true);
+        medEncoder.reset();
+        medOffset = bigEncoder.getAbsolutePosition();
 
         // set pid things
         arm1PidController = armMotor1.getPIDController();
@@ -90,25 +89,16 @@ public class Arm extends SubsystemBase {
         arm1PidController.setFF(kFF.getDouble(0));
         arm1PidController.setOutputRange(kMinOutput.getDouble(0), kMaxOutput.getDouble(0));
         arm1PidController.setPositionPIDWrappingEnabled(true);
-
-        // arm2PidController = armMotor2.getPIDController();
-        // arm2PidController.setP(kP);
-        // arm2PidController.setI(kI);
-        // arm2PidController.setD(kD);
-        // arm2PidController.setIZone(kIz);
-        // arm2PidController.setFF(kFF);
-        // arm2PidController.setOutputRange(kMinOutput, kMaxOutput);
-        // arm2PidController.setPositionPIDWrappingEnabled(true);
     }
     public void setAngle(double angle) {
-        rotate(anglePID.calculate(bigEncoder.getAbsolutePosition(), angle));
+        rotate(anglePID.calculate(medEncoder.getDistance()+medOffset, angle));
     }
     public double getAngle() {
-        return bigEncoder.getAbsolutePosition();
+        return medEncoder.getDistance()+medOffset;
     }
 
     public void rotate(double speed) {
-        arm1PidController.setReference(speed, ControlType.kDutyCycle);
+        arm1PidController.setReference(speed*5000, ControlType.kVelocity);
     }
 
     public void ampPose() {
@@ -130,6 +120,6 @@ public class Arm extends SubsystemBase {
         bigEncoder.reset();
     }
     public void updateshuffle(){
-        SmartDashboard.putString("big encoder", bigEncoder.getAbsolutePosition() + ", " + bigEncoder.get());
+        encoderEntry.setDouble(bigEncoder.getAbsolutePosition());
     }
 }

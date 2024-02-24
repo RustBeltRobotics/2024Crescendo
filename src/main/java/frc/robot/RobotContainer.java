@@ -5,6 +5,8 @@ import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.EventLoop;
@@ -35,7 +37,6 @@ import static frc.robot.Utilities.*;
 
 import java.util.Map;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -53,6 +54,8 @@ public class RobotContainer {
     POVButton o_dpadUpButton = new POVButton(operatorController, 0);
     POVButton o_dpadDownButton = new POVButton(operatorController, 180);
     double time;
+    //TODO: get can id of the thing
+    PowerDistribution thePDH = new PowerDistribution(5, ModuleType.kRev);
 
     public static final Intake intake = new Intake();
     public static final Arm arm = new Arm();
@@ -145,7 +148,7 @@ public class RobotContainer {
         new Trigger(driverController::getBButton).whileTrue(new AprilTagAimCommand(drivetrain,
                 "speaker",
                 () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor));
+                () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor, thePDH));
 
         new Trigger(d_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("default")));
         new Trigger(d_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));

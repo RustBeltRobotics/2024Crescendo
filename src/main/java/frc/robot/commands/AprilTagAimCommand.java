@@ -13,9 +13,11 @@ import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
@@ -50,15 +52,17 @@ public class AprilTagAimCommand extends Command {
     private final Drivetrain drivetrain;
 
     private final Interpolator<Double> doubleInterpolator = Interpolator.forDouble();
-
     Arm arm = new Arm();
+    PowerDistribution thePDH;
 
     // constructor for teleop
-    public AprilTagAimCommand(Drivetrain drivetrain, String target, DoubleSupplier stickX, DoubleSupplier stickY) {
+    public AprilTagAimCommand(Drivetrain drivetrain, String target, DoubleSupplier stickX, DoubleSupplier stickY, PowerDistribution thePDH) {
         this.drivetrain = drivetrain;
         this.target = target;
         this.stickX = stickX;
         this.stickY = stickY;
+        this.thePDH = thePDH;
+        thePDH.setSwitchableChannel(false);
         addRequirements(drivetrain);
     }
 
@@ -146,6 +150,7 @@ public class AprilTagAimCommand extends Command {
                 autoAimCommand.setBoolean(true);
             } else {
                 armTarget = doubleInterpolator.interpolate(0.5,0.75, MathUtil.inverseInterpolate(0,1,(Constants.SPEAKER_HEIGHT-Constants.LL_HEIGHT) / Math.tan(Constants.LL_ANGLE+ty))); //TODO: change this start end vals
+                SmartDashboard.putNumber("calculated distance", (Constants.SPEAKER_HEIGHT-Constants.LL_HEIGHT) / Math.tan(Constants.LL_ANGLE+ty));
                 //arm.setAngle(armTarget);
                 ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                         stickX.getAsDouble() * LL_SPEED_LIMIT,
@@ -157,8 +162,10 @@ public class AprilTagAimCommand extends Command {
             }
             if ((tx < 3.0 || tx > -3.0)&& (arm.getAngle() < armTarget+1 || arm.getAngle() > armTarget-1)) {
                 aimCommand.setBoolean(true);
+                thePDH.setSwitchableChannel(true);
             } else {
                 aimCommand.setBoolean(false);
+                thePDH.setSwitchableChannel(false);
             }
 
             // auto shoot
