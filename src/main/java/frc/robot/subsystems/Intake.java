@@ -37,6 +37,10 @@ public class Intake extends SubsystemBase{
         intakeMotor.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         intakeMotor.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
     }
+    @Override
+    public void periodic(){
+        getSwitch();
+    }
     
     public void runBothIntakes(double speed){
         floorMotor.set(speed);
@@ -57,6 +61,7 @@ public class Intake extends SubsystemBase{
         intakeMotor.set(0);
     }
     public void runFloorIntakes(double speed) {
+
         floorMotor.set(speed);
     }
     //runs the intake for 2 seconds in order to feed note into the shooter

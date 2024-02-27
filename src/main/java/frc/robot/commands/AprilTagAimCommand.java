@@ -17,13 +17,12 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.util.LimelightHelpers;
 
 public class AprilTagAimCommand extends Command {
     private double tx;
@@ -44,7 +43,7 @@ public class AprilTagAimCommand extends Command {
     static GenericEntry kD;
     static GenericEntry aimCommand;
     static GenericEntry autoAimCommand;
-
+    static GenericEntry LLdistance;
 
     public static double AUTO_TX;
     public static boolean validTID = false;
@@ -56,7 +55,8 @@ public class AprilTagAimCommand extends Command {
     PowerDistribution thePDH;
 
     // constructor for teleop
-    public AprilTagAimCommand(Drivetrain drivetrain, String target, DoubleSupplier stickX, DoubleSupplier stickY, PowerDistribution thePDH) {
+    public AprilTagAimCommand(Drivetrain drivetrain, String target, DoubleSupplier stickX, DoubleSupplier stickY,
+            PowerDistribution thePDH) {
         this.drivetrain = drivetrain;
         this.target = target;
         this.stickX = stickX;
@@ -73,30 +73,6 @@ public class AprilTagAimCommand extends Command {
         stickX = () -> 0;
         stickY = () -> 0;
         autonomous = true;
-    }
-
-    public final static void makeShuffleboard() {
-        ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
-                .getLayout("LL Aim", BuiltInLayouts.kList)
-                .withSize(2, 2);
-        kP = pidvals.add("kP", 0.13)
-                .getEntry();
-        kI = pidvals.add("kI", 0.13)
-                .getEntry();
-        kD = pidvals.add("kD", 0.00)
-                .getEntry();
-        aimCommand = Shuffleboard.getTab("Competition")
-                .add("shot threashold", false)
-                .withWidget("Boolean Box")
-                .withPosition(10, 0)
-                .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
-                .getEntry();
-        autoAimCommand = Shuffleboard.getTab("Competition")
-                .add("auto aiming", false)
-                .withWidget("Boolean Box")
-                .withPosition(10, 2)
-                .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
-                .getEntry();
     }
 
     @Override
@@ -123,78 +99,113 @@ public class AprilTagAimCommand extends Command {
                         break;
                 }
             } else {// its blue
-            switch (target) {
-                case "speaker":
-                    targetTID = 7.0;
-                    targetTID2 = 8.0;
-                    break;
-                case "amp":
-                    targetTID = 6.0;
-                    break;
-                case "source":
-                    targetTID = 1.0;
-                    targetTID2 = 2.0;
-                    break;
+                switch (target) {
+                    case "speaker":
+                        targetTID = 7.0;
+                        targetTID2 = 8.0;
+                        break;
+                    case "amp":
+                        targetTID = 6.0;
+                        break;
+                    case "source":
+                        targetTID = 1.0;
+                        targetTID2 = 2.0;
+                        break;
+                }
             }
-        }
-        // determine if the primary tag id matches our target tag id
-        sightedTID = LimelightHelpers.getFiducialID(LL_NAME);
-        if (sightedTID == targetTID || sightedTID == targetTID2) {
-            steerPID.enableContinuousInput(0.0, 360.0);
-            tx = LimelightHelpers.getTX(LL_NAME);
-            ty = LimelightHelpers.getTY(LL_NAME);
-            steeringAdjust = steerPID.calculate(tx);
-            if (autonomous) {
-                AUTO_TX = steeringAdjust;
-                validTID = true;
-                autoAimCommand.setBoolean(true);
-            } else {
-                armTarget = doubleInterpolator.interpolate(0.5,0.75, MathUtil.inverseInterpolate(0,1,(Constants.SPEAKER_HEIGHT-Constants.LL_HEIGHT) / Math.tan(Constants.LL_ANGLE+ty))); //TODO: change this start end vals
-                SmartDashboard.putNumber("calculated distance", (Constants.SPEAKER_HEIGHT-Constants.LL_HEIGHT) / Math.tan(Constants.LL_ANGLE+ty));
-                //arm.setAngle(armTarget);
-                ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                        stickX.getAsDouble() * LL_SPEED_LIMIT,
-                        stickY.getAsDouble() * LL_SPEED_LIMIT,
-                        steeringAdjust,
-                        Rotation2d.fromDegrees(drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()));
+            // determine if the primary tag id matches our target tag id
+            sightedTID = LimelightHelpers.getFiducialID(LL_NAME);
+            if (sightedTID == targetTID || sightedTID == targetTID2) {
+                steerPID.enableContinuousInput(0.0, 360.0);
+                tx = LimelightHelpers.getTX(LL_NAME);
+                ty = LimelightHelpers.getTY(LL_NAME);
+                steeringAdjust = steerPID.calculate(tx);
+                // TODO:change stuff to interpolate
+                armTarget = doubleInterpolator.interpolate(0.5, 0.75, MathUtil.inverseInterpolate(0, 1,
+                        (Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan(Constants.LL_ANGLE + ty)));
+                LLdistance.setDouble(
+                        (Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan(Constants.LL_ANGLE + ty));
+                if (autonomous) {
+                    AUTO_TX = steeringAdjust;
+                    validTID = true;
+                    arm.setAngle(armTarget);
+                    autoAimCommand.setBoolean(true);
+                } else {
+                    ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                            stickX.getAsDouble() * LL_SPEED_LIMIT,
+                            stickY.getAsDouble() * LL_SPEED_LIMIT,
+                            steeringAdjust,
+                            Rotation2d.fromDegrees(drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()));
 
-                drivetrain.drive(ChassisSpeeds.discretize(fieldRelativeSpeeds, 0.020));
-            }
-            if ((tx < 3.0 || tx > -3.0)&& (arm.getAngle() < armTarget+1 || arm.getAngle() > armTarget-1)) {
-                aimCommand.setBoolean(true);
-                thePDH.setSwitchableChannel(true);
-            } else {
-                aimCommand.setBoolean(false);
-                thePDH.setSwitchableChannel(false);
-            }
+                    drivetrain.drive(ChassisSpeeds.discretize(fieldRelativeSpeeds, 0.020));
+                }
+                if ((tx < 3.0 || tx > -3.0) && (arm.getAngle() < armTarget + 1 || arm.getAngle() > armTarget - 1)) {
+                    aimCommand.setBoolean(true);
+                    thePDH.setSwitchableChannel(true);
+                } else {
+                    aimCommand.setBoolean(false);
+                    thePDH.setSwitchableChannel(false);
+                }
+                // auto shoot
+                if (autonomous && aimCommand.getBoolean(false) == true) {
+                    Intake.feedShooter();
+                    finished = true;
+                }
 
-            // auto shoot
-            if (autonomous && aimCommand.getBoolean(false) == true) {
-                Intake.feedShooter();
-                finished = true;
-            }
-
-        } else { // just normal drive with no rotation
-            if (autonomous) {
-                validTID = false;
-                autoAimCommand.setBoolean(false);
-            } else {
-            drivetrain.drive(ChassisSpeeds.discretize(ChassisSpeeds.fromFieldRelativeSpeeds(
-                    stickX.getAsDouble(),
-                    stickY.getAsDouble(),
-                    0,
-                    Rotation2d.fromDegrees(drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset())), 0.020));
-            aimCommand.setBoolean(false);
+            } else { // just normal drive with no rotation
+                if (autonomous) {
+                    validTID = false;
+                    autoAimCommand.setBoolean(false);
+                } else {
+                    drivetrain.drive(ChassisSpeeds.discretize(ChassisSpeeds.fromFieldRelativeSpeeds(
+                            stickX.getAsDouble(),
+                            stickY.getAsDouble(),
+                            0,
+                            Rotation2d.fromDegrees(drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset())),
+                            0.020));
+                    aimCommand.setBoolean(false);
+                }
             }
         }
     }
-    }
+
     @Override
     public void end(boolean interrupted) {
         drivetrain.drive(new ChassisSpeeds(stickX.getAsDouble(), stickY.getAsDouble(), 0));
     }
+
     @Override
     public boolean isFinished() {
         return finished;
+    }
+    public final static void makeShuffleboard() {
+        ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
+                .getLayout("LL Aim", BuiltInLayouts.kList)
+                .withSize(2, 2);
+        kP = pidvals.add("kP", 0.13)
+                .getEntry();
+        kI = pidvals.add("kI", 0.13)
+                .getEntry();
+        kD = pidvals.add("kD", 0.00)
+                .getEntry();
+        aimCommand = Shuffleboard.getTab("Competition")
+                .add("shot threashold", false)
+                .withWidget("Boolean Box")
+                .withPosition(10, 0)
+                .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
+                .getEntry();
+        autoAimCommand = Shuffleboard.getTab("Competition")
+                .add("auto aiming", false)
+                .withWidget("Boolean Box")
+                .withPosition(10, 2)
+                .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
+                .getEntry();
+        LLdistance = Shuffleboard.getTab("Diag").add("distance", 0.0).getEntry();
+    }
+    //auto aim for operator
+    public final void aimShooter() {
+        if (sightedTID == targetTID || sightedTID == targetTID2) {
+            arm.setAngle(armTarget);
+        }
     }
 }

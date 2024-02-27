@@ -14,10 +14,11 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.*;
 
-public class SwerveModule {
+public class SwerveModule extends SubsystemBase{
     private final CANSparkMax driveMotor;
     private final CANSparkMax steerMotor;
 
@@ -97,7 +98,32 @@ public class SwerveModule {
         resetEncoders();
 
         //set the things
-        updateSwervePid();
+        updatePIDs();
+    }
+    @Override
+    public void periodic(){
+        //updatePIDs();
+    }
+    public void updatePIDs(){
+        // set PID coefficients (drive)
+        drivePidController.setP(kP.getDouble(0));
+        drivePidController.setI(kI.getDouble(0));
+        drivePidController.setD(kD.getDouble(0));
+        drivePidController.setIZone(kIz.getDouble(0));
+        drivePidController.setFF(drive_kFF.getDouble(0));
+        drivePidController.setOutputRange(kMinOutput.getDouble(0), kMaxOutput.getDouble(0));
+        drivePidController.setPositionPIDWrappingEnabled(true);
+
+        // set PID coefficients (steer)
+        steerPidController.setP(STEER_P);
+        steerPidController.setI(STEER_I);
+        steerPidController.setD(STEER_D);
+        steerPidController.setIZone(kIz.getDouble(0));
+        steerPidController.setFF(steer_kFF.getDouble(0));
+        steerPidController.setOutputRange(kMinOutput.getDouble(0), kMaxOutput.getDouble(1));
+        steerPidController.setPositionPIDWrappingEnabled(true);
+        steerPidController.setPositionPIDWrappingMaxInput(360);
+        steerPidController.setPositionPIDWrappingMinInput(0);
     }
 
     /** @return Drive position, meters, -inf to +inf */
@@ -191,26 +217,5 @@ public class SwerveModule {
             value = lowerBound + ((value - upperBound)%(upperBound - lowerBound));
         }
         return value;
-    }
-    public void updateSwervePid(){
-        // set PID coefficients (drive)
-        drivePidController.setP(kP.getDouble(0));
-        drivePidController.setI(kI.getDouble(0));
-        drivePidController.setD(kD.getDouble(0));
-        drivePidController.setIZone(kIz.getDouble(0));
-        drivePidController.setFF(drive_kFF.getDouble(0));
-        drivePidController.setOutputRange(kMinOutput.getDouble(0), kMaxOutput.getDouble(0));
-        drivePidController.setPositionPIDWrappingEnabled(true);
-
-        // set PID coefficients (steer)
-        steerPidController.setP(STEER_P);
-        steerPidController.setI(STEER_I);
-        steerPidController.setD(STEER_D);
-        steerPidController.setIZone(kIz.getDouble(0));
-        steerPidController.setFF(steer_kFF.getDouble(0));
-        steerPidController.setOutputRange(kMinOutput.getDouble(0), kMaxOutput.getDouble(1));
-        steerPidController.setPositionPIDWrappingEnabled(true);
-        steerPidController.setPositionPIDWrappingMaxInput(360);
-        steerPidController.setPositionPIDWrappingMinInput(0);
     }
 }

@@ -7,7 +7,6 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -19,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.AprilTagAimCommand;
 import frc.robot.commands.DefaultArmCommand;
@@ -33,10 +33,11 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
 import static frc.robot.Constants.*;
-import static frc.robot.Utilities.*;
+import static frc.robot.util.Utilities.*;
 
 import java.util.Map;
 
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -61,7 +62,7 @@ public class RobotContainer {
     public static final Arm arm = new Arm();
     public static final Climber climber = new Climber();
     public static final Shooter shooter = new Shooter();
-
+    
     //this has to be the shittiest code in the whole project
     private static EventLoop triggerEventLoop = new EventLoop();
 
@@ -103,8 +104,8 @@ public class RobotContainer {
 
         drivetrain.setDefaultCommand(new FieldOrientedDriveCommand(drivetrain,
                 () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxis(-driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+                () -> -modifyAxis(-driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
+                () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
                         * maxSpeedFactor));
 
         intake.setDefaultCommand(new DefaultIntakeCommand(intake,
@@ -122,6 +123,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("AprilTagAim", new AprilTagAimCommand(drivetrain, "speaker"));
         NamedCommands.registerCommand("SpoolShooter", new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
         NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
+        NamedCommands.registerCommand("FeedShooter", new InstantCommand(() -> Intake.feedShooter()));
 
         // Configure the button bindings
         configureButtonBindings();
@@ -154,7 +156,7 @@ public class RobotContainer {
         new Trigger(d_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));
         new Trigger(d_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FR")));
 
-        driverController.leftTrigger(triggerEventLoop).ifHigh(() -> speedUp());
+        driverController.leftTrigger(triggerEventLoop).debounce(0.2).ifHigh(() -> speedUp());
 
         new Trigger(o_dpadUpButton::getAsBoolean).whileTrue(new InstantCommand(() -> climber.climb(0.3)));
         new Trigger(o_dpadDownButton::getAsBoolean).whileTrue(new InstantCommand(() -> climber.climb(-0.3)));
@@ -163,11 +165,12 @@ public class RobotContainer {
         new Trigger(operatorController::getStartButtonPressed).onTrue(new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
         new Trigger(operatorController::getBackButtonPressed).onTrue(new InstantCommand(() -> Shooter.stop()));
         //amp pose
-        new Trigger(operatorController::getYButton).onTrue(new InstantCommand(() -> arm.ampPose()));
+        new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));
+        //new Trigger(operatorController::getYButton).onFalse(new InstantCommand(() -> arm.rotate(0)));
         //source pose
-        new Trigger(operatorController::getXButton).onTrue(new InstantCommand(() -> arm.sourcePose()));
+        new Trigger(operatorController::getXButton).onTrue(new GroundPickUpCommand());
         //ground pose
-        new Trigger(operatorController::getAButton).onTrue(new InstantCommand(() -> arm.groundPose()));
+        new Trigger(operatorController::getAButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.groundPose())));
     }
 
     public void configureAutos() {
@@ -203,12 +206,7 @@ public class RobotContainer {
     }
 
     public void speedUp() {
-        if (time - Timer.getFPGATimestamp()+.2 < 0){
-            maxSpeedFactor += .1;
-            maxSpeedFactor = MathUtil.clamp(maxSpeedFactor, .1, 1.);
-            speedometer.setValue(maxSpeedFactor);
-            time = Timer.getFPGATimestamp();
-        }
+        speedometer.setValue(maxSpeedFactor);
     }
 
     public void speedDown() {
@@ -220,11 +218,11 @@ public class RobotContainer {
 
     public void rumble() {
         if(Intake.getSwitch()) {
-            //driverController.setRumble(RumbleType.kLeftRumble, 1.0); 
-            //driverController.setRumble(RumbleType.kRightRumble, 1.0);
+            driverController.setRumble(RumbleType.kLeftRumble, .5); 
+            driverController.setRumble(RumbleType.kRightRumble, .5);
         } else { 
-            //driverController.setRumble(RumbleType.kLeftRumble, 0.0); 
-            //driverController.setRumble(RumbleType.kRightRumble, 0.0);
+            driverController.setRumble(RumbleType.kLeftRumble, 0.0); 
+            driverController.setRumble(RumbleType.kRightRumble, 0.0);
         }
     }
 }

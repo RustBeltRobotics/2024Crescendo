@@ -53,8 +53,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.LimelightHelpers;
 import frc.robot.commands.AprilTagAimCommand;
+import frc.robot.util.LimelightHelpers;
 
 public class Drivetrain extends SubsystemBase {
     private String theMove;
@@ -208,7 +208,7 @@ public class Drivetrain extends SubsystemBase {
      * robot is currently facing to the 'forwards' direction.
      */
     public void zeroGyroscope() {
-        gyroOffset = getGyroscopeAngle()+180;
+        gyroOffset = getGyroscopeAngle();
     }
 
     public double getGyroOffset() {
@@ -224,7 +224,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getGyroscopeAngle() {
-        return Math.IEEEremainder(360. - navx.getAngle(), 360.);
+        return -Math.IEEEremainder(360. - navx.getAngle(), 360.);
     }
 
     // Returns the measurment of the gyroscope yaw. Used for field-relative drive
@@ -380,7 +380,7 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("bl",backLeftModule.getAbsolutePosition());
         SmartDashboard.putNumber("fr",frontRightModule.getAbsolutePosition());
         SmartDashboard.putNumber("fl",frontLeftModule.getAbsolutePosition());
-        Gyro.setDouble(getGyroscopeAngle());
+        Gyro.setDouble(getGyroscopeAngle()+getGyroOffset());
 
         // Periodically send a set of module states (I hope)
         statePublisher.set(new SwerveModuleState[] {

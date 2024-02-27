@@ -21,8 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Climber extends SubsystemBase {
     private final CANSparkMax climberMotor1;
     private final CANSparkMax climberMotor2;
-    private final SparkPIDController climber1PidController;
-    // private final SparkPIDController shooter2PidController;
+    private SparkPIDController climber1PidController;
 
     private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
         .getLayout("Climber PID", BuiltInLayouts.kList)
@@ -66,31 +65,24 @@ public class Climber extends SubsystemBase {
         climberMotor2.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
         climberMotor2.follow(climberMotor1, false); //TODO: check
 
-        //set pid things
         climber1PidController = climberMotor1.getPIDController();
-        climber1PidController.setP(kP.getDouble(7e-5));
-        climber1PidController.setI(kI.getDouble(0));
-        climber1PidController.setD(kD.getDouble(0));
-        climber1PidController.setIZone(kIz.getDouble(0));
-        climber1PidController.setFF(kFF.getDouble(0));
-        climber1PidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(1));
-        climber1PidController.setPositionPIDWrappingEnabled(true);
 
-        // shooter2PidController = climberMotor2.getPIDController();
-        // shooter2PidController.setP(kP);
-        // shooter2PidController.setI(kI);
-        // shooter2PidController.setD(kD);
-        // shooter2PidController.setIZone(kIz);
-        // shooter2PidController.setFF(kFF);
-        // shooter2PidController.setOutputRange(kMinOutput, kMaxOutput);
-        // shooter2PidController.setPositionPIDWrappingEnabled(true);
     }
+    // @Override
+    // public void periodic(){
+    //     //set pid things
+    //     climber1PidController.setP(kP.getDouble(7e-5));
+    //     climber1PidController.setI(kI.getDouble(0));
+    //     climber1PidController.setD(kD.getDouble(0));
+    //     climber1PidController.setIZone(kIz.getDouble(0));
+    //     climber1PidController.setFF(kFF.getDouble(0));
+    //     climber1PidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(1));
+    //     climber1PidController.setPositionPIDWrappingEnabled(true);
+    // }
     public void climb(double speed){
         climber1PidController.setReference(speed, ControlType.kDutyCycle);
-        // shooter2PidController.setReference(velocity, ControlType.kVelocity);
     }
     public void stop(){
         climber1PidController.setReference(0, ControlType.kVelocity);
-        // shooter2PidController.setReference(0, ControlType.kVelocity);
     }
 }
