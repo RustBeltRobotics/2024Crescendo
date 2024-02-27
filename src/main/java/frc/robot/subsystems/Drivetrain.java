@@ -224,7 +224,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getGyroscopeAngle() {
-        return -Math.IEEEremainder(360. - navx.getAngle(), 360.);
+        return -Math.IEEEremainder(360. - navx.getAngle()+90, 360.);
     }
 
     // Returns the measurment of the gyroscope yaw. Used for field-relative drive

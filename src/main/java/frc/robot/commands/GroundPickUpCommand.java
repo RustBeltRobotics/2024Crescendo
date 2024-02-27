@@ -25,6 +25,7 @@ public class GroundPickUpCommand extends Command {
         switchEventLoop.poll();
         loaded.ifHigh(() -> Intake.stopArmIntake());
         loaded.ifHigh(() -> finished = true);
+        System.out.println("groundpicking");
     }
     @Override
     public boolean isFinished() {

@@ -14,6 +14,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.*;
@@ -56,14 +57,14 @@ public class SwerveModule extends SubsystemBase{
             .getEntry();
         private static GenericEntry steer_kFF =
             pidvals.add("ssteer_kFF", 0.0)
-            .getEntry();
+            .getEntry();        
 
     public SwerveModule(int driveID, int steerID, int encoderID) {
         // Setup drive motor SparkMax
         driveMotor = new CANSparkMax(driveID, MotorType.kBrushless);
         driveMotor.restoreFactoryDefaults();
         driveMotor.setIdleMode(IdleMode.kBrake);
-        driveMotor.setInverted(false);
+        driveMotor.setInverted(true);
         driveMotor.setSmartCurrentLimit(DRIVE_SMART_CURRENT_LIMIT);
         driveMotor.setSecondaryCurrentLimit(DRIVE_SECONDARY_CURRENT_LIMIT);
 
@@ -99,6 +100,7 @@ public class SwerveModule extends SubsystemBase{
 
         //set the things
         updatePIDs();
+        pidvals.add(new InstantCommand(() -> updatePIDs()));
     }
     @Override
     public void periodic(){
