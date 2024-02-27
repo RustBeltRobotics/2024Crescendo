@@ -40,7 +40,7 @@ public class Arm extends SubsystemBase {
     private static GenericEntry medEncoderEntry = diag.add("rel arm encoder", 0.0).getEntry();
     private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
             .getLayout("Arm PID", BuiltInLayouts.kList)
-            .withSize(2, 2);
+            .withSize(2, 5);
     private static GenericEntry kP = pidvals.add("spark_P", 7e-5)
             .getEntry();
     private static GenericEntry kI = pidvals.add("spark_I", 0.0)
