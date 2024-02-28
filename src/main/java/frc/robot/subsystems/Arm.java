@@ -91,6 +91,7 @@ public class Arm extends SubsystemBase {
         medOffset = bigEncoder.getAbsolutePosition();
         medEncoder.setDistancePerPulse(1/90);//experimental
         armMotor1.getEncoder().setPositionConversionFactor(1/42);
+        armMotor1.getEncoder().setPosition(0.5);
 
         // set pid things
         arm1PidController = armMotor1.getPIDController();
