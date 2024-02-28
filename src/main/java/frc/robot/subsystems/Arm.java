@@ -30,7 +30,7 @@ public class Arm extends SubsystemBase {
     private static final CANSparkMax armMotor1 = new CANSparkMax(LEFT_ROTATE, MotorType.kBrushless);;
     private static final CANSparkMax armMotor2 = new CANSparkMax(RIGHT_ROTATE, MotorType.kBrushless);;
     
-    private static final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(0);
+    private static final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(4);
     private static final Encoder medEncoder = new Encoder(2, 3);
 
     private final SparkPIDController arm1PidController;
@@ -86,9 +86,11 @@ public class Arm extends SubsystemBase {
         armMotor2.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
 
         armMotor2.follow(armMotor1, true);
+
         medEncoder.reset();
         medOffset = bigEncoder.getAbsolutePosition();
         medEncoder.setDistancePerPulse(1/90);//experimental
+        armMotor1.getEncoder().setPositionConversionFactor(1/42);
 
         // set pid things
         arm1PidController = armMotor1.getPIDController();
@@ -106,14 +108,13 @@ public class Arm extends SubsystemBase {
         gravAnglePID.setPID(agkP.getDouble(5), agkI.getDouble(0), agkD.getDouble(0));
     }
     public void setAngle(double angle) {
-        rotate(anglePID.calculate(bigEncoder.get(), angle));
-        System.out.println(anglePID.calculate(bigEncoder.get(), angle)+" "+angle);
-        
-        // if (angle > bigEncoder.getAbsolutePosition()){
-        //     rotate(anglePID.calculate(bigEncoder.get(), angle));
-        // } else {
-        //     rotate(gravAnglePID.calculate(bigEncoder.get(), angle));
-        // }
+        //rotate(anglePID.calculate(bigEncoder.get(), angle));
+        rotate(anglePID.calculate(armMotor1.getEncoder().getPosition(), angle));
+        if (angle > bigEncoder.getAbsolutePosition()){
+            rotate(anglePID.calculate(bigEncoder.get(), angle));
+        } else {
+            rotate(gravAnglePID.calculate(bigEncoder.get(), angle));
+        }
     }
     public double getAngle() {
         //return medEncoder.getDistance()+medOffset;

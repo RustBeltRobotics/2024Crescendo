@@ -217,11 +217,11 @@ public class RobotContainer {
 
     public void rumble() {
         if(Intake.getSwitch()) {
-            driverController.setRumble(RumbleType.kLeftRumble, .5); 
-            driverController.setRumble(RumbleType.kRightRumble, .5);
+            operatorController.setRumble(RumbleType.kLeftRumble, .5); 
+            operatorController.setRumble(RumbleType.kRightRumble, .5);
         } else { 
-            driverController.setRumble(RumbleType.kLeftRumble, 0.0); 
-            driverController.setRumble(RumbleType.kRightRumble, 0.0);
+            operatorController.setRumble(RumbleType.kLeftRumble, 0.0); 
+            operatorController.setRumble(RumbleType.kRightRumble, 0.0);
         }
     }
 }

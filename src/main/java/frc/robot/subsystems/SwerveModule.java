@@ -29,6 +29,8 @@ public class SwerveModule extends SubsystemBase{
     private final RelativeEncoder steerEncoder;
 
     private final CANcoder absoluteSteerEncoder;
+    
+    int i=0;
 
     //Shuffling
         private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
@@ -58,9 +60,9 @@ public class SwerveModule extends SubsystemBase{
         private static GenericEntry steer_kFF =
             pidvals.add("ssteer_kFF", 0.0)
             .getEntry();
-        
 
     public SwerveModule(int driveID, int steerID, int encoderID) {
+        Shuffleboard.getTab("Diag").add(new InstantCommand(() -> updatePIDs()));
         // Setup drive motor SparkMax
         driveMotor = new CANSparkMax(driveID, MotorType.kBrushless);
         driveMotor.restoreFactoryDefaults();
@@ -98,9 +100,13 @@ public class SwerveModule extends SubsystemBase{
 
         // Zero encoders to ensure steer relative matches absolute
         resetEncoders();
-
         //set the things
         updatePIDs();
+
+        if (i==0){
+            Shuffleboard.getTab("Diag").add(new InstantCommand(() -> updatePIDs()));
+            i++;
+        }
     }
     @Override
     public void periodic(){
@@ -108,7 +114,7 @@ public class SwerveModule extends SubsystemBase{
     }
     public void updatePIDs(){
         // set PID coefficients (drive)
-        drivePidController.setP(kP.getDouble(0));
+        drivePidController.setP(kP.getDouble(7e-5));
         drivePidController.setI(kI.getDouble(0));
         drivePidController.setD(kD.getDouble(0));
         drivePidController.setIZone(kIz.getDouble(0));
