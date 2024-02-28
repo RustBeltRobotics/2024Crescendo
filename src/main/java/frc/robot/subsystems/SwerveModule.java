@@ -102,11 +102,6 @@ public class SwerveModule extends SubsystemBase{
         resetEncoders();
         //set the things
         updatePIDs();
-
-        if (i==0){
-            Shuffleboard.getTab("Diag").add(new InstantCommand(() -> updatePIDs()));
-            i++;
-        }
     }
     @Override
     public void periodic(){
@@ -225,5 +220,8 @@ public class SwerveModule extends SubsystemBase{
             value = lowerBound + ((value - upperBound)%(upperBound - lowerBound));
         }
         return value;
+    }
+    public void makeUpdateButton(){
+        
     }
 }

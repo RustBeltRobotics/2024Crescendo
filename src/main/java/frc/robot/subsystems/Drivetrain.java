@@ -51,6 +51,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.AprilTagAimCommand;
@@ -134,7 +135,6 @@ public class Drivetrain extends SubsystemBase {
             .getStructTopic("MyPose", Pose2d.struct).publish();
 
     public Drivetrain() {
-
         // Start publishing an array of module states with the "/SwerveStates" key
         statePublisher = NetworkTableInstance.getDefault()
             .getStructArrayTopic("/SwerveStates", SwerveModuleState.struct).publish();
@@ -201,6 +201,14 @@ public class Drivetrain extends SubsystemBase {
                 new Pose2d());
 
         theMove = "default";
+        Shuffleboard.getTab("Diag").add(new InstantCommand(() -> updatePIDs()));
+    }
+
+    private void updatePIDs(){
+        frontLeftModule.updatePIDs();
+        frontRightModule.updatePIDs();
+        backLeftModule.updatePIDs();
+        backRightModule.updatePIDs();
     }
 
     /**
