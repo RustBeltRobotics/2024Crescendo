@@ -37,7 +37,6 @@ import static frc.robot.util.Utilities.*;
 
 import java.util.Map;
 
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -104,7 +103,7 @@ public class RobotContainer {
 
         drivetrain.setDefaultCommand(new FieldOrientedDriveCommand(drivetrain,
                 () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxis(-driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
+                () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
                         * maxSpeedFactor));
 

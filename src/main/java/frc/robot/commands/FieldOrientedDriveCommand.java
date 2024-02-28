@@ -55,7 +55,7 @@ public class FieldOrientedDriveCommand extends Command {
                     translationXSupplier.getAsDouble(),
                     translationYSupplier.getAsDouble(),
                     rotationSupplier.getAsDouble(),
-                    Rotation2d.fromDegrees(drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset())), 0.020));
+                    Rotation2d.fromDegrees(-(drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()))), 0.020));
     }
 
     /** When the drive method is interupted, set all velocities to zero. */

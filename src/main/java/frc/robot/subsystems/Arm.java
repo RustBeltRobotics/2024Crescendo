@@ -14,6 +14,7 @@ import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.units.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -87,7 +88,7 @@ public class Arm extends SubsystemBase {
         armMotor2.follow(armMotor1, true);
         medEncoder.reset();
         medOffset = bigEncoder.getAbsolutePosition();
-        medEncoder.setDistancePerPulse(90);//experimental
+        medEncoder.setDistancePerPulse(1/90);//experimental
 
         // set pid things
         arm1PidController = armMotor1.getPIDController();
@@ -105,11 +106,14 @@ public class Arm extends SubsystemBase {
         gravAnglePID.setPID(agkP.getDouble(5), agkI.getDouble(0), agkD.getDouble(0));
     }
     public void setAngle(double angle) {
-        if (angle > bigEncoder.getAbsolutePosition()){
-            rotate(anglePID.calculate(bigEncoder.get(), angle));
-        } else {
-            rotate(gravAnglePID.calculate(bigEncoder.get(), angle));
-        }
+        rotate(anglePID.calculate(bigEncoder.get(), angle));
+        System.out.println(anglePID.calculate(bigEncoder.get(), angle)+" "+angle);
+        
+        // if (angle > bigEncoder.getAbsolutePosition()){
+        //     rotate(anglePID.calculate(bigEncoder.get(), angle));
+        // } else {
+        //     rotate(gravAnglePID.calculate(bigEncoder.get(), angle));
+        // }
     }
     public double getAngle() {
         //return medEncoder.getDistance()+medOffset;

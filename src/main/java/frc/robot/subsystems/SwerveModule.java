@@ -57,7 +57,8 @@ public class SwerveModule extends SubsystemBase{
             .getEntry();
         private static GenericEntry steer_kFF =
             pidvals.add("ssteer_kFF", 0.0)
-            .getEntry();        
+            .getEntry();
+        
 
     public SwerveModule(int driveID, int steerID, int encoderID) {
         // Setup drive motor SparkMax
@@ -100,7 +101,6 @@ public class SwerveModule extends SubsystemBase{
 
         //set the things
         updatePIDs();
-        pidvals.add(new InstantCommand(() -> updatePIDs()));
     }
     @Override
     public void periodic(){
