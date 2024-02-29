@@ -62,7 +62,7 @@ public class Shooter extends SubsystemBase {
         shooterMotor2.setInverted(false);
         shooterMotor2.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         shooterMotor2.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
-        shooterMotor2.follow(shooterMotor1, false); //TODO: check
+        shooterMotor2.follow(shooterMotor1, false);
 
         shooter1PidController = shooterMotor1.getPIDController();
     //set pid things
@@ -71,10 +71,9 @@ public class Shooter extends SubsystemBase {
         shooter1PidController.setD(kD.getDouble(0));
         shooter1PidController.setIZone(kIz.getDouble(0));
         shooter1PidController.setFF(kFF.getDouble(0));
-        // TODO: might want to go to -5000 as well, incase we want to spin the wheels backwards to intake through the shooter wheels at the source
-        shooter1PidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(5000)); 
-        shooter1PidController.setPositionPIDWrappingEnabled(true); // TODO: you really shouldn't need this for the shooter
+        shooter1PidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(1)); 
     }
+    // Commented out because it was overloading the RIO
     // @Override
     // public void periodic(){
     //     //set pid things
@@ -90,7 +89,7 @@ public class Shooter extends SubsystemBase {
         return shooterMotor1.getEncoder().getVelocity();
     }
 
-    // TODO: Why are spool() and stop() static methods?
+    // TODO: Why are spool() and stop() static methods? - because they are called from static classes
     public static void spool(double velocity){
         // FIXME: We should figure out why we need a value of 4 here.
         // I have a feeling the issue is not something unique to the shooter, so if we
@@ -100,9 +99,6 @@ public class Shooter extends SubsystemBase {
         shooter1PidController.setReference(velocity*4, ControlType.kVelocity);
     }
     public static void stop(){
-        // TODO: This is going to apply a non-zero voltage to aggressively bring its velocity
-        // to zero. I'm not sure we want to do that. We might be better off telling
-        // it to apply 0 voltage and let it coast down.
-        shooter1PidController.setReference(0, ControlType.kVelocity);
+        shooter1PidController.setReference(0, ControlType.kVoltage);
     }
 }

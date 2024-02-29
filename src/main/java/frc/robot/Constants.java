@@ -29,11 +29,6 @@ public final class Constants {
     public static final int NEO_SMART_CURRENT_LIMIT = 60;
     /** Secondary current limit applied to NEOs */
     public static final int NEO_SECONDARY_CURRENT_LIMIT = 80;
-    // TODO: We aren't using any 550's so these could be removed if you wanted.
-    /** Smart current limit applied to NEO 550s */
-    public static final int NEO550_SMART_CURRENT_LIMIT = 20;
-    /** Secondary current limit applied to NEO 550s */
-    public static final int NEO550_SECONDARY_CURRENT_LIMIT = 30;
 
     // Drivetrain Constants
     /**
@@ -76,9 +71,6 @@ public final class Constants {
      */
     public static final double MAX_VELOCITY_METERS_PER_SECOND = 5676. * DRIVE_VELOCITY_CONVERSION;
 
-    // TODO: This is an obselete constant from Arno, you could remove it if you wanted.
-    public static final double MAX_VELOCITY_PRECISION_MODE_METERS_PER_SECOND = 0.5;
-
     /**
      * The maximum angular velocity of the robot in radians per second. This is a
      * measure of how fast the robot can rotate in place.
@@ -103,10 +95,6 @@ public final class Constants {
      * Max acceleration while following a trajectory. Meters per second per second
      */
     public static final double MAX_TRAJECTORY_ACCELERATION = 2.;
-
-    // TODO: You can delete this, we don't have any balanceing in auto for this game
-    /** Max velocity while following balance auto trajectory. Meters per second */
-    public static final double MAX_BALANCE_TRAJECTORY_VELOCITY = 3.;
 
     // PID Constants for translation and rotation moves
     public static final double translation_P = 10.0;

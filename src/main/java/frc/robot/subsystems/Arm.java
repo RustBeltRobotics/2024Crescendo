@@ -14,7 +14,6 @@ import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.units.Angle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -107,6 +106,7 @@ public class Arm extends SubsystemBase {
     public void periodic() {
         anglePID.setPID(akP.getDouble(0), akI.getDouble(0), akD.getDouble(0));
         gravAnglePID.setPID(agkP.getDouble(5), agkI.getDouble(0), agkD.getDouble(0));
+        updateshuffle();
     }
     public void setAngle(double angle) {
         //rotate(anglePID.calculate(bigEncoder.get(), angle));

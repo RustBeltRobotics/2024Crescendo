@@ -30,8 +30,6 @@ public class SwerveModule extends SubsystemBase{
 
     private final CANcoder absoluteSteerEncoder;
     
-    int i=0; // TODO is this used anywhere?
-
     // Shuffling
     // TODO: Consider moving these constanst to the Constants class
     private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
@@ -108,15 +106,15 @@ public class SwerveModule extends SubsystemBase{
         drivePidController.setIZone(kIz.getDouble(0));
         drivePidController.setFF(drive_kFF.getDouble(0));
         drivePidController.setOutputRange(kMinOutput.getDouble(0), kMaxOutput.getDouble(0));
-        drivePidController.setPositionPIDWrappingEnabled(true); // TODO: I think this wants to be false for drive?
+        drivePidController.setPositionPIDWrappingEnabled(false);
 
         // set PID coefficients (steer)
         steerPidController.setP(STEER_P);
         steerPidController.setI(STEER_I);
         steerPidController.setD(STEER_D);
-        steerPidController.setIZone(kIz.getDouble(0)); // TODO: does it make sense to use the same value here as for drive?
+        steerPidController.setIZone(kIz.getDouble(0)); // TODO: does it make sense to use the same value here as for drive? - i dont know what this value does
         steerPidController.setFF(steer_kFF.getDouble(0));
-        steerPidController.setOutputRange(kMinOutput.getDouble(0), kMaxOutput.getDouble(1)); // TODO: does it make sense to use the same value here as for drive?
+        steerPidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(1));
         steerPidController.setPositionPIDWrappingEnabled(true);
         steerPidController.setPositionPIDWrappingMaxInput(360);
         steerPidController.setPositionPIDWrappingMinInput(0);
@@ -146,6 +144,7 @@ public class SwerveModule extends SubsystemBase{
     public double getAbsolutePosition() {
         return absoluteSteerEncoder.getPosition().getValueAsDouble() * 360;
         // TODO: Should this be calling absoluteSteerEncoder.getAbsolutePosition? Since we've zeroed the encoders, will the two methods even return different values?
+        // - this method is uses to zero the relative encoders
     }
 
     /** @return Drive encoder (meters) and steer encoder (Rotation2d) positions */
@@ -181,9 +180,9 @@ public class SwerveModule extends SubsystemBase{
             return;
         }
         state = SwerveModuleState.optimize(state, getState().angle);
-        // TODO: I could be mistaken, but it looks like kDutyCycle ignores PIDF constants? Is this intentional?
+        // TODO: I could be mistaken, but it looks like kDutyCycle ignores PIDF constants? Is this intentional? - i think the pid constants are still doing stuff because the robot wouldnt drive when they were all zero
         drivePidController.setReference(state.speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND, CANSparkMax.ControlType.kDutyCycle);
-        setSparkAngle(state.angle.getDegrees());
+        setSteerAngle(state.angle.getDegrees());
     }
 
     /**
@@ -201,8 +200,7 @@ public class SwerveModule extends SubsystemBase{
         steerMotor.set(0.);
     }
 
-    // TODO: Consider renaming SparkAngle to SteerAngle to reduce confusion
-    public void setSparkAngle(double targetAngleInDegrees){
+    public void setSteerAngle(double targetAngleInDegrees){
         double currentSparkAngle = steerMotor.getEncoder().getPosition(); // TODO: Consider replacing this line with a call to getSteerPosition()
         double sparkRelativeTargetAngle = reboundValue(targetAngleInDegrees, currentSparkAngle);
         steerPidController.setReference(sparkRelativeTargetAngle, ControlType.kPosition);
@@ -210,6 +208,7 @@ public class SwerveModule extends SubsystemBase{
 
     // TODO: Consider moving this to  the Utilities class, it could be useful elsewhere
     // TODO: On second thought, I think this is redundant, now that you're using steerPidController.setPositionPIDWrappingEnabled(true);
+    // TODO: so i would think the same thing, but if i remember correctly we were using wrapping before we added this and still having issues
     public double reboundValue(double value, double anchor){
         double lowerBound = anchor - 180;
         double upperBound = anchor + 180;
@@ -220,9 +219,5 @@ public class SwerveModule extends SubsystemBase{
             value = lowerBound + ((value - upperBound)%(upperBound - lowerBound));
         }
         return value;
-    }
-
-    public void makeUpdateButton(){
-        // UpdateButton.make();
     }
 }

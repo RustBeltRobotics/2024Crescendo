@@ -48,10 +48,6 @@ import com.pathplanner.lib.auto.NamedCommands;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-    double time; // TODO: is this used anywhere?
-
-    //this has to be the shittiest code in the whole project
-    // TODO: What does it do and why is it bad?
     private static EventLoop triggerEventLoop = new EventLoop();
 
     // The robot's subsystems are defined here
@@ -118,9 +114,8 @@ public class RobotContainer {
                 () -> modifyAxis(operatorController.getRightTriggerAxis()),
                 () -> modifyAxis(operatorController.getLeftTriggerAxis())));
 
-        // TODO: Do we want to run modifyAxis on arm commands?
         arm.setDefaultCommand(new DefaultArmCommand(arm,
-                () -> modifyAxis(operatorController.getLeftY())));
+                () -> operatorController.getLeftY()));
 
         AprilTagAimCommand.makeShuffleboard();
         Intake.makeShuffleboard();
@@ -148,30 +143,30 @@ public class RobotContainer {
         new Trigger(driverController::getRightBumper).whileTrue(new RunCommand(() -> speedThrottle()));
         // Pressing the Left Bumper shifts to low speed
         new Trigger(driverController::getLeftBumper).onTrue(new InstantCommand(() -> speedDown()));
-        // TODO: What does this do? Toggles between robot oriented and field oriented?
+        // Toggles between robot oriented and field oriented
         new Trigger(driverController::getXButton).toggleOnTrue(new RobotOrientedDriveCommand(drivetrain,
                 () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
-                        * maxSpeedFactor,
-                () -> -1));
-        // TODO: What does this do? Looks like it toggles auto aim to the speaker on
+                        * maxSpeedFactor));
+        // Automatically aims at speaker while the b button is held
         new Trigger(driverController::getBButton).whileTrue(new AprilTagAimCommand(drivetrain,
                 "speaker",
                 () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor, thePDH));
 
-        // TODO: What do these do?
+        // Bindings to change center of rotation
         new Trigger(d_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("default")));
         new Trigger(d_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));
         new Trigger(d_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FR")));
 
-        // TODO: What does this do?
+        // If left trigger is pressed for 0.2 seconds, increase the speed limit
         driverController.leftTrigger(triggerEventLoop).debounce(0.2).ifHigh(() -> speedUp());
 
-        // TODO: the first two make sense to me, the third doesn't
+        // Activate climb motors
         new Trigger(o_dpadUpButton::getAsBoolean).whileTrue(new InstantCommand(() -> climber.climb(0.3)));
         new Trigger(o_dpadDownButton::getAsBoolean).whileTrue(new InstantCommand(() -> climber.climb(-0.3)));
+        // Disable the climb motors when the buttons arent pressed
         new Trigger(o_dpadDownButton::getAsBoolean).whileFalse(new InstantCommand(() -> climber.stop())).and(() -> !o_dpadDownButton.getAsBoolean());
 
         // Pressing the Start Button spools up the shooter.
@@ -179,10 +174,8 @@ public class RobotContainer {
         // Pressing the Back Button spools down the shooter.
         new Trigger(operatorController::getBackButtonPressed).onTrue(new InstantCommand(() -> Shooter.stop()));
         // Pressing the Y Button rotates the arm to the amp pose
-        new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));
-        //new Trigger(operatorController::getYButton).onFalse(new InstantCommand(() -> arm.rotate(0)));
-        // TODO: source pose button is likely obselete at this point, source pick up and ground pickup are both fully rotated down
-        //source pose
+        new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));        
+        // Ground pose
         new Trigger(operatorController::getXButton).onTrue(new GroundPickUpCommand());
         // Pressing the A Button rotates the arm to the ground pose
         new Trigger(operatorController::getAButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.groundPose())));

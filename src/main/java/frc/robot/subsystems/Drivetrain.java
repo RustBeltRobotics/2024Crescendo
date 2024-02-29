@@ -149,7 +149,7 @@ public class Drivetrain extends SubsystemBase {
                         new PIDConstants(rotation_P, rotation_I, rotation_D), // Rotation PID constants
                         Constants.MAX_VELOCITY_METERS_PER_SECOND, // Max module speed, in m/s
                         Constants.DRIVETRAIN_BASE_RADIUS, // Drive base radius in meters. Distance from robot center to furthest module.
-                        new ReplanningConfig() //TODO: check on this function
+                        new ReplanningConfig()
                 ),
                 () -> {
                     // Boolean supplier that controls when the path will be mirrored for the red alliance
@@ -231,12 +231,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getGyroscopeAngle() {
-        // TODO: I think we're double dipping on our negatives here. 360 - navx.getAngle inverts it once, then the negative sign out front inverts it again.
-        return -Math.IEEEremainder(360. - navx.getAngle(), 360.);
-        // TODO: Or better yet, there's now a navx.getYaw() method, that is clamped to
-        // -180 to 180 degrees, eliminating the need for a remainder function
-        // altogether. For some reason, this wasn't available to us last year, only
-        // getPitch and getRoll.
+        return navx.getYaw();
     }
 
     // Returns the measurment of the gyroscope yaw. Used for field-relative drive
@@ -344,7 +339,17 @@ public class Drivetrain extends SubsystemBase {
         if (visionPose2d.getX() != 0.0 && poseDifference < 0.5) {
             poseEstimator.addVisionMeasurement(visionPose2d, poseReadingTimestamp);
         }
-        // TODO: For readability, considermoving the switch to a handleMoves() method or something
+
+        handleMoves();
+
+        handleLocked();
+
+        updateOdometry();
+
+        updateTelemetry();
+    }
+
+    private void handleMoves() {
         switch (theMove){
             case "FL":
                 states = KINEMATICS.toSwerveModuleStates(chassisSpeeds, new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2., Constants.DRIVETRAIN_WHEELBASE_METERS / 2.));
@@ -365,8 +370,8 @@ public class Drivetrain extends SubsystemBase {
                 FREntry.setBoolean(false); 
                 break;
         }
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
-        // TODO: Consider moving to a handleLockedWheels method or something
+    }
+    private void handleLocked(){
         if (!wheelsLocked) {
             // If we are not in wheel's locked mode, set the states normally
             frontLeftModule.setState(states[0]);
@@ -382,12 +387,9 @@ public class Drivetrain extends SubsystemBase {
             backLeftModule.lockModule(-45);
             backRightModule.lockModule(45);
         }
-
-        // Update the odometry
-        updateOdometry();
-
-        // TODO: Consider moving to an updateDiagnostics method or something
-        // Diagnostics
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+    }
+    private void updateTelemetry() {
         FRA.setDouble(frontLeftModule.getSteerPosition());
         FLA.setDouble(frontRightModule.getSteerPosition());
         BRA.setDouble(backLeftModule.getSteerPosition());
@@ -405,7 +407,6 @@ public class Drivetrain extends SubsystemBase {
             states[2],
             states[3]
         });
-
         posePublisher.set(poseEstimator.getEstimatedPosition());
     }
 }

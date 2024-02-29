@@ -63,7 +63,7 @@ public class Climber extends SubsystemBase {
         climberMotor2.setInverted(false);
         climberMotor2.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         climberMotor2.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
-        climberMotor2.follow(climberMotor1, false); //TODO: check
+        climberMotor2.follow(climberMotor1, false);
 
         climber1PidController = climberMotor1.getPIDController();
 
