@@ -54,6 +54,19 @@ public class RobotOrientedDriveCommand extends Command {
     @Override
     public void execute() {
         robotOrientEntry.setBoolean(true);
+        // FIXME: Unless you're intentionally leaving it in here for some reason, I
+        // would recommend removing all of the POV stuff from this commmand. For
+        // background, this was obselete code from Arno. Our first attempt at giving the
+        // driver precision driving capability was to allow them to use the D-Pad to
+        // drive at a heavily reduced max velocity. We ended up switching to the Bumper
+        // button speed limiter controls instead, but because we never used robot
+        // oriented drive, we forgot to go back and remove it from this command. Since
+        // you're only ever calling this command with a -1 for the povSupplier input, I
+        // don't think leaving it in should break anything, but removing it will reduce
+        // confusion and be slightly safer. If someone were to ever link a call to this
+        // command with the actual D-Pad input for some reason, it would cause some
+        // wonky behavior, since you're already binding various D-Pad buttons to other
+        // commands.
         int pov = povSupplier.getAsInt();
         if (pov == -1) {
             drivetrain.drive(new ChassisSpeeds(

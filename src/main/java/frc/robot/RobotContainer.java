@@ -48,29 +48,29 @@ import com.pathplanner.lib.auto.NamedCommands;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+    double time; // TODO: is this used anywhere?
+
+    //this has to be the shittiest code in the whole project
+    // TODO: What does it do and why is it bad?
+    private static EventLoop triggerEventLoop = new EventLoop();
+
+    // The robot's subsystems are defined here
+    public static final Drivetrain drivetrain = new Drivetrain();
+    public static final Intake intake = new Intake();
+    public static final Arm arm = new Arm();
+    public static final Climber climber = new Climber();
+    public static final Shooter shooter = new Shooter();
+    //TODO: get can id of the thing
+    PowerDistribution thePDH = new PowerDistribution(5, ModuleType.kRev);
+
+    // The drive team controllers are defined here
+    public static final XboxController driverController = new XboxController(0);
+    public static final XboxController operatorController = new XboxController(1);
     POVButton d_dpadUpButton = new POVButton(driverController, 0);
     POVButton d_dpadLeftButton = new POVButton(driverController, 270);
     POVButton d_dpadRightButton = new POVButton(driverController, 90);
     POVButton o_dpadUpButton = new POVButton(operatorController, 0);
     POVButton o_dpadDownButton = new POVButton(operatorController, 180);
-    double time;
-    //TODO: get can id of the thing
-    PowerDistribution thePDH = new PowerDistribution(5, ModuleType.kRev);
-
-    public static final Intake intake = new Intake();
-    public static final Arm arm = new Arm();
-    public static final Climber climber = new Climber();
-    public static final Shooter shooter = new Shooter();
-    
-    //this has to be the shittiest code in the whole project
-    private static EventLoop triggerEventLoop = new EventLoop();
-
-    // The robot's subsystems are defined here
-    public static final Drivetrain drivetrain = new Drivetrain();
-
-    // The drive team controllers are defined here
-    public static final XboxController driverController = new XboxController(0);
-    public static final XboxController operatorController = new XboxController(1);
 
     // Limits maximum speed
     private double maxSpeedFactor = .2;
@@ -100,17 +100,25 @@ public class RobotContainer {
         // Left stick Y axis -> forward and backwards movement
         // Left stick X axis -> left and right movement
         // Right stick X axis -> rotation
-
+        // TODO: depending on driver feedback, we may want to consider different
+        // maxSpeedFactors for translation vs rotation
+        // TODO: depending on driver feedback, we may want to consider different methods
+        // of modifiy axis. Steeper ramp, shallower ramp, larger or smaller deadband,
+        // etc.
         drivetrain.setDefaultCommand(new FieldOrientedDriveCommand(drivetrain,
                 () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
                         * maxSpeedFactor));
-
+        // TODO: Do we want to run modifyAxis on intake commands? Do we want it to be
+        // the same as what we do for driving input? If not, maybe we want a more
+        // generic version of modifyAxis, I've taken a stab at this in Utilities, let me
+        // know what you think
         intake.setDefaultCommand(new DefaultIntakeCommand(intake,
                 () -> modifyAxis(operatorController.getRightTriggerAxis()),
                 () -> modifyAxis(operatorController.getLeftTriggerAxis())));
 
+        // TODO: Do we want to run modifyAxis on arm commands?
         arm.setDefaultCommand(new DefaultArmCommand(arm,
                 () -> modifyAxis(operatorController.getLeftY())));
 
@@ -136,39 +144,47 @@ public class RobotContainer {
         new Trigger(driverController::getAButton).onTrue(new InstantCommand(() -> drivetrain.zeroGyroscope()));
         // Pressing Y button locks the wheels in an X pattern
         new Trigger(driverController::getYButton).onTrue(new InstantCommand(() -> drivetrain.toggleWheelsLocked()));
-
+        // Pressing Right Bumper sets the speed limit to the value on the Right Trigger
         new Trigger(driverController::getRightBumper).whileTrue(new RunCommand(() -> speedThrottle()));
         // Pressing the Left Bumper shifts to low speed
         new Trigger(driverController::getLeftBumper).onTrue(new InstantCommand(() -> speedDown()));
+        // TODO: What does this do? Toggles between robot oriented and field oriented?
         new Trigger(driverController::getXButton).toggleOnTrue(new RobotOrientedDriveCommand(drivetrain,
                 () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
                         * maxSpeedFactor,
                 () -> -1));
+        // TODO: What does this do? Looks like it toggles auto aim to the speaker on
         new Trigger(driverController::getBButton).whileTrue(new AprilTagAimCommand(drivetrain,
                 "speaker",
                 () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor, thePDH));
 
+        // TODO: What do these do?
         new Trigger(d_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("default")));
         new Trigger(d_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));
         new Trigger(d_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FR")));
 
+        // TODO: What does this do?
         driverController.leftTrigger(triggerEventLoop).debounce(0.2).ifHigh(() -> speedUp());
 
+        // TODO: the first two make sense to me, the third doesn't
         new Trigger(o_dpadUpButton::getAsBoolean).whileTrue(new InstantCommand(() -> climber.climb(0.3)));
         new Trigger(o_dpadDownButton::getAsBoolean).whileTrue(new InstantCommand(() -> climber.climb(-0.3)));
         new Trigger(o_dpadDownButton::getAsBoolean).whileFalse(new InstantCommand(() -> climber.stop())).and(() -> !o_dpadDownButton.getAsBoolean());
 
+        // Pressing the Start Button spools up the shooter.
         new Trigger(operatorController::getStartButtonPressed).onTrue(new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
+        // Pressing the Back Button spools down the shooter.
         new Trigger(operatorController::getBackButtonPressed).onTrue(new InstantCommand(() -> Shooter.stop()));
-        //amp pose
+        // Pressing the Y Button rotates the arm to the amp pose
         new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));
         //new Trigger(operatorController::getYButton).onFalse(new InstantCommand(() -> arm.rotate(0)));
+        // TODO: source pose button is likely obselete at this point, source pick up and ground pickup are both fully rotated down
         //source pose
         new Trigger(operatorController::getXButton).onTrue(new GroundPickUpCommand());
-        //ground pose
+        // Pressing the A Button rotates the arm to the ground pose
         new Trigger(operatorController::getAButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.groundPose())));
     }
 
@@ -191,6 +207,9 @@ public class RobotContainer {
         return autoChooser.getSelected();
     }
 
+    // TODO: lets work with you and Andrzej on Thursday or Saturday to test out a
+    // couple different throttle methods, and pick which one you guys like best,
+    // that way we can clean these next four methods up a bit
     public void speedThrottle() {
         if (driverController.getRightTriggerAxis() != 0) {
             maxSpeedFactor = driverController.getRightTriggerAxis();

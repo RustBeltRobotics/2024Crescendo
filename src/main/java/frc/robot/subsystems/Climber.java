@@ -7,7 +7,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import static frc.robot.Constants.LEFT_CLIMB;
 import static frc.robot.Constants.NEO_SECONDARY_CURRENT_LIMIT;
 import static frc.robot.Constants.NEO_SMART_CURRENT_LIMIT;
-import static frc.robot.Constants.RIGT_CLIMB;
+import static frc.robot.Constants.RIGHT_CLIMB;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
@@ -57,7 +57,7 @@ public class Climber extends SubsystemBase {
         climberMotor1.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         climberMotor1.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
 
-        climberMotor2 = new CANSparkMax(RIGT_CLIMB, MotorType.kBrushless);
+        climberMotor2 = new CANSparkMax(RIGHT_CLIMB, MotorType.kBrushless);
         climberMotor2.restoreFactoryDefaults();
         climberMotor2.setIdleMode(IdleMode.kBrake);
         climberMotor2.setInverted(false);

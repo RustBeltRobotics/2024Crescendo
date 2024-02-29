@@ -55,7 +55,7 @@ public class Intake extends SubsystemBase{
     }
     public static void runSmartArmIntake(double speed) {
         intakeMotor.set(speed);
-
+        System.out.println("I am a smart arm intake!");
     }
     public static void stopArmIntake() {
         intakeMotor.set(0);
@@ -64,6 +64,7 @@ public class Intake extends SubsystemBase{
 
         floorMotor.set(speed);
     }
+    // TODO: Why is this a static method?
     //runs the intake for 2 seconds in order to feed note into the shooter
     public static void feedShooter() {
         runArmIntake(1);

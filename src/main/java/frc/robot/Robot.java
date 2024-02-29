@@ -34,6 +34,17 @@ public class Robot extends TimedRobot {
      * This function is run once when the robot is first started up and should be
      * used for any initialization code.
      */
+    /**
+     * TODO: I think it should be ok to have an instance of Arm here, separate from
+     * the instance in robotContainer, although to be honest, I'm not 100% sure. I
+     * have a vague memory of running into issus last year with a similar situation,
+     * resulting from the code trying to create multiple instances of the same CAN
+     * ID's, although it's possible I'm thinking of something different. From what I
+     * can tell, this instance is only being used to call arm.updateShuffle() inside
+     * of robotPeriodic(). In which case, I think the same effect could be achieved,
+     * possibly with less risk, by moving the call of updateShuffle into the Arm
+     * periodic() method.
+     */
     Arm arm = new Arm();
     @Override
     public void robotInit() {

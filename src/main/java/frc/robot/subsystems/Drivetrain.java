@@ -86,17 +86,16 @@ public class Drivetrain extends SubsystemBase {
     private SwerveModuleState[] states;
 
 
-    //The Shuffle
+    // The Shuffle
     ShuffleboardTab comp = Shuffleboard.getTab("Competition");
     ShuffleboardLayout drivetrainLayout = Shuffleboard.getTab("Competition")
-    .getLayout("Drivetrain", BuiltInLayouts.kList)
-    .withSize(1,2)
-    .withPosition(0,2);
-    private final GenericEntry FRA =
-        drivetrainLayout.add("Front Left Absolute", 0)
-        .getEntry();
-    private final GenericEntry FLA =
-        drivetrainLayout.add("Front Right Absolute", 0)
+            .getLayout("Drivetrain", BuiltInLayouts.kList)
+            .withSize(1, 2)
+            .withPosition(0, 2);
+    private final GenericEntry FRA = drivetrainLayout.add("Front Left Absolute", 0)
+            .getEntry();
+    private final GenericEntry FLA = drivetrainLayout.add(
+            "Front Right Absolute", 0)
         .getEntry();
     private final GenericEntry BRA =
         drivetrainLayout.add("Back Left Absolute", 0)
@@ -232,7 +231,12 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getGyroscopeAngle() {
+        // TODO: I think we're double dipping on our negatives here. 360 - navx.getAngle inverts it once, then the negative sign out front inverts it again.
         return -Math.IEEEremainder(360. - navx.getAngle(), 360.);
+        // TODO: Or better yet, there's now a navx.getYaw() method, that is clamped to
+        // -180 to 180 degrees, eliminating the need for a remainder function
+        // altogether. For some reason, this wasn't available to us last year, only
+        // getPitch and getRoll.
     }
 
     // Returns the measurment of the gyroscope yaw. Used for field-relative drive
@@ -315,6 +319,7 @@ public class Drivetrain extends SubsystemBase {
      */
     @Override
     public void periodic() {
+        // TODO: Consider moving the vision stuff to a Vision subsystem class, and passing the pose estimation info back to drivetrain
         var alliance = DriverStation.getAlliance();
         Pose2d visionPose2d;
         
@@ -339,6 +344,7 @@ public class Drivetrain extends SubsystemBase {
         if (visionPose2d.getX() != 0.0 && poseDifference < 0.5) {
             poseEstimator.addVisionMeasurement(visionPose2d, poseReadingTimestamp);
         }
+        // TODO: For readability, considermoving the switch to a handleMoves() method or something
         switch (theMove){
             case "FL":
                 states = KINEMATICS.toSwerveModuleStates(chassisSpeeds, new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2., Constants.DRIVETRAIN_WHEELBASE_METERS / 2.));
@@ -360,6 +366,7 @@ public class Drivetrain extends SubsystemBase {
                 break;
         }
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+        // TODO: Consider moving to a handleLockedWheels method or something
         if (!wheelsLocked) {
             // If we are not in wheel's locked mode, set the states normally
             frontLeftModule.setState(states[0]);
@@ -379,6 +386,7 @@ public class Drivetrain extends SubsystemBase {
         // Update the odometry
         updateOdometry();
 
+        // TODO: Consider moving to an updateDiagnostics method or something
         // Diagnostics
         FRA.setDouble(frontLeftModule.getSteerPosition());
         FLA.setDouble(frontRightModule.getSteerPosition());
@@ -390,7 +398,7 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("fl",frontLeftModule.getAbsolutePosition());
         Gyro.setDouble(getGyroscopeAngle()+getGyroOffset());
 
-        // Periodically send a set of module states (I hope)
+        // Periodically send a set of module states (I hope) I love the confidince!
         statePublisher.set(new SwerveModuleState[] {
             states[0],
             states[1],

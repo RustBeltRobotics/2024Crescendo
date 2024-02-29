@@ -26,6 +26,7 @@ public class DefaultArmCommand extends Command {
      */
     @Override
     public void execute() {
+        // the modifyAxis method that you call as an input to this command already applies a deadband, so is this if statement necessary?
         if (!(rotationSupplier.getAsDouble()<0.1 && rotationSupplier.getAsDouble() > -0.1)){
             arm.rotate(rotationSupplier.getAsDouble());
         }
