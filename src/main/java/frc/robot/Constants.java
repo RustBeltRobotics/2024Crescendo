@@ -147,4 +147,8 @@ public final class Constants {
     public static final double AMP_POSITION = 0.75; //TODO: get this encoder reading
     public static final double SOURCE_POSITION = 0.75; //TODO: get this encoder reading
     public static final double GROUND_POSITION = 0.5; //TODO: get this encoder reading
+    public static final double ARM_FF_kS = 0;
+    public static final double ARM_FF_kG = 0;
+    public static final double ARM_FF_kV = 0;
+    public static final double MAX_ARM_VELOCITY = 2*Math.PI;
 }

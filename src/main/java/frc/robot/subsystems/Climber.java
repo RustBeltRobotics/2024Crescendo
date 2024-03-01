@@ -66,19 +66,21 @@ public class Climber extends SubsystemBase {
         climberMotor2.follow(climberMotor1, false);
 
         climber1PidController = climberMotor1.getPIDController();
-
+        
+        updatePIDs();
     }
-    // @Override
-    // public void periodic(){
-    //     //set pid things
-    //     climber1PidController.setP(kP.getDouble(7e-5));
-    //     climber1PidController.setI(kI.getDouble(0));
-    //     climber1PidController.setD(kD.getDouble(0));
-    //     climber1PidController.setIZone(kIz.getDouble(0));
-    //     climber1PidController.setFF(kFF.getDouble(0));
-    //     climber1PidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(1));
-    //     climber1PidController.setPositionPIDWrappingEnabled(true);
-    // }
+    @Override
+    public void periodic(){}
+
+    public void updatePIDs() {
+        climber1PidController.setP(kP.getDouble(7e-5));
+        climber1PidController.setI(kI.getDouble(0));
+        climber1PidController.setD(kD.getDouble(0));
+        climber1PidController.setIZone(kIz.getDouble(0));
+        climber1PidController.setFF(kFF.getDouble(0));
+        climber1PidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(1));
+        climber1PidController.setPositionPIDWrappingEnabled(true);
+    }
     public void climb(double speed){
         climber1PidController.setReference(speed, ControlType.kDutyCycle);
     }

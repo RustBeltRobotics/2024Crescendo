@@ -189,10 +189,6 @@ public class RobotContainer {
     /**
      * This method returns the autonomous routine that will be run at the start of
      * the match.
-     * <p>
-     * For now, we only have one routine, so it just returns that one.
-     * Once we have more than one routine, we will want to implement a chooser
-     * dropdown on the dashboard.
      * 
      * @return The autonomous routine that will be run
      */
