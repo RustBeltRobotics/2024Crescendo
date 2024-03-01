@@ -26,7 +26,7 @@ public class DefaultIntakeCommand extends Command {
      * This method is run every 20 ms.
      * <p>
      * Send the input speeds to the appropriate intake/outtake method
-=     */
+     */
     @Override
     public void execute() {
         double inSpeed = inSpeedSupplier.getAsDouble();

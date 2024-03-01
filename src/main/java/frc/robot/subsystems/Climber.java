@@ -7,7 +7,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import static frc.robot.Constants.LEFT_CLIMB;
 import static frc.robot.Constants.NEO_SECONDARY_CURRENT_LIMIT;
 import static frc.robot.Constants.NEO_SMART_CURRENT_LIMIT;
-import static frc.robot.Constants.RIGT_CLIMB;
+import static frc.robot.Constants.RIGHT_CLIMB;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
@@ -57,28 +57,30 @@ public class Climber extends SubsystemBase {
         climberMotor1.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         climberMotor1.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
 
-        climberMotor2 = new CANSparkMax(RIGT_CLIMB, MotorType.kBrushless);
+        climberMotor2 = new CANSparkMax(RIGHT_CLIMB, MotorType.kBrushless);
         climberMotor2.restoreFactoryDefaults();
         climberMotor2.setIdleMode(IdleMode.kBrake);
         climberMotor2.setInverted(false);
         climberMotor2.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         climberMotor2.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
-        climberMotor2.follow(climberMotor1, false); //TODO: check
+        climberMotor2.follow(climberMotor1, false);
 
         climber1PidController = climberMotor1.getPIDController();
-
+        
+        updatePIDs();
     }
-    // @Override
-    // public void periodic(){
-    //     //set pid things
-    //     climber1PidController.setP(kP.getDouble(7e-5));
-    //     climber1PidController.setI(kI.getDouble(0));
-    //     climber1PidController.setD(kD.getDouble(0));
-    //     climber1PidController.setIZone(kIz.getDouble(0));
-    //     climber1PidController.setFF(kFF.getDouble(0));
-    //     climber1PidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(1));
-    //     climber1PidController.setPositionPIDWrappingEnabled(true);
-    // }
+    @Override
+    public void periodic(){}
+
+    public void updatePIDs() {
+        climber1PidController.setP(kP.getDouble(7e-5));
+        climber1PidController.setI(kI.getDouble(0));
+        climber1PidController.setD(kD.getDouble(0));
+        climber1PidController.setIZone(kIz.getDouble(0));
+        climber1PidController.setFF(kFF.getDouble(0));
+        climber1PidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(1));
+        climber1PidController.setPositionPIDWrappingEnabled(true);
+    }
     public void climb(double speed){
         climber1PidController.setReference(speed, ControlType.kDutyCycle);
     }

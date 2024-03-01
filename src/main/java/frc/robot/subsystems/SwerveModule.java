@@ -14,7 +14,6 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.*;
@@ -30,39 +29,29 @@ public class SwerveModule extends SubsystemBase{
 
     private final CANcoder absoluteSteerEncoder;
     
-    int i=0;
-
-    //Shuffling
-        private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
-             .getLayout("Swerve PID", BuiltInLayouts.kList)
-             .withSize(2, 2);
-        private static GenericEntry kP =
-        pidvals.add("skP", 7e-5)
+    // Shuffling
+    // TODO: Consider moving these constanst to the Constants class
+    private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
+            .getLayout("Swerve PID", BuiltInLayouts.kList)
+            .withSize(2, 2);
+    private static GenericEntry kP = pidvals.add("skP", 7e-5)
             .getEntry();
-        private static GenericEntry kI =
-        pidvals.add("skI", 0.0)
+    private static GenericEntry kI = pidvals.add("skI", 0.0)
             .getEntry();
-        private static GenericEntry kD =
-            pidvals.add("skD", 0.0)
+    private static GenericEntry kD = pidvals.add("skD", 0.0)
             .getEntry();
-        private static GenericEntry kIz =
-            pidvals.add("skIz", 0.0)
+    private static GenericEntry kIz = pidvals.add("skIz", 0.0)
             .getEntry();
-        private static GenericEntry drive_kFF =
-            pidvals.add("sdrive_kFF", 0.000015)
+    private static GenericEntry drive_kFF = pidvals.add("sdrive_kFF", 0.000015)
             .getEntry();
-        private static GenericEntry kMaxOutput =
-            pidvals.add("skMaxOutput", 1)
+    private static GenericEntry kMaxOutput = pidvals.add("skMaxOutput", 1)
             .getEntry();
-        private static GenericEntry kMinOutput =
-            pidvals.add("skMinOutput", -1)
+    private static GenericEntry kMinOutput = pidvals.add("skMinOutput", -1)
             .getEntry();
-        private static GenericEntry steer_kFF =
-            pidvals.add("ssteer_kFF", 0.0)
+    private static GenericEntry steer_kFF = pidvals.add("ssteer_kFF", 0.0)
             .getEntry();
 
     public SwerveModule(int driveID, int steerID, int encoderID) {
-        Shuffleboard.getTab("Diag").add(new InstantCommand(() -> updatePIDs()));
         // Setup drive motor SparkMax
         driveMotor = new CANSparkMax(driveID, MotorType.kBrushless);
         driveMotor.restoreFactoryDefaults();
@@ -115,15 +104,15 @@ public class SwerveModule extends SubsystemBase{
         drivePidController.setIZone(kIz.getDouble(0));
         drivePidController.setFF(drive_kFF.getDouble(0));
         drivePidController.setOutputRange(kMinOutput.getDouble(0), kMaxOutput.getDouble(0));
-        drivePidController.setPositionPIDWrappingEnabled(true);
+        drivePidController.setPositionPIDWrappingEnabled(false);
 
         // set PID coefficients (steer)
         steerPidController.setP(STEER_P);
         steerPidController.setI(STEER_I);
         steerPidController.setD(STEER_D);
-        steerPidController.setIZone(kIz.getDouble(0));
+        steerPidController.setIZone(kIz.getDouble(0)); // TODO: does it make sense to use the same value here as for drive? - i dont know what this value does
         steerPidController.setFF(steer_kFF.getDouble(0));
-        steerPidController.setOutputRange(kMinOutput.getDouble(0), kMaxOutput.getDouble(1));
+        steerPidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(1));
         steerPidController.setPositionPIDWrappingEnabled(true);
         steerPidController.setPositionPIDWrappingMaxInput(360);
         steerPidController.setPositionPIDWrappingMinInput(0);
@@ -151,7 +140,9 @@ public class SwerveModule extends SubsystemBase{
 
     /** @return Absolute steer position, degrees, -inf to +inf */
     public double getAbsolutePosition() {
-        return absoluteSteerEncoder.getPosition().getValueAsDouble()*360;
+        return absoluteSteerEncoder.getPosition().getValueAsDouble() * 360;
+        // TODO: Should this be calling absoluteSteerEncoder.getAbsolutePosition? Since we've zeroed the encoders, will the two methods even return different values?
+        // - this method is uses to zero the relative encoders
     }
 
     /** @return Drive encoder (meters) and steer encoder (Rotation2d) positions */
@@ -187,8 +178,9 @@ public class SwerveModule extends SubsystemBase{
             return;
         }
         state = SwerveModuleState.optimize(state, getState().angle);
+        // TODO: I could be mistaken, but it looks like kDutyCycle ignores PIDF constants? Is this intentional? - i think the pid constants are still doing stuff because the robot wouldnt drive when they were all zero
         drivePidController.setReference(state.speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND, CANSparkMax.ControlType.kDutyCycle);
-        setSparkAngle(state.angle.getDegrees());
+        setSteerAngle(state.angle.getDegrees());
     }
 
     /**
@@ -205,11 +197,16 @@ public class SwerveModule extends SubsystemBase{
         driveMotor.set(0.);
         steerMotor.set(0.);
     }
-    public void setSparkAngle(double targetAngleInDegrees){
-        double currentSparkAngle = steerMotor.getEncoder().getPosition();
+
+    public void setSteerAngle(double targetAngleInDegrees){
+        double currentSparkAngle = steerMotor.getEncoder().getPosition(); // TODO: Consider replacing this line with a call to getSteerPosition()
         double sparkRelativeTargetAngle = reboundValue(targetAngleInDegrees, currentSparkAngle);
         steerPidController.setReference(sparkRelativeTargetAngle, ControlType.kPosition);
     }
+
+    // TODO: Consider moving this to  the Utilities class, it could be useful elsewhere
+    // TODO: On second thought, I think this is redundant, now that you're using steerPidController.setPositionPIDWrappingEnabled(true);
+    // TODO: so i would think the same thing, but if i remember correctly we were using wrapping before we added this and still having issues
     public double reboundValue(double value, double anchor){
         double lowerBound = anchor - 180;
         double upperBound = anchor + 180;
@@ -220,8 +217,5 @@ public class SwerveModule extends SubsystemBase{
             value = lowerBound + ((value - upperBound)%(upperBound - lowerBound));
         }
         return value;
-    }
-    public void makeUpdateButton(){
-        
     }
 }

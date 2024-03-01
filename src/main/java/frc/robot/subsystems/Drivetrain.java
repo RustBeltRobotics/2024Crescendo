@@ -86,17 +86,16 @@ public class Drivetrain extends SubsystemBase {
     private SwerveModuleState[] states;
 
 
-    //The Shuffle
+    // The Shuffle
     ShuffleboardTab comp = Shuffleboard.getTab("Competition");
     ShuffleboardLayout drivetrainLayout = Shuffleboard.getTab("Competition")
-    .getLayout("Drivetrain", BuiltInLayouts.kList)
-    .withSize(1,2)
-    .withPosition(0,2);
-    private final GenericEntry FRA =
-        drivetrainLayout.add("Front Left Absolute", 0)
-        .getEntry();
-    private final GenericEntry FLA =
-        drivetrainLayout.add("Front Right Absolute", 0)
+            .getLayout("Drivetrain", BuiltInLayouts.kList)
+            .withSize(1, 2)
+            .withPosition(0, 2);
+    private final GenericEntry FRA = drivetrainLayout.add("Front Left Absolute", 0)
+            .getEntry();
+    private final GenericEntry FLA = drivetrainLayout.add(
+            "Front Right Absolute", 0)
         .getEntry();
     private final GenericEntry BRA =
         drivetrainLayout.add("Back Left Absolute", 0)
@@ -150,7 +149,7 @@ public class Drivetrain extends SubsystemBase {
                         new PIDConstants(rotation_P, rotation_I, rotation_D), // Rotation PID constants
                         Constants.MAX_VELOCITY_METERS_PER_SECOND, // Max module speed, in m/s
                         Constants.DRIVETRAIN_BASE_RADIUS, // Drive base radius in meters. Distance from robot center to furthest module.
-                        new ReplanningConfig() //TODO: check on this function
+                        new ReplanningConfig()
                 ),
                 () -> {
                     // Boolean supplier that controls when the path will be mirrored for the red alliance
@@ -232,7 +231,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getGyroscopeAngle() {
-        return -Math.IEEEremainder(360. - navx.getAngle(), 360.);
+        return navx.getYaw();
     }
 
     // Returns the measurment of the gyroscope yaw. Used for field-relative drive
@@ -315,6 +314,7 @@ public class Drivetrain extends SubsystemBase {
      */
     @Override
     public void periodic() {
+        // TODO: Consider moving the vision stuff to a Vision subsystem class, and passing the pose estimation info back to drivetrain
         var alliance = DriverStation.getAlliance();
         Pose2d visionPose2d;
         
@@ -339,6 +339,17 @@ public class Drivetrain extends SubsystemBase {
         if (visionPose2d.getX() != 0.0 && poseDifference < 0.5) {
             poseEstimator.addVisionMeasurement(visionPose2d, poseReadingTimestamp);
         }
+
+        handleMoves();
+
+        handleLocked();
+
+        updateOdometry();
+
+        updateTelemetry();
+    }
+
+    private void handleMoves() {
         switch (theMove){
             case "FL":
                 states = KINEMATICS.toSwerveModuleStates(chassisSpeeds, new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2., Constants.DRIVETRAIN_WHEELBASE_METERS / 2.));
@@ -359,7 +370,8 @@ public class Drivetrain extends SubsystemBase {
                 FREntry.setBoolean(false); 
                 break;
         }
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+    }
+    private void handleLocked(){
         if (!wheelsLocked) {
             // If we are not in wheel's locked mode, set the states normally
             frontLeftModule.setState(states[0]);
@@ -375,11 +387,9 @@ public class Drivetrain extends SubsystemBase {
             backLeftModule.lockModule(-45);
             backRightModule.lockModule(45);
         }
-
-        // Update the odometry
-        updateOdometry();
-
-        // Diagnostics
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+    }
+    private void updateTelemetry() {
         FRA.setDouble(frontLeftModule.getSteerPosition());
         FLA.setDouble(frontRightModule.getSteerPosition());
         BRA.setDouble(backLeftModule.getSteerPosition());
@@ -390,14 +400,13 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("fl",frontLeftModule.getAbsolutePosition());
         Gyro.setDouble(getGyroscopeAngle()+getGyroOffset());
 
-        // Periodically send a set of module states (I hope)
+        // Periodically send a set of module states (I hope) I love the confidince!
         statePublisher.set(new SwerveModuleState[] {
             states[0],
             states[1],
             states[2],
             states[3]
         });
-
         posePublisher.set(poseEstimator.getEstimatedPosition());
     }
 }

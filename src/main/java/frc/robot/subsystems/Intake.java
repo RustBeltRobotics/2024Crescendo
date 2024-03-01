@@ -53,10 +53,6 @@ public class Intake extends SubsystemBase{
     public static void runArmIntake(double speed) {
         intakeMotor.set(speed);
     }
-    public static void runSmartArmIntake(double speed) {
-        intakeMotor.set(speed);
-
-    }
     public static void stopArmIntake() {
         intakeMotor.set(0);
     }
@@ -64,6 +60,7 @@ public class Intake extends SubsystemBase{
 
         floorMotor.set(speed);
     }
+    // TODO: Why is this a static method? - because it is called from static classes in order to be a namedcommand for pathplannerlib
     //runs the intake for 2 seconds in order to feed note into the shooter
     public static void feedShooter() {
         runArmIntake(1);

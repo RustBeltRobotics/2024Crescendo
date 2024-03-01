@@ -29,31 +29,23 @@ public final class Constants {
     public static final int NEO_SMART_CURRENT_LIMIT = 60;
     /** Secondary current limit applied to NEOs */
     public static final int NEO_SECONDARY_CURRENT_LIMIT = 80;
-    /** Smart current limit applied to NEO 550s */
-    public static final int NEO550_SMART_CURRENT_LIMIT = 20;
-    /** Secondary current limit applied to NEO 550s */
-    public static final int NEO550_SECONDARY_CURRENT_LIMIT = 30;
 
     // Drivetrain Constants
-    // FIXME: These values for Arno and departure. CRESCENDO uses SDS MK4 L3
-    // modules, mounted on a 24" x 24" frame perimeter
     /**
      * The left-to-right distance between the drivetrain wheels
      * <p>
      * Should be measured from center to center
      */
-    public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.47;
+    public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.4445;
 
-    // FIXME: These values for Arno and departure. CRESCENDO uses SDS MK4 L3
-    // modules, mounted on a 24" x 24" frame perimeter
     /**
      * The front-to-back distance between the drivetrain wheels
      * <p>
      * Should be measured from center to center
      */
-    public static final double DRIVETRAIN_WHEELBASE_METERS = 0.47;
+    public static final double DRIVETRAIN_WHEELBASE_METERS = 0.4445;
 
-    public static final double DRIVETRAIN_BASE_RADIUS = Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS, DRIVETRAIN_WHEELBASE_METERS) / 2;
+    public static final double DRIVETRAIN_BASE_RADIUS = Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS, DRIVETRAIN_WHEELBASE_METERS) / 2.;
 
     /**
      * Creates a swerve kinematics object, to convert desired chassis velocity into
@@ -65,13 +57,12 @@ public final class Constants {
             new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2., DRIVETRAIN_WHEELBASE_METERS / 2.),
             new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2., -DRIVETRAIN_WHEELBASE_METERS / 2.));
 
-    // FIXME: These values for Arno and departure. CRESCENDO uses SDS MK4 L3 modules
-    /** Conversion between rotations and meters */
+    /** Conversion between motor rotations and drive meters */
     public static final double DRIVE_POSITION_CONVERSION = Math.PI
-            * 0.1016 // wheek diameter
-            * (14.0 / 50.0) * (28.0 / 16.0) * (15.0 / 45.0); // SdsModuleConfigurations.MK4I_L2.getDriveReduction();
-
-    /** Conversion between rotations per minute and meters per seconds */
+            * 0.1016 // 4" wheel diameter
+            * (14.0 / 50.0) * (28.0 / 16.0) * (15.0 / 45.0);
+            
+    /** Conversion between motor rotations per minute and drive meters per seconds */
     public static final double DRIVE_VELOCITY_CONVERSION = DRIVE_POSITION_CONVERSION / 60.;
 
     /**
@@ -80,8 +71,6 @@ public final class Constants {
      */
     public static final double MAX_VELOCITY_METERS_PER_SECOND = 5676. * DRIVE_VELOCITY_CONVERSION;
 
-    public static final double MAX_VELOCITY_PRECISION_MODE_METERS_PER_SECOND = 0.5;
-
     /**
      * The maximum angular velocity of the robot in radians per second. This is a
      * measure of how fast the robot can rotate in place.
@@ -89,14 +78,11 @@ public final class Constants {
     public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND
             / Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2., DRIVETRAIN_WHEELBASE_METERS / 2.);
 
-    // FIXME: These values for Arno and departure. CRESCENDO uses SDS MK4 L3 modules
-    /** Conversion between rotations and degrees */
-    public static final double STEER_POSITION_CONVERSION =360*(1 / 12.8); // 12.8:1 ratio
-    /** Conversion between rotations per minute and degrees per seconds */
+    /** Conversion between motor rotations and steer degrees */
+    public static final double STEER_POSITION_CONVERSION = 360. * (1. / 12.8); // 12.8:1 gear ratio
+    /** Conversion between motor rotations per minute and steer degrees per seconds */
     public static final double STEER_VELOCITY_CONVERSION = STEER_POSITION_CONVERSION / 60.;
 
-    // FIXME: These values are probably a solid starting point, given MK4I's and
-    // MK4's have a different steering ratio by about 40%
     // Steer PID Constants
     public static final double STEER_P = 0.01;
     public static final double STEER_I = 0.0;
@@ -110,9 +96,6 @@ public final class Constants {
      */
     public static final double MAX_TRAJECTORY_ACCELERATION = 2.;
 
-    /** Max velocity while following balance auto trajectory. Meters per second */
-    public static final double MAX_BALANCE_TRAJECTORY_VELOCITY = 3.;
-
     // PID Constants for translation and rotation moves
     public static final double translation_P = 10.0;
     public static final double translation_I = 0.0;
@@ -122,10 +105,6 @@ public final class Constants {
     public static final double rotation_I = 0.0;
     public static final double rotation_D = 0.0;
 
-    // FIXME: All CAN ID's will need to be programmed into the hardware, so we can
-    // change these if we want. Personally, I would recommend moving to a more
-    // particular numbering scheme. Either way, it would help to have an excel doc
-    // or something similar with ID's, PDH port #'s, functions, etc.
     // CAN IDs
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 21;
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 20;
@@ -143,7 +122,7 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 15;
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 3;
 
-    public static final int RIGT_CLIMB = 12;
+    public static final int RIGHT_CLIMB = 12;
     public static final int ARM_INTAKE = 13;
     public static final int GROUND_INTAKE = 18;
     public static final int LEFT_CLIMB = 19;
@@ -152,7 +131,7 @@ public final class Constants {
     public static final int RIGHT_SHOOTER = 24;
     public static final int LEFT_SHOOTER = 25;
 
-    //Feild
+    //Field
     public static final double SPEAKER_HEIGHT = 204.0; //cm
 
     //Limelight/vision
@@ -168,4 +147,8 @@ public final class Constants {
     public static final double AMP_POSITION = 0.75; //TODO: get this encoder reading
     public static final double SOURCE_POSITION = 0.75; //TODO: get this encoder reading
     public static final double GROUND_POSITION = 0.5; //TODO: get this encoder reading
+    public static final double ARM_FF_kS = 0;
+    public static final double ARM_FF_kG = 0;
+    public static final double ARM_FF_kV = 0;
+    public static final double MAX_ARM_VELOCITY = 2*Math.PI;
 }

@@ -55,6 +55,10 @@ public class FieldOrientedDriveCommand extends Command {
                     translationXSupplier.getAsDouble(),
                     translationYSupplier.getAsDouble(),
                     rotationSupplier.getAsDouble(),
+                    // TODO: for the next line, I'm wondering if it makes more sense to handle the
+                    // negative sign inside of the Drivetrain class, instead of here. Seems like it
+                    // could be a pain to have to remember we need to throw a negative sign out
+                    // front everytime we call getGyro
                     Rotation2d.fromDegrees(-(drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()))), 0.020));
     }
 
