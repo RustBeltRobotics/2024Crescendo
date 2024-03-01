@@ -53,7 +53,6 @@ public class SwerveModule extends SubsystemBase{
             .getEntry();
 
     public SwerveModule(int driveID, int steerID, int encoderID) {
-        Shuffleboard.getTab("Diag").add(new InstantCommand(() -> updatePIDs()));
         // Setup drive motor SparkMax
         driveMotor = new CANSparkMax(driveID, MotorType.kBrushless);
         driveMotor.restoreFactoryDefaults();

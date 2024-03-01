@@ -29,8 +29,8 @@ public class Arm extends SubsystemBase {
     private static final CANSparkMax armMotor1 = new CANSparkMax(LEFT_ROTATE, MotorType.kBrushless);;
     private static final CANSparkMax armMotor2 = new CANSparkMax(RIGHT_ROTATE, MotorType.kBrushless);;
     
-    private static final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(4);
-    private static final Encoder medEncoder = new Encoder(2, 3);
+    private final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(4);
+    //private static final Encoder medEncoder = new Encoder(2, 3);
 
     private final SparkPIDController arm1PidController;
     private double medOffset;
@@ -86,11 +86,12 @@ public class Arm extends SubsystemBase {
 
         armMotor2.follow(armMotor1, true);
 
-        medEncoder.reset();
+        bigEncoder.setDistancePerRotation(360);
+        //medEncoder.reset();
         medOffset = bigEncoder.getAbsolutePosition();
-        medEncoder.setDistancePerPulse(1/90);//experimental
-        armMotor1.getEncoder().setPositionConversionFactor(1/42);
-        armMotor1.getEncoder().setPosition(0.5);
+        //medEncoder.setDistancePerPulse(1/90);//experimental
+        //armMotor1.getEncoder().setPositionConversionFactor(1/42);
+        //armMotor1.getEncoder().setPosition(0.5);
 
         // set pid things
         arm1PidController = armMotor1.getPIDController();
@@ -110,7 +111,7 @@ public class Arm extends SubsystemBase {
     }
     public void setAngle(double angle) {
         //rotate(anglePID.calculate(bigEncoder.get(), angle));
-        rotate(anglePID.calculate(armMotor1.getEncoder().getPosition(), angle));
+        //rotate(anglePID.calculate(armMotor1.getEncoder().getPosition(), angle));
         if (angle > bigEncoder.getAbsolutePosition()){
             rotate(anglePID.calculate(bigEncoder.get(), angle));
         } else {
@@ -143,6 +144,6 @@ public class Arm extends SubsystemBase {
     }
     public void updateshuffle(){
         bigEncoderEntry.setDouble(bigEncoder.getAbsolutePosition());
-        medEncoderEntry.setDouble(medEncoder.getDistance()+medOffset);
+        //medEncoderEntry.setDouble(medEncoder.getDistance()+medOffset);
     }
 }
