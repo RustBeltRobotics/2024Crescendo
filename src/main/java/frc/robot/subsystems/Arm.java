@@ -77,7 +77,10 @@ public class Arm extends SubsystemBase {
     public void setAngle(double angle) {
         //rotate(anglePID.calculate(bigEncoder.get(), angle));
         //rotate(anglePID.calculate(armMotor1.getEncoder().getPosition(), angle));
-        armMotor1.setVoltage(angleFF.calculate((bigEncoder.get()*2*Math.PI), 0)+anglePID.calculate(bigEncoder.get(), angle));
+        armMotor1.setVoltage(
+            angleFF.calculate((bigEncoder.get()*2*Math.PI), 0)+
+            anglePID.calculate(bigEncoder.get(), angle)
+        );
     }
     public double getAngle() {
         //return medEncoder.getDistance()+medOffset;
