@@ -69,7 +69,7 @@ public class Arm extends SubsystemBase {
 
         armMotor2.follow(armMotor1, true);
 
-        bigEncoder.setDistancePerRotation(360);
+        bigEncoder.setDistancePerRotation(2*Math.PI); //TODO: does this even do anything?
     }
     @Override
     public void periodic() {
@@ -80,7 +80,10 @@ public class Arm extends SubsystemBase {
     public void setAngle(double angle) {
         //rotate(anglePID.calculate(bigEncoder.get(), angle));
         //rotate(anglePID.calculate(armMotor1.getEncoder().getPosition(), angle));
-        armMotor1.setVoltage(angleFF.calculate((bigEncoder.get()*2*Math.PI), MAX_ARM_VELOCITY)+anglePID.calculate(bigEncoder.get(), angle));
+        armMotor1.setVoltage(
+            angleFF.calculate((bigEncoder.get()*2*Math.PI), 0)+
+            anglePID.calculate(bigEncoder.get(), angle)
+        );
     }
     public double getAngle() {
         //return medEncoder.getDistance()+medOffset;
