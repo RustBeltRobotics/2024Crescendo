@@ -56,8 +56,7 @@ public class RobotContainer {
     public static final Arm arm = new Arm();
     public static final Climber climber = new Climber();
     public static final Shooter shooter = new Shooter();
-    //TODO: get can id of the thing
-    PowerDistribution thePDH = new PowerDistribution(5, ModuleType.kRev);
+    PowerDistribution thePDH = new PowerDistribution(PDH, ModuleType.kRev);
 
     // The drive team controllers are defined here
     public static final XboxController driverController = new XboxController(0);
@@ -104,8 +103,7 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(new FieldOrientedDriveCommand(drivetrain,
                 () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
-                        * maxSpeedFactor));
+                () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
         // TODO: Do we want to run modifyAxis on intake commands? Do we want it to be
         // the same as what we do for driving input? If not, maybe we want a more
         // generic version of modifyAxis, I've taken a stab at this in Utilities, let me
@@ -114,8 +112,7 @@ public class RobotContainer {
                 () -> modifyAxis(operatorController.getRightTriggerAxis()),
                 () -> modifyAxis(operatorController.getLeftTriggerAxis())));
 
-        arm.setDefaultCommand(new DefaultArmCommand(arm,
-                () -> operatorController.getLeftY()));
+        arm.setDefaultCommand(new DefaultArmCommand(arm, () -> operatorController.getLeftY()));
 
         AprilTagAimCommand.makeShuffleboard();
         Intake.makeShuffleboard();
@@ -143,19 +140,23 @@ public class RobotContainer {
         new Trigger(driverController::getRightBumper).whileTrue(new RunCommand(() -> speedThrottle()));
         // Pressing the Left Bumper shifts to low speed
         new Trigger(driverController::getLeftBumper).onTrue(new InstantCommand(() -> speedDown()));
-        // Toggles between robot oriented and field oriented
+        // Pressing the X Button toggles between robot oriented and field oriented
         new Trigger(driverController::getXButton).toggleOnTrue(new RobotOrientedDriveCommand(drivetrain,
                 () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
-                        * maxSpeedFactor));
-        // Automatically aims at speaker while the b button is held
+                () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
+        // Automatically aims at speaker while the B button is held
         new Trigger(driverController::getBButton).whileTrue(new AprilTagAimCommand(drivetrain,
                 "speaker",
                 () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor, thePDH));
+                () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
+                        thePDH));
 
-        // Bindings to change center of rotation
+        // TODO: Lets think about what we can do to move these functions onto the stick
+        // buttons, bumpers, or triggers, so the driver doesn't have to remove their
+        // thumbs from the sticks to execute
+        // RE: My immediate thought is reverting to the old throttle control systen and rebinding the triggers to FL+FR with default when both return false.
+        // Pressing Left and Right change drivebase the center of rotation, for defensive maneuvers. Pressing Up reverts to normal
         new Trigger(d_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("default")));
         new Trigger(d_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));
         new Trigger(d_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FR")));
@@ -175,10 +176,16 @@ public class RobotContainer {
         new Trigger(operatorController::getBackButtonPressed).onTrue(new InstantCommand(() -> Shooter.stop()));
         // Pressing the Y Button rotates the arm to the amp pose
         new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));        
-        // Ground pose
+        // Pressing the X Button initiates ground intake of a game piece
         new Trigger(operatorController::getXButton).onTrue(new GroundPickUpCommand());
         // Pressing the A Button rotates the arm to the ground pose
         new Trigger(operatorController::getAButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.groundPose())));
+        // TODO: Once we dial in the shooter, it might make sense to give the operator a
+        // button (not analog) to run the intake for half a second to execute the shot.
+        // This is likely more repeatable than manual speed control -> more relaible
+        // shots
+        // RE: honestly, as the operator i think its probably not necessary to bind another button to this,
+        // i can just stop holding the button when the orange thing shoots out.
     }
 
     public void configureAutos() {

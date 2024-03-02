@@ -25,10 +25,10 @@ public class Robot extends TimedRobot {
 
     private ShuffleboardTab matchTab = Shuffleboard.getTab("Competition");
     private GenericEntry timeEntry = matchTab.add("Time Left", 0.0)
-    .withWidget(BuiltInWidgets.kNumberBar)
-    .withPosition(4, 0)
-    .withSize(2, 1)
-    .getEntry();
+            .withWidget(BuiltInWidgets.kNumberBar)
+            .withPosition(4, 0)
+            .withSize(2, 1)
+            .getEntry();
     /**
      * This function is run once when the robot is first started up and should be
      * used for any initialization code.

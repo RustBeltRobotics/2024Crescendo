@@ -7,7 +7,6 @@ import static frc.robot.Constants.ARM_FF_kG;
 import static frc.robot.Constants.ARM_FF_kS;
 import static frc.robot.Constants.ARM_FF_kV;
 import static frc.robot.Constants.LEFT_ROTATE;
-import static frc.robot.Constants.MAX_ARM_VELOCITY;
 import static frc.robot.Constants.NEO_SECONDARY_CURRENT_LIMIT;
 import static frc.robot.Constants.NEO_SMART_CURRENT_LIMIT;
 import static frc.robot.Constants.RIGHT_ROTATE;
@@ -68,8 +67,6 @@ public class Arm extends SubsystemBase {
         armMotor2.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
 
         armMotor2.follow(armMotor1, true);
-
-        bigEncoder.setDistancePerRotation(2*Math.PI); //TODO: does this even do anything?
     }
     @Override
     public void periodic() {

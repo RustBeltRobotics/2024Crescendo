@@ -29,7 +29,6 @@ public class Intake extends SubsystemBase{
         floorMotor.setInverted(true);
         floorMotor.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         floorMotor.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
-
         
         intakeMotor.restoreFactoryDefaults();
         intakeMotor.setIdleMode(IdleMode.kBrake);
@@ -37,41 +36,49 @@ public class Intake extends SubsystemBase{
         intakeMotor.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         intakeMotor.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
     }
+
     @Override
-    public void periodic(){
+    public void periodic() {
         getSwitch();
     }
     
-    public void runBothIntakes(double speed){
+    public void runBothIntakes(double speed) {
         floorMotor.set(speed);
         intakeMotor.set(speed);
     }
-    public void stopBothIntakes(){
-        floorMotor.set(0);
-        intakeMotor.set(0);
+
+    public void stopBothIntakes() {
+        floorMotor.set(0.);
+        intakeMotor.set(0.);
     }
+
     public static void runArmIntake(double speed) {
         intakeMotor.set(speed);
     }
+
     public static void stopArmIntake() {
         intakeMotor.set(0);
     }
+
     public void runFloorIntakes(double speed) {
 
         floorMotor.set(speed);
     }
-    // TODO: Why is this a static method? - because it is called from static classes in order to be a namedcommand for pathplannerlib
     //runs the intake for 2 seconds in order to feed note into the shooter
     public static void feedShooter() {
         runArmIntake(1);
         double startTime = System.currentTimeMillis();
-        if (System.currentTimeMillis() - startTime < 2.0) { stopArmIntake(); }
+        if (System.currentTimeMillis() - startTime < 2.0) {
+            stopArmIntake();
+        }
     }
+
     public static boolean getSwitch() {
         limitSwitch.setBoolean(!noteSwitch.get());
-        return !noteSwitch.get();
+        return !noteSwitch.get(); // Switch is currently wired as normally open, the rio returns high when the pins are open.
     }
-    public static void makeShuffleboard(){
+
+    public static void makeShuffleboard() {
         limitSwitch = Shuffleboard.getTab("Competition")
                 .add("Limit Switch", false)
                 .withWidget("Boolean Box")

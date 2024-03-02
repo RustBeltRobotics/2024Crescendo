@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.Utilities;
 
 import static frc.robot.Constants.*;
 
@@ -44,9 +45,9 @@ public class SwerveModule extends SubsystemBase{
             .getEntry();
     private static GenericEntry drive_kFF = pidvals.add("sdrive_kFF", 0.000015)
             .getEntry();
-    private static GenericEntry kMaxOutput = pidvals.add("skMaxOutput", 1)
+    private static GenericEntry kMaxOutput = pidvals.add("skMaxOutput", 1.)
             .getEntry();
-    private static GenericEntry kMinOutput = pidvals.add("skMinOutput", -1)
+    private static GenericEntry kMinOutput = pidvals.add("skMinOutput", -1.)
             .getEntry();
     private static GenericEntry steer_kFF = pidvals.add("ssteer_kFF", 0.0)
             .getEntry();
@@ -99,23 +100,29 @@ public class SwerveModule extends SubsystemBase{
     public void updatePIDs(){
         // set PID coefficients (drive)
         drivePidController.setP(kP.getDouble(7e-5));
-        drivePidController.setI(kI.getDouble(0));
-        drivePidController.setD(kD.getDouble(0));
-        drivePidController.setIZone(kIz.getDouble(0));
-        drivePidController.setFF(drive_kFF.getDouble(0));
-        drivePidController.setOutputRange(kMinOutput.getDouble(0), kMaxOutput.getDouble(0));
+        drivePidController.setI(kI.getDouble(0.));
+        drivePidController.setD(kD.getDouble(0.));
+        drivePidController.setIZone(0.);
+        drivePidController.setFF(drive_kFF.getDouble(0.));
+        drivePidController.setOutputRange(kMinOutput.getDouble(-1.), kMaxOutput.getDouble(1.));
         drivePidController.setPositionPIDWrappingEnabled(false);
 
         // set PID coefficients (steer)
         steerPidController.setP(STEER_P);
         steerPidController.setI(STEER_I);
         steerPidController.setD(STEER_D);
-        steerPidController.setIZone(kIz.getDouble(0)); // TODO: does it make sense to use the same value here as for drive? - i dont know what this value does
-        steerPidController.setFF(steer_kFF.getDouble(0));
-        steerPidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(1));
+        // Does it make sense to use the same value here as for drive? - i dont know what this value does
+        // Basically, this limits the range of error values that are included in your
+        // integral. If you have a large error, its ignored, because large errors can
+        // lead to integral windup, which is reeeally bad. as long as our kI is 0, this
+        // IZone value is irrelevant, but if we ever want to incorporate an I gain,
+        // we'll definitely want to keep an eye on this one.
+        steerPidController.setIZone(0.);
+        steerPidController.setFF(steer_kFF.getDouble(0.));
+        steerPidController.setOutputRange(kMinOutput.getDouble(-1.), kMaxOutput.getDouble(1.));
         steerPidController.setPositionPIDWrappingEnabled(true);
-        steerPidController.setPositionPIDWrappingMaxInput(360);
-        steerPidController.setPositionPIDWrappingMinInput(0);
+        steerPidController.setPositionPIDWrappingMaxInput(360.);
+        steerPidController.setPositionPIDWrappingMinInput(0.);
     }
 
     /** @return Drive position, meters, -inf to +inf */
@@ -140,9 +147,9 @@ public class SwerveModule extends SubsystemBase{
 
     /** @return Absolute steer position, degrees, -inf to +inf */
     public double getAbsolutePosition() {
-        return absoluteSteerEncoder.getPosition().getValueAsDouble() * 360;
-        // TODO: Should this be calling absoluteSteerEncoder.getAbsolutePosition? Since we've zeroed the encoders, will the two methods even return different values?
-        // - this method is uses to zero the relative encoders
+        return absoluteSteerEncoder.getAbsolutePosition().getValueAsDouble() * 360.;
+        // TODO: it looks like the difference between absposition and position is that position is limited to +-16k and absposition is limited to (odd) -0.5 to 0.999755859375
+        // I did change it but i think its very strange that the limits arent symmetrical and we will keep an eye out for weird behaviour 
     }
 
     /** @return Drive encoder (meters) and steer encoder (Rotation2d) positions */
@@ -178,7 +185,6 @@ public class SwerveModule extends SubsystemBase{
             return;
         }
         state = SwerveModuleState.optimize(state, getState().angle);
-        // TODO: I could be mistaken, but it looks like kDutyCycle ignores PIDF constants? Is this intentional? - i think the pid constants are still doing stuff because the robot wouldnt drive when they were all zero
         drivePidController.setReference(state.speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND, CANSparkMax.ControlType.kDutyCycle);
         setSteerAngle(state.angle.getDegrees());
     }
@@ -199,23 +205,8 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public void setSteerAngle(double targetAngleInDegrees){
-        double currentSparkAngle = steerMotor.getEncoder().getPosition(); // TODO: Consider replacing this line with a call to getSteerPosition()
-        double sparkRelativeTargetAngle = reboundValue(targetAngleInDegrees, currentSparkAngle);
+        double currentSparkAngle = getSteerPosition();
+        double sparkRelativeTargetAngle = Utilities.reboundValue(targetAngleInDegrees, currentSparkAngle);
         steerPidController.setReference(sparkRelativeTargetAngle, ControlType.kPosition);
-    }
-
-    // TODO: Consider moving this to  the Utilities class, it could be useful elsewhere
-    // TODO: On second thought, I think this is redundant, now that you're using steerPidController.setPositionPIDWrappingEnabled(true);
-    // TODO: so i would think the same thing, but if i remember correctly we were using wrapping before we added this and still having issues
-    public double reboundValue(double value, double anchor){
-        double lowerBound = anchor - 180;
-        double upperBound = anchor + 180;
-
-        if (value < lowerBound){
-            value = lowerBound + ((value-lowerBound)%(upperBound - lowerBound));
-        } else if (value > upperBound){
-            value = lowerBound + ((value - upperBound)%(upperBound - lowerBound));
-        }
-        return value;
     }
 }
