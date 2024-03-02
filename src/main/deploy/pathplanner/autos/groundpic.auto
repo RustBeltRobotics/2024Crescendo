@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3724940752633799,
-      "y": 5.539009759212179
+      "x": 2,
+      "y": 2
     },
     "rotation": 0
   },
@@ -12,9 +12,9 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "justMove"
+            "name": "GroundPickUp"
           }
         }
       ]

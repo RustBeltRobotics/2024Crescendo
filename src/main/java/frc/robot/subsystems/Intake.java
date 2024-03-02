@@ -45,11 +45,13 @@ public class Intake extends SubsystemBase{
     public void runBothIntakes(double speed) {
         floorMotor.set(speed);
         intakeMotor.set(speed);
+        System.out.println(speed);
     }
 
     public void stopBothIntakes() {
         floorMotor.set(0.);
         intakeMotor.set(0.);
+        System.out.println("stop");
     }
 
     public static void runArmIntake(double speed) {
@@ -67,10 +69,13 @@ public class Intake extends SubsystemBase{
     //runs the intake for 2 seconds in order to feed note into the shooter
     public static void feedShooter() {
         runArmIntake(1);
+        System.out.println("start");
         double startTime = System.currentTimeMillis();
-        if (System.currentTimeMillis() - startTime < 2.0) {
-            stopArmIntake();
+        while (System.currentTimeMillis() - startTime < 200.0) {
+            System.out.println("while");
+            runArmIntake(1);
         }
+        stopArmIntake();
     }
 
     public static boolean getSwitch() {

@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import static frc.robot.Constants.ARM_FF_kG;
 import static frc.robot.Constants.ARM_FF_kS;
+import static frc.robot.Constants.ARM_FF_kA;
 import static frc.robot.Constants.ARM_FF_kV;
 import static frc.robot.Constants.LEFT_ROTATE;
 import static frc.robot.Constants.NEO_SECONDARY_CURRENT_LIMIT;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.commands.AprilTagAimCommand;
 
 public class Arm extends SubsystemBase {
     private PIDController anglePID;
@@ -29,7 +31,7 @@ public class Arm extends SubsystemBase {
     private static final CANSparkMax armMotor1 = new CANSparkMax(LEFT_ROTATE, MotorType.kBrushless);;
     private static final CANSparkMax armMotor2 = new CANSparkMax(RIGHT_ROTATE, MotorType.kBrushless);;
     
-    private final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(4);
+    private static final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(2);
     //private static final Encoder medEncoder = new Encoder(2, 3);
 
     private double medOffset;
@@ -37,21 +39,23 @@ public class Arm extends SubsystemBase {
     private static ShuffleboardTab diag = Shuffleboard.getTab("Diag");
     private static GenericEntry bigEncoderEntry = diag.add("abs arm encoder", 0.0).getEntry();
     private static GenericEntry medEncoderEntry = diag.add("rel arm encoder", 0.0).getEntry();
+    private static GenericEntry anglesetpoint = diag.add("arm angle control", 0.5).getEntry();
     private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
             .getLayout("Arm PID", BuiltInLayouts.kList)
-            .withSize(2, 5);
-    private static GenericEntry akP = pidvals.add("spark_P", 10)
+            .withSize(2, 3)
+            .withPosition(3, 2);
+    private static GenericEntry akP = pidvals.add("P", 10)
             .getEntry();
-    private static GenericEntry akI = pidvals.add("spark_I", 0.0)
+    private static GenericEntry akI = pidvals.add("I", 0.0)
             .getEntry();
-    private static GenericEntry akD = pidvals.add("spark_D", 0.0)
+    private static GenericEntry akD = pidvals.add("D", 0.0)
             .getEntry();
     private static GenericEntry affkA = pidvals.add("FF_kA", 0)
             .getEntry();
     
     public Arm() {
-        anglePID = new PIDController(0, 0, 0);
-        angleFF = new ArmFeedforward(ARM_FF_kS, ARM_FF_kG, ARM_FF_kV, 0);
+        anglePID = new PIDController(60, 10, 2);
+        angleFF = new ArmFeedforward(ARM_FF_kS, ARM_FF_kG, ARM_FF_kV, ARM_FF_kA);
         
         // set motor things
         armMotor1.restoreFactoryDefaults();
@@ -70,17 +74,24 @@ public class Arm extends SubsystemBase {
     }
     @Override
     public void periodic() {
-        anglePID.setPID(akP.getDouble(0), akI.getDouble(0), akD.getDouble(0));
-        angleFF = new ArmFeedforward(ARM_FF_kS, ARM_FF_kG, ARM_FF_kV, affkA.getDouble(0));
+        //anglePID.setPID(akP.getDouble(0), akI.getDouble(0), akD.getDouble(0));
         updateshuffle();
+        //setAngle(anglesetpoint.getDouble(0.5));
     }
     public void setAngle(double angle) {
         //rotate(anglePID.calculate(bigEncoder.get(), angle));
         //rotate(anglePID.calculate(armMotor1.getEncoder().getPosition(), angle));
-        armMotor1.setVoltage(
-            angleFF.calculate((bigEncoder.get()*2*Math.PI), 0)+
-            anglePID.calculate(bigEncoder.get(), angle)
-        );
+        if (angle > bigEncoder.get()){
+            armMotor1.setVoltage(
+                -angleFF.calculate((bigEncoder.get()*2*Math.PI), 0)+
+                anglePID.calculate(bigEncoder.get(), angle)
+            );
+        } else {
+            armMotor1.setVoltage(
+                -angleFF.calculate((bigEncoder.get()*2*Math.PI), 0)+
+                anglePID.calculate(bigEncoder.get(), angle)
+            );
+        }
     }
     public double getAngle() {
         //return medEncoder.getDistance()+medOffset;
@@ -88,7 +99,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void rotate(double speed) {
-        armMotor1.set(speed);
+        armMotor1.setVoltage(speed*6);
     }
 
     public void ampPose() {
@@ -108,5 +119,10 @@ public class Arm extends SubsystemBase {
     public void updateshuffle(){
         bigEncoderEntry.setDouble(bigEncoder.getAbsolutePosition());
         //medEncoderEntry.setDouble(medEncoder.getDistance()+medOffset);
+    }
+    public void autoAim(){
+        if (AprilTagAimCommand.targetGood = true){
+            setAngle(AprilTagAimCommand.armTarget);
+        }
     }
 }
