@@ -44,9 +44,9 @@ public class SwerveModule extends SubsystemBase{
             .getEntry();
     private static GenericEntry drive_kFF = pidvals.add("sdrive_kFF", 0.000015)
             .getEntry();
-    private static GenericEntry kMaxOutput = pidvals.add("skMaxOutput", 1)
+    private static GenericEntry kMaxOutput = pidvals.add("skMaxOutput", 1.)
             .getEntry();
-    private static GenericEntry kMinOutput = pidvals.add("skMinOutput", -1)
+    private static GenericEntry kMinOutput = pidvals.add("skMinOutput", -1.)
             .getEntry();
     private static GenericEntry steer_kFF = pidvals.add("ssteer_kFF", 0.0)
             .getEntry();
@@ -99,23 +99,29 @@ public class SwerveModule extends SubsystemBase{
     public void updatePIDs(){
         // set PID coefficients (drive)
         drivePidController.setP(kP.getDouble(7e-5));
-        drivePidController.setI(kI.getDouble(0));
-        drivePidController.setD(kD.getDouble(0));
-        drivePidController.setIZone(kIz.getDouble(0));
-        drivePidController.setFF(drive_kFF.getDouble(0));
-        drivePidController.setOutputRange(kMinOutput.getDouble(0), kMaxOutput.getDouble(0));
+        drivePidController.setI(kI.getDouble(0.));
+        drivePidController.setD(kD.getDouble(0.));
+        drivePidController.setIZone(0.);
+        drivePidController.setFF(drive_kFF.getDouble(0.));
+        drivePidController.setOutputRange(kMinOutput.getDouble(-1.), kMaxOutput.getDouble(1.));
         drivePidController.setPositionPIDWrappingEnabled(false);
 
         // set PID coefficients (steer)
         steerPidController.setP(STEER_P);
         steerPidController.setI(STEER_I);
         steerPidController.setD(STEER_D);
-        steerPidController.setIZone(kIz.getDouble(0)); // TODO: does it make sense to use the same value here as for drive? - i dont know what this value does
-        steerPidController.setFF(steer_kFF.getDouble(0));
-        steerPidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(1));
+        // Does it make sense to use the same value here as for drive? - i dont know what this value does
+        // Basically, this limits the range of error values that are included in your
+        // integral. If you have a large error, its ignored, because large errors can
+        // lead to integral windup, which is reeeally bad. as long as our kI is 0, this
+        // IZone value is irrelevant, but if we ever want to incorporate an I gain,
+        // we'll definitely want to keep an eye on this one.
+        steerPidController.setIZone(0.);
+        steerPidController.setFF(steer_kFF.getDouble(0.));
+        steerPidController.setOutputRange(kMinOutput.getDouble(-1.), kMaxOutput.getDouble(1.));
         steerPidController.setPositionPIDWrappingEnabled(true);
-        steerPidController.setPositionPIDWrappingMaxInput(360);
-        steerPidController.setPositionPIDWrappingMinInput(0);
+        steerPidController.setPositionPIDWrappingMaxInput(360.);
+        steerPidController.setPositionPIDWrappingMinInput(0.);
     }
 
     /** @return Drive position, meters, -inf to +inf */
@@ -140,9 +146,12 @@ public class SwerveModule extends SubsystemBase{
 
     /** @return Absolute steer position, degrees, -inf to +inf */
     public double getAbsolutePosition() {
-        return absoluteSteerEncoder.getPosition().getValueAsDouble() * 360;
+        return absoluteSteerEncoder.getPosition().getValueAsDouble() * 360.;
         // TODO: Should this be calling absoluteSteerEncoder.getAbsolutePosition? Since we've zeroed the encoders, will the two methods even return different values?
         // - this method is uses to zero the relative encoders
+        // I get that - doesn't explain the difference between
+        // absoluteSteerEncoder.getPosition and absoluteSteerEncoder.getAboslutePosition
+        // though, which is the part I'm confused about
     }
 
     /** @return Drive encoder (meters) and steer encoder (Rotation2d) positions */

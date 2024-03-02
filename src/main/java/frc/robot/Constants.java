@@ -67,7 +67,8 @@ public final class Constants {
 
     /**
      * The maximum linear velocity of the robot in meters per second. This is a
-     * measure of how fast the robot can move linearly.
+     * measure of how fast the robot can move linearly. Calculated using the
+     * emprical free speed velocity of a NEO.
      */
     public static final double MAX_VELOCITY_METERS_PER_SECOND = 5676. * DRIVE_VELOCITY_CONVERSION;
 
@@ -106,6 +107,7 @@ public final class Constants {
     public static final double rotation_D = 0.0;
 
     // CAN IDs
+    // FIXME: re-assign CANcoders to 2-5 (or something other than 1) and reassign PDH to 1, per REV suggestion
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 21;
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 20;
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 1;
@@ -130,25 +132,31 @@ public final class Constants {
     public static final int LEFT_ROTATE = 23;
     public static final int RIGHT_SHOOTER = 24;
     public static final int LEFT_SHOOTER = 25;
+    public static final int PDH = 5;
 
     //Field
-    public static final double SPEAKER_HEIGHT = 204.0; //cm
+    /** The height of the speaker opening, in cm.*/
+    public static final double SPEAKER_HEIGHT = 204.0;
 
     //Limelight/vision
     public static final String LL_NAME = "limelight";
     public static final double LL_SPEED_LIMIT = 1.0;
-    public static final double LL_HEIGHT = 10; //TODO: get the real number
-    public static final double LL_ANGLE = 20; //TODO: get the real number
+    public static final double LL_HEIGHT = 10.; //TODO: get the real number and document units
+    public static final double LL_ANGLE = 20.; //TODO: get the real number and document units
 
     //Shooter
-    public static final double SPOOL_VELOCITY = 4257; //75% of max velocity
+    /**
+     * Target velocity for the shooter wheels, in rotations per minute. Uses 75% of
+     * the emperical free speed of a NEO, assuming no gearing
+     */
+    public static final double SPOOL_VELOCITY = 4257;
 
     //Arm
-    public static final double AMP_POSITION = 0.75; //TODO: get this encoder reading
-    public static final double SOURCE_POSITION = 0.75; //TODO: get this encoder reading
-    public static final double GROUND_POSITION = 0.5; //TODO: get this encoder reading
+    public static final double AMP_POSITION = 0.75; //TODO: get this encoder reading and document with units
+    public static final double SOURCE_POSITION = 0.75; //TODO: can probably be deleted
+    public static final double GROUND_POSITION = 0.5; //TODO: get this encoder reading and document with units
     public static final double ARM_FF_kS = 0;
     public static final double ARM_FF_kG = 0;
     public static final double ARM_FF_kV = 0;
-    public static final double MAX_ARM_VELOCITY = 2*Math.PI;
+    public static final double MAX_ARM_VELOCITY = 2. * Math.PI; // TODO: Document units and where this comes from
 }

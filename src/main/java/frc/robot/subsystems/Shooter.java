@@ -41,10 +41,10 @@ public class Shooter extends SubsystemBase {
         pidvals.add("shkFF", 0.0)
         .getEntry();
     private static GenericEntry kMaxOutput =
-        pidvals.add("shkMaxOutput", 1)
+        pidvals.add("shkMaxOutput", 1.)
         .getEntry();
     private static GenericEntry kMinOutput =
-        pidvals.add("shkMinOutput", -1)
+        pidvals.add("shkMinOutput", -1.)
         .getEntry();
 
     public Shooter(){
@@ -66,12 +66,12 @@ public class Shooter extends SubsystemBase {
 
         shooter1PidController = shooterMotor1.getPIDController();
     //set pid things
-        shooter1PidController.setP(kP.getDouble(1));
-        shooter1PidController.setI(kI.getDouble(0));
-        shooter1PidController.setD(kD.getDouble(0));
-        shooter1PidController.setIZone(kIz.getDouble(0));
-        shooter1PidController.setFF(kFF.getDouble(0));
-        shooter1PidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(1)); 
+        shooter1PidController.setP(kP.getDouble(1.));
+        shooter1PidController.setI(kI.getDouble(0.));
+        shooter1PidController.setD(kD.getDouble(0.));
+        shooter1PidController.setIZone(kIz.getDouble(0.));
+        shooter1PidController.setFF(kFF.getDouble(0.));
+        shooter1PidController.setOutputRange(kMinOutput.getDouble(-1.), kMaxOutput.getDouble(1.)); 
     }
     // Commented out because it was overloading the RIO
     // @Override
@@ -96,9 +96,9 @@ public class Shooter extends SubsystemBase {
         // don't understand it, it could be an issue elsewhere as well and we're
         // currently unaware.
         // REV hardware client might be able to shed some insight
-        shooter1PidController.setReference(velocity*4, ControlType.kVelocity);
+        shooter1PidController.setReference(velocity*4., ControlType.kVelocity);
     }
     public static void stop(){
-        shooter1PidController.setReference(0, ControlType.kVoltage);
+        shooter1PidController.setReference(0., ControlType.kVoltage);
     }
 }
