@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.Utilities;
 
 import static frc.robot.Constants.*;
 
@@ -146,12 +147,9 @@ public class SwerveModule extends SubsystemBase{
 
     /** @return Absolute steer position, degrees, -inf to +inf */
     public double getAbsolutePosition() {
-        return absoluteSteerEncoder.getPosition().getValueAsDouble() * 360.;
-        // TODO: Should this be calling absoluteSteerEncoder.getAbsolutePosition? Since we've zeroed the encoders, will the two methods even return different values?
-        // - this method is uses to zero the relative encoders
-        // I get that - doesn't explain the difference between
-        // absoluteSteerEncoder.getPosition and absoluteSteerEncoder.getAboslutePosition
-        // though, which is the part I'm confused about
+        return absoluteSteerEncoder.getAbsolutePosition().getValueAsDouble() * 360.;
+        // TODO: it looks like the difference between absposition and position is that position is limited to +-16k and absposition is limited to (odd) -0.5 to 0.999755859375
+        // I did change it but i think its very strange that the limits arent symmetrical and we will keep an eye out for weird behaviour 
     }
 
     /** @return Drive encoder (meters) and steer encoder (Rotation2d) positions */
@@ -187,7 +185,6 @@ public class SwerveModule extends SubsystemBase{
             return;
         }
         state = SwerveModuleState.optimize(state, getState().angle);
-        // TODO: I could be mistaken, but it looks like kDutyCycle ignores PIDF constants? Is this intentional? - i think the pid constants are still doing stuff because the robot wouldnt drive when they were all zero
         drivePidController.setReference(state.speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND, CANSparkMax.ControlType.kDutyCycle);
         setSteerAngle(state.angle.getDegrees());
     }
@@ -208,23 +205,8 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public void setSteerAngle(double targetAngleInDegrees){
-        double currentSparkAngle = steerMotor.getEncoder().getPosition(); // TODO: Consider replacing this line with a call to getSteerPosition()
-        double sparkRelativeTargetAngle = reboundValue(targetAngleInDegrees, currentSparkAngle);
+        double currentSparkAngle = getSteerPosition();
+        double sparkRelativeTargetAngle = Utilities.reboundValue(targetAngleInDegrees, currentSparkAngle);
         steerPidController.setReference(sparkRelativeTargetAngle, ControlType.kPosition);
-    }
-
-    // TODO: Consider moving this to  the Utilities class, it could be useful elsewhere
-    // TODO: On second thought, I think this is redundant, now that you're using steerPidController.setPositionPIDWrappingEnabled(true);
-    // TODO: so i would think the same thing, but if i remember correctly we were using wrapping before we added this and still having issues
-    public double reboundValue(double value, double anchor){
-        double lowerBound = anchor - 180;
-        double upperBound = anchor + 180;
-
-        if (value < lowerBound){
-            value = lowerBound + ((value-lowerBound)%(upperBound - lowerBound));
-        } else if (value > upperBound){
-            value = lowerBound + ((value - upperBound)%(upperBound - lowerBound));
-        }
-        return value;
     }
 }

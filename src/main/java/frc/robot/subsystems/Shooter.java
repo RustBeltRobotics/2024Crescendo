@@ -89,7 +89,6 @@ public class Shooter extends SubsystemBase {
         return shooterMotor1.getEncoder().getVelocity();
     }
 
-    // TODO: Why are spool() and stop() static methods? - because they are called from static classes
     public static void spool(double velocity){
         // FIXME: We should figure out why we need a value of 4 here.
         // I have a feeling the issue is not something unique to the shooter, so if we

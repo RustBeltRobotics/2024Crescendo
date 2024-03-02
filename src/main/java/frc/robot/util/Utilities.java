@@ -40,4 +40,18 @@ public class Utilities {
         value = Math.copySign(Math.pow(Math.abs(value), power), value);
         return value;
     }
+    /*
+     * I didnt write this and i dont remember what it does
+     */
+    public static double reboundValue(double value, double anchor){
+        double lowerBound = anchor - 180;
+        double upperBound = anchor + 180;
+
+        if (value < lowerBound){
+            value = lowerBound + ((value-lowerBound)%(upperBound - lowerBound));
+        } else if (value > upperBound){
+            value = lowerBound + ((value - upperBound)%(upperBound - lowerBound));
+        }
+        return value;
+    }
 }

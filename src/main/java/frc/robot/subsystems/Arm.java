@@ -7,7 +7,6 @@ import static frc.robot.Constants.ARM_FF_kG;
 import static frc.robot.Constants.ARM_FF_kS;
 import static frc.robot.Constants.ARM_FF_kV;
 import static frc.robot.Constants.LEFT_ROTATE;
-import static frc.robot.Constants.MAX_ARM_VELOCITY;
 import static frc.robot.Constants.NEO_SECONDARY_CURRENT_LIMIT;
 import static frc.robot.Constants.NEO_SMART_CURRENT_LIMIT;
 import static frc.robot.Constants.RIGHT_ROTATE;
@@ -68,8 +67,6 @@ public class Arm extends SubsystemBase {
         armMotor2.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
 
         armMotor2.follow(armMotor1, true);
-
-        bigEncoder.setDistancePerRotation(360);
     }
     @Override
     public void periodic() {
@@ -80,7 +77,7 @@ public class Arm extends SubsystemBase {
     public void setAngle(double angle) {
         //rotate(anglePID.calculate(bigEncoder.get(), angle));
         //rotate(anglePID.calculate(armMotor1.getEncoder().getPosition(), angle));
-        armMotor1.setVoltage(angleFF.calculate((bigEncoder.get()*2*Math.PI), MAX_ARM_VELOCITY)+anglePID.calculate(bigEncoder.get(), angle));
+        armMotor1.setVoltage(angleFF.calculate((bigEncoder.get()*2*Math.PI), 0)+anglePID.calculate(bigEncoder.get(), angle));
     }
     public double getAngle() {
         //return medEncoder.getDistance()+medOffset;

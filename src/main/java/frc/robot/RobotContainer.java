@@ -155,6 +155,7 @@ public class RobotContainer {
         // TODO: Lets think about what we can do to move these functions onto the stick
         // buttons, bumpers, or triggers, so the driver doesn't have to remove their
         // thumbs from the sticks to execute
+        // RE: My immediate thought is reverting to the old throttle control systen and rebinding the triggers to FL+FR with default when both return false.
         // Pressing Left and Right change drivebase the center of rotation, for defensive maneuvers. Pressing Up reverts to normal
         new Trigger(d_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("default")));
         new Trigger(d_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));
@@ -183,6 +184,8 @@ public class RobotContainer {
         // button (not analog) to run the intake for half a second to execute the shot.
         // This is likely more repeatable than manual speed control -> more relaible
         // shots
+        // RE: honestly, as the operator i think its probably not necessary to bind another button to this,
+        // i can just stop holding the button when the orange thing shoots out.
     }
 
     public void configureAutos() {

@@ -134,29 +134,31 @@ public final class Constants {
     public static final int LEFT_SHOOTER = 25;
     public static final int PDH = 5;
 
-    //Field
+    // Field
     /** The height of the speaker opening, in cm.*/
     public static final double SPEAKER_HEIGHT = 204.0;
 
-    //Limelight/vision
+    // Limelight/vision
     public static final String LL_NAME = "limelight";
-    public static final double LL_SPEED_LIMIT = 1.0;
-    public static final double LL_HEIGHT = 10.; //TODO: get the real number and document units
-    public static final double LL_ANGLE = 20.; //TODO: get the real number and document units
+    public static final double LL_SPEED_LIMIT = 1.0;//0-1
+    //height of the LL sensor from the ground in cm  
+    public static final double LL_HEIGHT = 10.; //TODO: get the real number
+    // Angle of LL from horizontal in degrees  
+    public static final double LL_ANGLE = 20.; //TODO: get the real number 
 
-    //Shooter
+    // Shooter
     /**
      * Target velocity for the shooter wheels, in rotations per minute. Uses 75% of
      * the emperical free speed of a NEO, assuming no gearing
      */
     public static final double SPOOL_VELOCITY = 4257;
 
-    //Arm
-    public static final double AMP_POSITION = 0.75; //TODO: get this encoder reading and document with units
-    public static final double SOURCE_POSITION = 0.75; //TODO: can probably be deleted
-    public static final double GROUND_POSITION = 0.5; //TODO: get this encoder reading and document with units
+    // Arm
+    // Angles of interest (Rotations)
+    public static final double AMP_POSITION = 0.75;
+    public static final double GROUND_POSITION = 0.5; 
+    // Calculated feedForward gains
     public static final double ARM_FF_kS = 0;
     public static final double ARM_FF_kG = 0;
     public static final double ARM_FF_kV = 0;
-    public static final double MAX_ARM_VELOCITY = 2. * Math.PI; // TODO: Document units and where this comes from
 }

@@ -64,7 +64,6 @@ public class Intake extends SubsystemBase{
 
         floorMotor.set(speed);
     }
-    // TODO: Why is this a static method? - because it is called from static classes in order to be a namedcommand for pathplannerlib
     //runs the intake for 2 seconds in order to feed note into the shooter
     public static void feedShooter() {
         runArmIntake(1);
@@ -76,7 +75,7 @@ public class Intake extends SubsystemBase{
 
     public static boolean getSwitch() {
         limitSwitch.setBoolean(!noteSwitch.get());
-        return !noteSwitch.get(); // Switch is currently wired as normally closed
+        return !noteSwitch.get(); // Switch is currently wired as normally open, the rio returns high when the pins are open.
     }
 
     public static void makeShuffleboard() {
