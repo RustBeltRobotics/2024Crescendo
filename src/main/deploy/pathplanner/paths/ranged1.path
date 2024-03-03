@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.6855283804025556,
-        "y": 4.366845500630254
+        "x": 2.2375361156972313,
+        "y": 4.092428687089518
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6855283804025538,
-        "y": 4.366845500630254
+        "x": 2.2429116565822413,
+        "y": 4.094447792690229
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.605773777395769,
+        "x": 2.690628656926957,
         "y": 4.092428687089518
       },
       "prevControl": {
-        "x": 1.6060396511484263,
-        "y": 4.069370568856466
+        "x": 2.681083794087231,
+        "y": 4.08865269739468
       },
       "nextControl": {
-        "x": 2.6216906228455312,
-        "y": 4.092795797198738
+        "x": 2.7054333405467066,
+        "y": 4.098285485005024
       },
       "isLocked": false,
       "linkedName": null
@@ -41,7 +41,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "path1end"
+      "linkedName": "ranged1end"
     }
   ],
   "rotationTargets": [
@@ -60,7 +60,7 @@
   "eventMarkers": [
     {
       "name": "pickup and shoot",
-      "waypointRelativePos": 0.75,
+      "waypointRelativePos": 0.35,
       "command": {
         "type": "sequential",
         "data": {
@@ -75,23 +75,6 @@
               "type": "named",
               "data": {
                 "name": "AprilTagAim"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "spool",
-      "waypointRelativePos": 0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "SpoolShooter"
               }
             }
           ]
@@ -113,7 +96,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -59.98598021437197,
+    "rotation": -1.3519707999976776,
     "velocity": 0
   },
   "useDefaultConstraints": true

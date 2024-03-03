@@ -128,7 +128,7 @@ public class AprilTagAimCommand extends Command {
                 if (autonomous) {
                     AUTO_TX = steeringAdjust;
                     validTID = true;
-                    arm.setAngle(armTarget);
+                    aimShooter();
                     autoAimCommand.setBoolean(true);
                 } else {
                     ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -147,7 +147,7 @@ public class AprilTagAimCommand extends Command {
                     thePDH.setSwitchableChannel(false);
                 }
                 // auto shoot
-                if (autonomous && aimCommand.getBoolean(false) == true) {
+                if (autonomous && aimCommand.getBoolean(false) && (arm.getAngle() < armTarget+0.2 && arm.getAngle() < armTarget-0.2)) {
                     Intake.feedShooter();
                     finished = true;
                 }
@@ -168,7 +168,6 @@ public class AprilTagAimCommand extends Command {
             }
         }
     }
-
     @Override
     public void end(boolean interrupted) {
         drivetrain.drive(new ChassisSpeeds(stickX.getAsDouble(), stickY.getAsDouble(), 0));

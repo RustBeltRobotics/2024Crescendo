@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3992660783486706,
-      "y": 4.091593180319389
+      "x": 2.2634173783972567,
+      "y": 5.55756513298741
     },
     "rotation": 0
   },
@@ -12,9 +12,9 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "justMove"
+            "name": "AprilTagAim"
           }
         }
       ]

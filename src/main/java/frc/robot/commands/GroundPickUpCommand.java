@@ -20,12 +20,11 @@ public class GroundPickUpCommand extends Command {
     
     @Override
     public void execute() {
-        //arm.groundPose();
+        arm.groundPose();
         intake.runBothIntakes(1);
         switchEventLoop.poll();
         loaded.ifHigh(() -> Intake.stopArmIntake());
         loaded.ifHigh(() -> finished = true);
-        System.out.println("groundpicking");
     }
     @Override
     public boolean isFinished() {

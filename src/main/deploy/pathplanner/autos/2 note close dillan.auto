@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7051062840657792,
-      "y": 4.372552113796889
+      "x": 0.7182509286893574,
+      "y": 4.392174091267826
     },
-    "rotation": -60.0
+    "rotation": -58.85034409292477
   },
   "command": {
     "type": "sequential",
@@ -32,7 +32,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LAYUP-1"
+            "pathName": "dillan-1"
           }
         }
       ]

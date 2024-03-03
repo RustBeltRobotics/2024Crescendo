@@ -3,54 +3,48 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.6949196839907443,
-        "y": 4.380090933347005
+        "x": 5.7170843973384375,
+        "y": 6.3155950642258425
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.536913890914938,
-        "y": 4.171688541198184
+        "x": 6.6627846219559625,
+        "y": 6.2474092780914345
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.5777122855851218,
-        "y": 4.231042954631781
+        "x": 8.04440515689067,
+        "y": 5.772717879141115
       },
       "prevControl": {
-        "x": 1.5886785186901524,
-        "y": 4.3787325207545535
+        "x": 8.03997361342937,
+        "y": 5.7704889963351365
       },
       "nextControl": {
-        "x": 2.7198098404224327,
-        "y": 4.209823935702918
+        "x": 8.048836700351972,
+        "y": 5.774946761947093
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.3409413573414304,
-        "y": 5.506684771970462
+        "x": 5.8549604655012875,
+        "y": 6.493905688704234
       },
       "prevControl": {
-        "x": 2.6052121734404015,
-        "y": 4.850402949085715
+        "x": 6.964039438681556,
+        "y": 6.1030776442133226
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "topMidfieldBreak"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 0,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
@@ -64,23 +58,6 @@
               "type": "named",
               "data": {
                 "name": "GroundPickUp"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 2.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "FeedShooter"
               }
             }
           ]
@@ -102,8 +79,8 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -59.83100631410749,
-    "velocity": 0
+    "rotation": 0,
+    "velocity": 4.0
   },
   "useDefaultConstraints": true
 }

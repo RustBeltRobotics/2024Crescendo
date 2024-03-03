@@ -32,7 +32,10 @@ public class DefaultIntakeCommand extends Command {
         double inSpeed = inSpeedSupplier.getAsDouble();
         double outSpeed = outSpeedSupplier.getAsDouble();
         double netSpeed = (inSpeed - outSpeed);
-        intake.runBothIntakes(netSpeed);
+        // dont always command zero so other commands can use the intake
+        if (netSpeed != 0){
+            intake.runBothIntakes(netSpeed);
+        }
     }
 
     /** When the intake method is interupted, set all velocities to zero. */

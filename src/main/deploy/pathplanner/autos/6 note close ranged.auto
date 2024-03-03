@@ -1,74 +1,92 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 0.6701792478561401,
-      "y": 4.367745399475098
-    },
-    "rotation": -59.237270793012975
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "sequential",
+          "type": "parallel",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "SpoolShooter"
-                }
-              },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "FeedShooter"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "choreotest.1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GroundPickUp"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "choreotest.2"
+                  "waitTime": 1.5
                 }
               },
               {
                 "type": "named",
                 "data": {
                   "name": "SpoolShooter"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged4"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "top midfield -  top shooting pose"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AprilTagAim"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged5"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "top midfield -  top shooting pose"
                 }
               },
               {
@@ -84,5 +102,5 @@
     }
   },
   "folder": null,
-  "choreoAuto": true
+  "choreoAuto": false
 }

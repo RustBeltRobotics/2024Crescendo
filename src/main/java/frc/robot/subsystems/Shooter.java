@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
     private static CANSparkMax shooterMotor1;
-    private final CANSparkMax shooterMotor2;
+    private static CANSparkMax shooterMotor2;
     private static SparkPIDController shooter1PidController;
     private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
         .getLayout("Shooter PID", BuiltInLayouts.kList)
@@ -48,7 +48,6 @@ public class Shooter extends SubsystemBase {
         .getEntry();
 
     public Shooter(){
-        //set motor things
         shooterMotor1 = new CANSparkMax(LEFT_SHOOTER, MotorType.kBrushless);
         shooterMotor1.restoreFactoryDefaults();
         shooterMotor1.setIdleMode(IdleMode.kCoast);
@@ -65,7 +64,6 @@ public class Shooter extends SubsystemBase {
         shooterMotor2.follow(shooterMotor1, false);
 
         shooter1PidController = shooterMotor1.getPIDController();
-    //set pid things
         shooter1PidController.setP(kP.getDouble(1.));
         shooter1PidController.setI(kI.getDouble(0.));
         shooter1PidController.setD(kD.getDouble(0.));
@@ -73,18 +71,6 @@ public class Shooter extends SubsystemBase {
         shooter1PidController.setFF(kFF.getDouble(0.));
         shooter1PidController.setOutputRange(kMinOutput.getDouble(-1.), kMaxOutput.getDouble(1.)); 
     }
-    // Commented out because it was overloading the RIO
-    // @Override
-    // public void periodic(){
-    //     //set pid things
-    //     shooter1PidController.setP(kP.getDouble(1));
-    //     shooter1PidController.setI(kI.getDouble(0));
-    //     shooter1PidController.setD(kD.getDouble(0));
-    //     shooter1PidController.setIZone(kIz.getDouble(0));
-    //     shooter1PidController.setFF(kFF.getDouble(0));
-    //     shooter1PidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(5000));
-    //     shooter1PidController.setPositionPIDWrappingEnabled(true);
-    // }
     public double getShooterVelocity() {
         return shooterMotor1.getEncoder().getVelocity();
     }

@@ -25,13 +25,13 @@ public class Intake extends SubsystemBase{
 
     public Intake() {
         floorMotor.restoreFactoryDefaults();
-        floorMotor.setIdleMode(IdleMode.kBrake);
+        floorMotor.setIdleMode(IdleMode.kCoast);
         floorMotor.setInverted(true);
         floorMotor.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         floorMotor.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
         
         intakeMotor.restoreFactoryDefaults();
-        intakeMotor.setIdleMode(IdleMode.kBrake);
+        intakeMotor.setIdleMode(IdleMode.kCoast);
         intakeMotor.setInverted(true);
         intakeMotor.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         intakeMotor.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
@@ -64,11 +64,10 @@ public class Intake extends SubsystemBase{
 
         floorMotor.set(speed);
     }
-    //runs the intake for 2 seconds in order to feed note into the shooter
+    //runs the intake until the note sensor is not triggered
     public static void feedShooter() {
-        runArmIntake(1);
-        double startTime = System.currentTimeMillis();
-        if (System.currentTimeMillis() - startTime < 2.0) {
+        runArmIntake(.75);
+        if (!getSwitch()) {
             stopArmIntake();
         }
     }

@@ -41,8 +41,6 @@ public class SwerveModule extends SubsystemBase{
             .getEntry();
     private static GenericEntry kD = pidvals.add("skD", 0.0)
             .getEntry();
-    private static GenericEntry kIz = pidvals.add("skIz", 0.0)
-            .getEntry();
     private static GenericEntry drive_kFF = pidvals.add("sdrive_kFF", 0.000015)
             .getEntry();
     private static GenericEntry kMaxOutput = pidvals.add("skMaxOutput", 1.)
@@ -148,8 +146,6 @@ public class SwerveModule extends SubsystemBase{
     /** @return Absolute steer position, degrees, -inf to +inf */
     public double getAbsolutePosition() {
         return absoluteSteerEncoder.getAbsolutePosition().getValueAsDouble() * 360.;
-        // TODO: it looks like the difference between absposition and position is that position is limited to +-16k and absposition is limited to (odd) -0.5 to 0.999755859375
-        // I did change it but i think its very strange that the limits arent symmetrical and we will keep an eye out for weird behaviour 
     }
 
     /** @return Drive encoder (meters) and steer encoder (Rotation2d) positions */

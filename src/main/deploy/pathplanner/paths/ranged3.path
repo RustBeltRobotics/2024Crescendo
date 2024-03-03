@@ -1,0 +1,82 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.322338550927102,
+        "y": 6.295325341766755
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.9367497630084545,
+        "y": 6.947208007139229
+      },
+      "isLocked": false,
+      "linkedName": "ranged2end"
+    },
+    {
+      "anchor": {
+        "x": 2.898858755306796,
+        "y": 6.995745208008272
+      },
+      "prevControl": {
+        "x": 2.895161432063935,
+        "y": 6.999468753401791
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "ranged3end"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0,
+      "rotationDegrees": 50.062773192784086,
+      "rotateFast": true
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "GroundPickUp"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "AprilTagAim"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 50.6702650746614,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 50.8396908955582,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
