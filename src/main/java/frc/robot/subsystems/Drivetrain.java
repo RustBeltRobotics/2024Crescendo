@@ -212,7 +212,7 @@ public class Drivetrain extends SubsystemBase {
      * robot is currently facing to the 'forwards' direction.
      */
     public void zeroGyroscope() {
-        gyroOffset = -getGyroscopeAngle();
+        gyroOffset = getGyroscopeAngle();
     }
 
     public double getGyroOffset() {
@@ -228,7 +228,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getGyroscopeAngle() {
-        return navx.getYaw();
+        return -navx.getYaw();
     }
 
     // Returns the measurment of the gyroscope yaw. Used for field-relative drive

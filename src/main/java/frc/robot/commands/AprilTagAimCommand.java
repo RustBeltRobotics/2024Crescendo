@@ -32,11 +32,12 @@ public class AprilTagAimCommand extends Command {
     private double targetTID;
     private double targetTID2 = -1;
     private double steeringAdjust;
-    private double armTarget;
+    public static double armTarget;
     private DoubleSupplier stickX;
     private DoubleSupplier stickY;
     private boolean autonomous;
     private boolean finished;
+    public static boolean targetGood;
 
     static GenericEntry kP;
     static GenericEntry kI;
@@ -53,6 +54,7 @@ public class AprilTagAimCommand extends Command {
     private final Interpolator<Double> doubleInterpolator = Interpolator.forDouble();
     Arm arm = new Arm();
     PowerDistribution thePDH;
+    private PIDController steerPID = new PIDController(kP.getDouble(0.13), kI.getDouble(0.0), kD.getDouble(0.01));
 
     // constructor for teleop
     public AprilTagAimCommand(Drivetrain drivetrain, String target, DoubleSupplier stickX, DoubleSupplier stickY,
@@ -82,7 +84,7 @@ public class AprilTagAimCommand extends Command {
 
     @Override
     public void execute() {
-        final PIDController steerPID = new PIDController(kP.getDouble(0.13), kI.getDouble(0.0), kD.getDouble(0.01));
+        steerPID.setPID(kP.getDouble(0.13), kI.getDouble(0.0), kD.getDouble(0.01));
         if (DriverStation.getAlliance().isPresent()) {
             if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
                 switch (target) {
@@ -121,21 +123,21 @@ public class AprilTagAimCommand extends Command {
                 ty = LimelightHelpers.getTY(LL_NAME);
                 steeringAdjust = steerPID.calculate(tx);
                 // TODO:change stuff to interpolate
-                armTarget = doubleInterpolator.interpolate(0.5, 0.75, MathUtil.inverseInterpolate(0, 1,
-                        (Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan(Constants.LL_ANGLE + ty)));
-                LLdistance.setDouble(
-                        (Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan(Constants.LL_ANGLE + ty));
+                armTarget = doubleInterpolator.interpolate(0.5, 0.568783, MathUtil.inverseInterpolate(150, 516,
+                        (Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan((Constants.LL_ANGLE + ty)*Math.PI/180)));
+                        LLdistance.setDouble((Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan((Constants.LL_ANGLE + ty)*Math.PI/180));
                 if (autonomous) {
                     AUTO_TX = steeringAdjust;
                     validTID = true;
                     aimShooter();
                     autoAimCommand.setBoolean(true);
                 } else {
+                    System.out.println(armTarget);
                     ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                             stickX.getAsDouble() * LL_SPEED_LIMIT,
                             stickY.getAsDouble() * LL_SPEED_LIMIT,
                             steeringAdjust,
-                            Rotation2d.fromDegrees(drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()));
+                            Rotation2d.fromDegrees(-(drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset())));
 
                     drivetrain.drive(ChassisSpeeds.discretize(fieldRelativeSpeeds, 0.020));
                 }
@@ -161,7 +163,7 @@ public class AprilTagAimCommand extends Command {
                             stickX.getAsDouble(),
                             stickY.getAsDouble(),
                             0,
-                            Rotation2d.fromDegrees(drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset())),
+                            Rotation2d.fromDegrees(drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset())), //FIXME: add negative
                             0.020));
                     aimCommand.setBoolean(false);
                 }
@@ -183,9 +185,9 @@ public class AprilTagAimCommand extends Command {
                 .withSize(2, 2);
         kP = pidvals.add("kP", 0.13)
                 .getEntry();
-        kI = pidvals.add("kI", 0.13)
+        kI = pidvals.add("kI", 0.0)
                 .getEntry();
-        kD = pidvals.add("kD", 0.00)
+        kD = pidvals.add("kD", 0.0)
                 .getEntry();
         aimCommand = Shuffleboard.getTab("Competition")
                 .add("shot threashold", false)
@@ -204,7 +206,7 @@ public class AprilTagAimCommand extends Command {
     //auto aim for operator
     public final void aimShooter() {
         if (sightedTID == targetTID || sightedTID == targetTID2) {
-            arm.setAngle(armTarget);
-        }
+            targetGood = true;
+        } 
     }
 }

@@ -180,6 +180,7 @@ public class RobotContainer {
         new Trigger(operatorController::getXButton).onTrue(new GroundPickUpCommand());
         // Pressing the A Button rotates the arm to the ground pose
         new Trigger(operatorController::getAButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.groundPose())));
+        new Trigger(operatorController::getBButton).whileTrue(new InstantCommand(() -> arm.autoAim()));
         // TODO: Once we dial in the shooter, it might make sense to give the operator a
         // button (not analog) to run the intake for half a second to execute the shot.
         // This is likely more repeatable than manual speed control -> more relaible
