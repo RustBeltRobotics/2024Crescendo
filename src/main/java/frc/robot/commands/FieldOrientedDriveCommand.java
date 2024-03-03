@@ -60,7 +60,7 @@ public class FieldOrientedDriveCommand extends Command {
                     // could be a pain to have to remember we need to throw a negative sign out
                     // front everytime we call getGyro
                     // RE: pretty sure that will return a different number because that negative is distributed 
-                    Rotation2d.fromDegrees((drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()))), 0.020));
+                    Rotation2d.fromDegrees((-drivetrain.getGyroscopeAngle() - drivetrain.getGyroOffset()))), 0.020));
     }
 
     /** When the drive method is interupted, set all velocities to zero. */

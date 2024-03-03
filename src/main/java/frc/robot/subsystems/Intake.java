@@ -45,7 +45,6 @@ public class Intake extends SubsystemBase{
     public void runBothIntakes(double speed) {
         floorMotor.set(speed);
         intakeMotor.set(speed);
-        System.out.println(speed);
     }
 
     public void stopBothIntakes() {

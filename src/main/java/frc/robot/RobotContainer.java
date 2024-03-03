@@ -112,14 +112,14 @@ public class RobotContainer {
                 () -> modifyAxis(operatorController.getRightTriggerAxis()),
                 () -> modifyAxis(operatorController.getLeftTriggerAxis())));
 
-        arm.setDefaultCommand(new DefaultArmCommand(arm, () -> operatorController.getLeftY()));
+        arm.setDefaultCommand(new DefaultArmCommand(arm, () -> -operatorController.getLeftY()));
 
         AprilTagAimCommand.makeShuffleboard();
         Intake.makeShuffleboard();
 
         // register april aim with pathplanner, passing 0,0 as stick suppliers and
         // targeting speaker
-        NamedCommands.registerCommand("AprilTagAim", new AprilTagAimCommand(drivetrain, "speaker"));
+        NamedCommands.registerCommand("AprilTagAim", new AprilTagAimCommand(drivetrain, "speaker", thePDH));
         NamedCommands.registerCommand("SpoolShooter", new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
         NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
         NamedCommands.registerCommand("FeedShooter", new InstantCommand(() -> Intake.feedShooter()));
@@ -172,6 +172,7 @@ public class RobotContainer {
 
         // Pressing the Start Button spools up the shooter.
         new Trigger(operatorController::getStartButtonPressed).onTrue(new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
+        new Trigger(operatorController::getRightBumper).onTrue(new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY*0.5)));
         // Pressing the Back Button spools down the shooter.
         new Trigger(operatorController::getBackButtonPressed).onTrue(new InstantCommand(() -> Shooter.stop()));
         // Pressing the Y Button rotates the arm to the amp pose
@@ -180,7 +181,7 @@ public class RobotContainer {
         new Trigger(operatorController::getXButton).onTrue(new GroundPickUpCommand());
         // Pressing the A Button rotates the arm to the ground pose
         new Trigger(operatorController::getAButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.groundPose())));
-        new Trigger(operatorController::getBButton).whileTrue(new InstantCommand(() -> arm.autoAim()));
+        new Trigger(operatorController::getBButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
         // TODO: Once we dial in the shooter, it might make sense to give the operator a
         // button (not analog) to run the intake for half a second to execute the shot.
         // This is likely more repeatable than manual speed control -> more relaible
@@ -235,9 +236,13 @@ public class RobotContainer {
         if(Intake.getSwitch()) {
             operatorController.setRumble(RumbleType.kLeftRumble, .5); 
             operatorController.setRumble(RumbleType.kRightRumble, .5);
+            driverController.setRumble(RumbleType.kLeftRumble, .5); 
+            driverController.setRumble(RumbleType.kRightRumble, .5);
         } else { 
             operatorController.setRumble(RumbleType.kLeftRumble, 0.0); 
             operatorController.setRumble(RumbleType.kRightRumble, 0.0);
+            driverController.setRumble(RumbleType.kLeftRumble, 0.0); 
+            driverController.setRumble(RumbleType.kRightRumble, 0.0);
         }
     }
 }

@@ -69,11 +69,13 @@ public class AprilTagAimCommand extends Command {
     }
 
     // constructor for autonomous
-    public AprilTagAimCommand(Drivetrain drivetrain, String target) {
+    public AprilTagAimCommand(Drivetrain drivetrain, String target, PowerDistribution thePDH) {
         this.drivetrain = drivetrain;
         this.target = target;
         stickX = () -> 0;
         stickY = () -> 0;
+        this.thePDH = thePDH;
+        thePDH.setSwitchableChannel(false);
         autonomous = true;
     }
 
@@ -84,6 +86,7 @@ public class AprilTagAimCommand extends Command {
 
     @Override
     public void execute() {
+        System.out.println("exec");
         steerPID.setPID(kP.getDouble(0.13), kI.getDouble(0.0), kD.getDouble(0.01));
         if (DriverStation.getAlliance().isPresent()) {
             if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
@@ -127,12 +130,11 @@ public class AprilTagAimCommand extends Command {
                         (Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan((Constants.LL_ANGLE + ty)*Math.PI/180)));
                         LLdistance.setDouble((Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan((Constants.LL_ANGLE + ty)*Math.PI/180));
                 if (autonomous) {
-                    AUTO_TX = steeringAdjust;
                     validTID = true;
-                    aimShooter();
+                    AUTO_TX = steeringAdjust;
+                    arm.setAngle(AprilTagAimCommand.armTarget);
                     autoAimCommand.setBoolean(true);
                 } else {
-                    System.out.println(armTarget);
                     ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                             stickX.getAsDouble() * LL_SPEED_LIMIT,
                             stickY.getAsDouble() * LL_SPEED_LIMIT,

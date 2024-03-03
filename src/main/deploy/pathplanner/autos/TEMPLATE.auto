@@ -29,12 +29,6 @@
           "data": {
             "name": "FeedShooter"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": null
-          }
         }
       ]
     }

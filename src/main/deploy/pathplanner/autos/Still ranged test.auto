@@ -12,9 +12,22 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "AprilTagAim"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AprilTagAim"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 10.0
+                }
+              }
+            ]
           }
         }
       ]

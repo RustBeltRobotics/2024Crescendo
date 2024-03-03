@@ -212,7 +212,7 @@ public class Drivetrain extends SubsystemBase {
      * robot is currently facing to the 'forwards' direction.
      */
     public void zeroGyroscope() {
-        gyroOffset = getGyroscopeAngle();
+        gyroOffset = navx.getYaw(); //we were calling the getgyrosocpe function shich was also negated
     }
 
     public double getGyroOffset() {

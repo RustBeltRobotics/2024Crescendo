@@ -81,17 +81,11 @@ public class Arm extends SubsystemBase {
     public void setAngle(double angle) {
         //rotate(anglePID.calculate(bigEncoder.get(), angle));
         //rotate(anglePID.calculate(armMotor1.getEncoder().getPosition(), angle));
-        if (angle > bigEncoder.get()){
+        //-angleFF.calculate((bigEncoder.get()*2*Math.PI), 0)+
             armMotor1.setVoltage(
-                -angleFF.calculate((bigEncoder.get()*2*Math.PI), 0)+
+                
                 anglePID.calculate(bigEncoder.get(), angle)
             );
-        } else {
-            armMotor1.setVoltage(
-                -angleFF.calculate((bigEncoder.get()*2*Math.PI), 0)+
-                anglePID.calculate(bigEncoder.get(), angle)
-            );
-        }
     }
     public double getAngle() {
         //return medEncoder.getDistance()+medOffset;
@@ -121,7 +115,9 @@ public class Arm extends SubsystemBase {
         //medEncoderEntry.setDouble(medEncoder.getDistance()+medOffset);
     }
     public void autoAim(){
+        System.out.println("b pressed");
         if (AprilTagAimCommand.targetGood = true){
+            System.out.println("if loop");
             setAngle(AprilTagAimCommand.armTarget);
         }
     }
