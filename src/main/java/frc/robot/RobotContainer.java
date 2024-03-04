@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -66,7 +67,8 @@ public class RobotContainer {
     POVButton d_dpadRightButton = new POVButton(driverController, 90);
     POVButton o_dpadUpButton = new POVButton(operatorController, 0);
     POVButton o_dpadDownButton = new POVButton(operatorController, 180);
-
+    POVButton o_dpadLeftButton = new POVButton(operatorController, 270);
+    POVButton o_dpadRightButton = new POVButton(operatorController, 90);
     // Limits maximum speed
     private double maxSpeedFactor = .2;
 
@@ -86,6 +88,9 @@ public class RobotContainer {
 
     public static SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
+    SlewRateLimiter driveSlewRateLimiter = new SlewRateLimiter(0.5);
+    //SlewRateLimiter rotationSlewRateLimiter = new SlewRateLimiter(0.5);
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -101,9 +106,9 @@ public class RobotContainer {
         // of modifiy axis. Steeper ramp, shallower ramp, larger or smaller deadband,
         // etc.
         drivetrain.setDefaultCommand(new FieldOrientedDriveCommand(drivetrain,
-                () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
+                () -> driveSlewRateLimiter.calculate(-modifyAxisGeneric(driverController.getLeftY(), 1.0, 0.5) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor),
+                () -> driveSlewRateLimiter.calculate(-modifyAxisGeneric(driverController.getLeftX(), 1.0, 0.5) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor),
+                () -> -modifyAxisGeneric(driverController.getRightX(), 1.0, 0.5) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
         // TODO: Do we want to run modifyAxis on intake commands? Do we want it to be
         // the same as what we do for driving input? If not, maybe we want a more
         // generic version of modifyAxis, I've taken a stab at this in Utilities, let me
@@ -163,18 +168,6 @@ public class RobotContainer {
 
         // If left trigger is pressed for 0.2 seconds, increase the speed limit
         driverController.leftTrigger(triggerEventLoop).debounce(0.2).ifHigh(() -> speedUp());
-
-        // Activate climb motors
-        new Trigger(o_dpadUpButton::getAsBoolean).whileTrue(new InstantCommand(() -> climber.climb(0.3)));
-        new Trigger(o_dpadDownButton::getAsBoolean).whileTrue(new InstantCommand(() -> climber.climb(-0.3)));
-        // Disable the climb motors when the buttons arent pressed
-        new Trigger(o_dpadDownButton::getAsBoolean).whileFalse(new InstantCommand(() -> climber.stop())).and(() -> !o_dpadDownButton.getAsBoolean());
-
-        // Pressing the Start Button spools up the shooter.
-        new Trigger(operatorController::getStartButtonPressed).onTrue(new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
-        new Trigger(operatorController::getRightBumper).onTrue(new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY*0.5)));
-        // Pressing the Back Button spools down the shooter.
-        new Trigger(operatorController::getBackButtonPressed).onTrue(new InstantCommand(() -> Shooter.stop()));
         // Pressing the Y Button rotates the arm to the amp pose
         new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));        
         // Pressing the X Button initiates ground intake of a game piece
@@ -182,12 +175,20 @@ public class RobotContainer {
         // Pressing the A Button rotates the arm to the ground pose
         new Trigger(operatorController::getAButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.groundPose())));
         new Trigger(operatorController::getBButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
+
+        new Trigger(operatorController::getBButton).whileTrue(new RepeatCommand(new InstantCommand(() -> intake.autoShoot()))).and(() -> driverController.getBButton());
+
+        new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> intake.stopBothIntakes()));
+        new Trigger(operatorController::getRightBumper).onTrue(new InstantCommand(() -> Intake.feedShooter()));
+        // Up D-pad is stop shooter
+        new Trigger(o_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.stop()));
+        // Left D-pad is amp spool
+        new Trigger(o_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY/2)));
+        // Right D-pad is speaker spool
+        new Trigger(o_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY)));
         // TODO: Once we dial in the shooter, it might make sense to give the operator a
         // button (not analog) to run the intake for half a second to execute the shot.
-        // This is likely more repeatable than manual speed control -> more relaible
-        // shots
-        // RE: honestly, as the operator i think its probably not necessary to bind another button to this,
-        // i can just stop holding the button when the orange thing shoots out.
+        // This is likely more repeatable than manual speed control -> more relaible.
     }
 
     public void configureAutos() {
@@ -239,6 +240,14 @@ public class RobotContainer {
             driverController.setRumble(RumbleType.kLeftRumble, .5); 
             driverController.setRumble(RumbleType.kRightRumble, .5);
         } else { 
+            operatorController.setRumble(RumbleType.kLeftRumble, 0.0); 
+            operatorController.setRumble(RumbleType.kRightRumble, 0.0);
+            driverController.setRumble(RumbleType.kLeftRumble, 0.0); 
+            driverController.setRumble(RumbleType.kRightRumble, 0.0);
+        }
+    }
+    public void rumble(String set){
+        if (set.equals("stop")){
             operatorController.setRumble(RumbleType.kLeftRumble, 0.0); 
             operatorController.setRumble(RumbleType.kRightRumble, 0.0);
             driverController.setRumble(RumbleType.kLeftRumble, 0.0); 

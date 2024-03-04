@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,24 +17,18 @@ public class GroundPickUpCommand extends Command {
     public void initialize() {
         finished = false;
         addRequirements(intake, arm);
-        System.out.println("initialize");
     }
     
     @Override
     public void execute() {
-        //arm.groundPose();
+        arm.groundPose();
         intake.runBothIntakes(1);
         switchEventLoop.poll();
         loaded.ifHigh(() -> Intake.stopArmIntake());
         loaded.ifHigh(() -> finished = true);
-        System.out.println("groundpicking");
     }
     @Override
     public boolean isFinished() {
         return finished;
-    }
-    @Override
-    public void end(boolean interrupted) {
-        System.out.println("interuptted");
     }
 }

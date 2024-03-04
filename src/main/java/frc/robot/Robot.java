@@ -58,7 +58,6 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
         timeEntry.setDouble(DriverStation.getMatchTime());
-        robotContainer.rumble();
     }
 
     /**
@@ -67,6 +66,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
+        robotContainer.rumble("stop");
         autonomousCommand = robotContainer.getAutonomousCommand();
         if (autonomousCommand != null) {
             autonomousCommand.schedule();
@@ -90,11 +90,13 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         RobotContainer.pollEventLoop();
+        robotContainer.rumble();
     }
 
     /** This function is called once when the robot is disabled. */
     @Override
     public void disabledInit() {
+        robotContainer.rumble("stop");
     }
 
     /** This function is called periodically when disabled. */

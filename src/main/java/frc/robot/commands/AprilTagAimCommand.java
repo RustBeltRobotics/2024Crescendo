@@ -42,7 +42,7 @@ public class AprilTagAimCommand extends Command {
     static GenericEntry kP;
     static GenericEntry kI;
     static GenericEntry kD;
-    static GenericEntry aimCommand;
+    public static GenericEntry aimCommand;
     static GenericEntry autoAimCommand;
     static GenericEntry LLdistance;
 

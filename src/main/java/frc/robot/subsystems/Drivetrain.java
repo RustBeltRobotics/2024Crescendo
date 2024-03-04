@@ -31,6 +31,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -50,7 +51,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -85,21 +85,28 @@ public class Drivetrain extends SubsystemBase {
 
     private SwerveModuleState[] states;
 
-
     // The Shuffle
     ShuffleboardTab comp = Shuffleboard.getTab("Competition");
     ShuffleboardLayout drivetrainLayout = Shuffleboard.getTab("Competition")
             .getLayout("Drivetrain", BuiltInLayouts.kList)
             .withSize(1, 2)
             .withPosition(0, 2);
-    private final GenericEntry FRA = drivetrainLayout.add("Front Left Absolute", 0)
+    private final GenericEntry FRA = drivetrainLayout.add("Front Right Absolute", 0)
             .getEntry();
     private final GenericEntry FLA = drivetrainLayout.add(
-            "Front Right Absolute", 0)
+            "Front Left Absolute", 0)
             .getEntry();
-    private final GenericEntry BRA = drivetrainLayout.add("Back Left Absolute", 0)
+    private final GenericEntry BRA = drivetrainLayout.add("Back Right Absolute", 0)
             .getEntry();
-    private final GenericEntry BLA = drivetrainLayout.add("Back Right Absolute", 0)
+    private final GenericEntry BLA = drivetrainLayout.add("Back Left Absolute", 0)
+            .getEntry();
+    private final GenericEntry BLV = drivetrainLayout.add("Back Left Velocity", 0)
+            .getEntry();
+    private final GenericEntry BRV = drivetrainLayout.add("Back Right Velocity", 0)
+            .getEntry();
+    private final GenericEntry FLV = drivetrainLayout.add("Front Left Velocity", 0)
+            .getEntry();
+    private final GenericEntry FRV = drivetrainLayout.add("Front Right Velocity", 0)
             .getEntry();
     private final GenericEntry Gyro = comp.add("Gryoscope Angle", 0)
             .withWidget(BuiltInWidgets.kGyro)
@@ -387,14 +394,14 @@ public class Drivetrain extends SubsystemBase {
     }
 
     private void updateTelemetry() {
-        FRA.setDouble(frontLeftModule.getSteerPosition());
-        FLA.setDouble(frontRightModule.getSteerPosition());
-        BRA.setDouble(backLeftModule.getSteerPosition());
-        BLA.setDouble(backRightModule.getSteerPosition());
-        SmartDashboard.putNumber("br",backRightModule.getAbsolutePosition());
-        SmartDashboard.putNumber("bl",backLeftModule.getAbsolutePosition());
-        SmartDashboard.putNumber("fr",frontRightModule.getAbsolutePosition());
-        SmartDashboard.putNumber("fl",frontLeftModule.getAbsolutePosition());
+        FLA.setDouble(frontLeftModule.getAbsolutePosition());
+        FRA.setDouble(frontRightModule.getAbsolutePosition());
+        BLA.setDouble(backLeftModule.getAbsolutePosition());
+        BRA.setDouble(backRightModule.getAbsolutePosition());
+        FLV.setDouble(frontLeftModule.getDriveVelocity());
+        FRV.setDouble(frontRightModule.getDriveVelocity());
+        BLV.setDouble(backLeftModule.getDriveVelocity());
+        BRV.setDouble(backRightModule.getDriveVelocity());
         Gyro.setDouble(getGyroscopeAngle()+getGyroOffset());
 
         // Periodically send a set of module states (I hope) I love the confidince!
