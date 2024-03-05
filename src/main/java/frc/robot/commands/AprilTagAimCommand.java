@@ -132,8 +132,8 @@ public class AprilTagAimCommand extends Command {
                 if (autonomous) {
                     validTID = true;
                     AUTO_TX = steeringAdjust;
-                    //arm.setAngle(AprilTagAimCommand.armTarget);
-                    System.out.print("setpoint, " + AprilTagAimCommand.armTarget);
+                    //arm.setAngle(armTarget);
+                    System.out.print("setpoint, " + armTarget);
                     autoAimCommand.setBoolean(true);
                 } else {
                     ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -144,7 +144,7 @@ public class AprilTagAimCommand extends Command {
 
                     drivetrain.drive(ChassisSpeeds.discretize(fieldRelativeSpeeds, 0.020));
                 }
-                if ((tx < 3.0 || tx > -3.0) && (arm.getAngle() < armTarget + 1 || arm.getAngle() > armTarget - 1)) {
+                if ((tx < 3.0 && tx > -3.0)) {
                     aimCommand.setBoolean(true);
                     rotationGood = true;
                     thePDH.setSwitchableChannel(true);
@@ -169,7 +169,7 @@ public class AprilTagAimCommand extends Command {
                             stickX.getAsDouble(),
                             stickY.getAsDouble(),
                             0,
-                            Rotation2d.fromDegrees(drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset())), //FIXME: add negative
+                            Rotation2d.fromDegrees(drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset())),
                             0.020));
                     aimCommand.setBoolean(false);
                 }

@@ -79,12 +79,10 @@ public class Arm extends SubsystemBase {
         //setAngle(anglesetpoint.getDouble(0.5));
     }
     public void setAngle(double angle) {
-        //rotate(anglePID.calculate(bigEncoder.get(), angle));
-        //rotate(anglePID.calculate(armMotor1.getEncoder().getPosition(), angle));
-        //-angleFF.calculate((bigEncoder.get()*2*Math.PI), 0)+
-            armMotor1.setVoltage(
-                anglePID.calculate(bigEncoder.get(), angle)
-            );
+        System.out.println("setangle, " + angle);
+        armMotor1.setVoltage(
+            anglePID.calculate(bigEncoder.get(), angle)
+        );
     }
     public double getAngle() {
         //return medEncoder.getDistance()+medOffset;
@@ -93,6 +91,7 @@ public class Arm extends SubsystemBase {
 
     public void rotate(double speed) {
         armMotor1.setVoltage(speed*6);
+        System.out.println("rotate, " + speed);
     }
 
     public void ampPose() {
@@ -105,6 +104,7 @@ public class Arm extends SubsystemBase {
 
     public void stop() {
         armMotor1.setVoltage(0);
+        System.out.println("stop");
     }
     public void zeroBigEncoder() {
         bigEncoder.reset();
@@ -114,10 +114,8 @@ public class Arm extends SubsystemBase {
         //medEncoderEntry.setDouble(medEncoder.getDistance()+medOffset);
     }
     public void autoAim(){
-        System.out.println("b pressed");
         if (AprilTagAimCommand.targetGood = true){
-            System.out.println("if loop");
-            setAngle(AprilTagAimCommand.armTarget);
+            //setAngle(AprilTagAimCommand.armTarget);
             System.out.println("autoaim, " + AprilTagAimCommand.armTarget);
         }
     }

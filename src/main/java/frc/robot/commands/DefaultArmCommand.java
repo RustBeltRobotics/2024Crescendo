@@ -21,14 +21,12 @@ public class DefaultArmCommand extends Command {
 
     /**
      * This method is run every 20 ms.
-     * <p>
+     * <p>feildOrientEntry
      * Send the input rotation and extension velocities to the arm's driveArm method.
      */
     @Override
     public void execute() {
-        if(rotationSupplier.getAsDouble() !=0 ){
-            //arm.rotate(rotationSupplier.getAsDouble());
-        }
+        arm.rotate(rotationSupplier.getAsDouble());
     }
 
     /** When the drive method is interupted, set all velocities to zero. */

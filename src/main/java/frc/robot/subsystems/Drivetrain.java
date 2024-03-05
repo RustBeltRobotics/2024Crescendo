@@ -14,6 +14,9 @@ import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_ENCODER;
 import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_MOTOR;
 import static frc.robot.Constants.KINEMATICS;
 import static frc.robot.Constants.MAX_VELOCITY_METERS_PER_SECOND;
+import static frc.robot.Constants.STEER_D;
+import static frc.robot.Constants.STEER_I;
+import static frc.robot.Constants.STEER_P;
 import static frc.robot.Constants.LL_NAME;
 import static frc.robot.Constants.rotation_D;
 import static frc.robot.Constants.rotation_I;
@@ -30,6 +33,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -60,7 +64,6 @@ import frc.robot.util.LimelightHelpers;
 
 public class Drivetrain extends SubsystemBase {
     private String theMove;
-
     // NavX connected over MXP
     public final AHRS navx;
 
@@ -349,7 +352,7 @@ public class Drivetrain extends SubsystemBase {
 
         updateOdometry();
 
-        updateTelemetry();
+        //updateTelemetry();
     }
 
     private void handleMoves() {

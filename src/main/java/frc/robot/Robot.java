@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
         for (int port = 5800; port <= 5807; port++) {
             PortForwarder.add(port, "limelight.local", port);
         }
-        CameraServer.startAutomaticCapture();
+        //CameraServer.startAutomaticCapture();
 
         //prints literally everything to the ds :)
         SmartDashboard.putData(CommandScheduler.getInstance());

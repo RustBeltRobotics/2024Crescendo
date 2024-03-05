@@ -8,7 +8,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -95,10 +95,7 @@ public class SwerveModule extends SubsystemBase{
         //set the things
         updatePIDs();
     }
-    @Override
-    public void periodic(){
-        //updatePIDs();
-    }
+    
     public void updatePIDs(){
         // set PID coefficients (drive)
         drivePidController.setP(kP.getDouble(7e-5));

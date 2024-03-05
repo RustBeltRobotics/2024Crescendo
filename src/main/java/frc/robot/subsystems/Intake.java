@@ -76,7 +76,7 @@ public class Intake extends SubsystemBase{
     }
 
     public static boolean getSwitch() {
-        limitSwitch.setBoolean(!noteSwitch.get());
+        //limitSwitch.setBoolean(!noteSwitch.get());
         return !noteSwitch.get(); // Switch is currently wired as normally open, the rio returns high when the pins are open.
     }
 

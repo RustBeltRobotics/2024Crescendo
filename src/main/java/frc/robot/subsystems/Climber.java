@@ -69,9 +69,7 @@ public class Climber extends SubsystemBase {
         
         updatePIDs();
     }
-    @Override
-    public void periodic(){}
-
+    
     public void updatePIDs() {
         climber1PidController.setP(kP.getDouble(7e-5));
         climber1PidController.setI(kI.getDouble(0));

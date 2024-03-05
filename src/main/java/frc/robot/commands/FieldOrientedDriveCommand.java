@@ -1,11 +1,16 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
+
+import static frc.robot.Constants.STEER_D;
+import static frc.robot.Constants.STEER_I;
+import static frc.robot.Constants.STEER_P;
 
 import java.util.Map;
 import java.util.function.DoubleSupplier;
@@ -16,6 +21,8 @@ import java.util.function.DoubleSupplier;
  */
 public class FieldOrientedDriveCommand extends Command {
     private final Drivetrain drivetrain;
+    private PIDController headingPID = new PIDController(STEER_P, STEER_I, STEER_D);
+    private double lastCommandedHeading;
 
     // DoubleSupplier objects need to be used, not double
     private final DoubleSupplier translationXSupplier;
@@ -41,6 +48,10 @@ public class FieldOrientedDriveCommand extends Command {
         // Command requires the drivetrain subsystem
         addRequirements(drivetrain);
     }
+    @Override
+    public void initialize(){
+        feildOrientEntry.setBoolean(true);
+    }
 
     /**
      * This method is run every 20 ms.
@@ -50,17 +61,22 @@ public class FieldOrientedDriveCommand extends Command {
      */
     @Override
     public void execute() {
-            feildOrientEntry.setBoolean(true); 
+        if (translationYSupplier.getAsDouble() != 0) {
             drivetrain.drive(ChassisSpeeds.discretize(ChassisSpeeds.fromFieldRelativeSpeeds(
-                    translationXSupplier.getAsDouble(),
-                    translationYSupplier.getAsDouble(),
-                    rotationSupplier.getAsDouble(),
-                    // TODO: for the next line, I'm wondering if it makes more sense to handle the
-                    // negative sign inside of the Drivetrain class, instead of here. Seems like it
-                    // could be a pain to have to remember we need to throw a negative sign out
-                    // front everytime we call getGyro
-                    // RE: pretty sure that will return a different number because that negative is distributed 
-                    Rotation2d.fromDegrees((drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()))), 0.020));
+                translationXSupplier.getAsDouble(),
+                translationYSupplier.getAsDouble(),
+                rotationSupplier.getAsDouble(),
+                Rotation2d.fromDegrees((drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()))), 0.020)
+            );
+            lastCommandedHeading = drivetrain.getGyroscopeAngle();
+        } else {
+            drivetrain.drive(ChassisSpeeds.discretize(ChassisSpeeds.fromFieldRelativeSpeeds(
+                translationXSupplier.getAsDouble(),
+                translationYSupplier.getAsDouble(),
+                headingPID.calculate(drivetrain.getGyroscopeAngle(), lastCommandedHeading),
+                Rotation2d.fromDegrees((drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()))), 0.020)
+            );
+        }
     }
 
     /** When the drive method is interupted, set all velocities to zero. */
