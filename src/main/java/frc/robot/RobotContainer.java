@@ -106,9 +106,13 @@ public class RobotContainer {
         // of modifiy axis. Steeper ramp, shallower ramp, larger or smaller deadband,
         // etc.
         drivetrain.setDefaultCommand(new FieldOrientedDriveCommand(drivetrain,
-                () -> driveSlewRateLimiter.calculate(-modifyAxisGeneric(driverController.getLeftY(), 1.0, 0.5) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor),
-                () -> driveSlewRateLimiter.calculate(-modifyAxisGeneric(driverController.getLeftX(), 1.0, 0.5) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor),
-                () -> -modifyAxisGeneric(driverController.getRightX(), 1.0, 0.5) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
+                () -> 
+                //driveSlewRateLimiter.calculate(
+                    -modifyAxisGeneric(driverController.getLeftY(), 1.0, 0.05) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
+                () ->
+                 //driveSlewRateLimiter.calculate(
+                    -modifyAxisGeneric(driverController.getLeftX(), 1.0, 0.05)* MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
+                () -> -modifyAxisGeneric(driverController.getRightX(), 1.0, 0.05) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
         // TODO: Do we want to run modifyAxis on intake commands? Do we want it to be
         // the same as what we do for driving input? If not, maybe we want a more
         // generic version of modifyAxis, I've taken a stab at this in Utilities, let me
@@ -174,11 +178,11 @@ public class RobotContainer {
         new Trigger(operatorController::getXButton).onTrue(new GroundPickUpCommand());
         // Pressing the A Button rotates the arm to the ground pose
         new Trigger(operatorController::getAButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.groundPose())));
+        // B button for auto aim shooter
         new Trigger(operatorController::getBButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
-
-        new Trigger(operatorController::getBButton).whileTrue(new RepeatCommand(new InstantCommand(() -> intake.autoShoot()))).and(() -> driverController.getBButton());
-
+        // Left bumper stops intake
         new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> intake.stopBothIntakes()));
+        // Right bumper autofeeds
         new Trigger(operatorController::getRightBumper).onTrue(new InstantCommand(() -> Intake.feedShooter()));
         // Up D-pad is stop shooter
         new Trigger(o_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.stop()));
@@ -186,9 +190,9 @@ public class RobotContainer {
         new Trigger(o_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY/2)));
         // Right D-pad is speaker spool
         new Trigger(o_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY)));
-        // TODO: Once we dial in the shooter, it might make sense to give the operator a
-        // button (not analog) to run the intake for half a second to execute the shot.
-        // This is likely more repeatable than manual speed control -> more relaible.
+
+        // Auto shoot when both B buttons are held
+        new Trigger(operatorController::getBButton).whileTrue(new RepeatCommand(new InstantCommand(() -> intake.autoShoot()))).and(() -> driverController.getBButton());
     }
 
     public void configureAutos() {

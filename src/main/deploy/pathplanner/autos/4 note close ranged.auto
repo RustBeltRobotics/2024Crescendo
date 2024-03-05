@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 0.7158077303539929,
+      "y": 4.370492728944174
+    },
+    "rotation": -60.73697918232499
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -34,6 +40,12 @@
           "type": "path",
           "data": {
             "pathName": "ranged1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AprilTagAim"
           }
         },
         {

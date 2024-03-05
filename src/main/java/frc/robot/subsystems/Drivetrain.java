@@ -51,6 +51,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -219,7 +220,7 @@ public class Drivetrain extends SubsystemBase {
      * robot is currently facing to the 'forwards' direction.
      */
     public void zeroGyroscope() {
-        gyroOffset = navx.getYaw(); //we were calling the getgyrosocpe function shich was also negated
+        gyroOffset = -getGyroscopeAngle(); //we were calling the getgyrosocpe function shich was also negated
     }
 
     public double getGyroOffset() {
@@ -235,7 +236,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getGyroscopeAngle() {
-        return -navx.getYaw();
+        return -navx.getYaw(); // -180 to 180, 0 degres is forward, ccw is +
     }
 
     // Returns the measurment of the gyroscope yaw. Used for field-relative drive
@@ -402,7 +403,12 @@ public class Drivetrain extends SubsystemBase {
         FRV.setDouble(frontRightModule.getDriveVelocity());
         BLV.setDouble(backLeftModule.getDriveVelocity());
         BRV.setDouble(backRightModule.getDriveVelocity());
-        Gyro.setDouble(getGyroscopeAngle()+getGyroOffset());
+        //Gyro.setDouble(getGyroscopeAngle()+getGyroOffset());
+        SmartDashboard.putNumber("navx angle", navx.getAngle());
+        SmartDashboard.putNumber("navx yaw", navx.getYaw());
+        SmartDashboard.putNumber("displacement X", navx.getDisplacementX());
+        SmartDashboard.putNumber("displacement Y", navx.getDisplacementY());
+        SmartDashboard.putNumber("getGyroscopeAngle()", getGyroscopeAngle());
 
         // Periodically send a set of module states (I hope) I love the confidince!
         statePublisher.set(new SwerveModuleState[] {

@@ -83,7 +83,6 @@ public class Arm extends SubsystemBase {
         //rotate(anglePID.calculate(armMotor1.getEncoder().getPosition(), angle));
         //-angleFF.calculate((bigEncoder.get()*2*Math.PI), 0)+
             armMotor1.setVoltage(
-                
                 anglePID.calculate(bigEncoder.get(), angle)
             );
     }
@@ -119,6 +118,7 @@ public class Arm extends SubsystemBase {
         if (AprilTagAimCommand.targetGood = true){
             System.out.println("if loop");
             setAngle(AprilTagAimCommand.armTarget);
+            System.out.println("autoaim, " + AprilTagAimCommand.armTarget);
         }
     }
 }

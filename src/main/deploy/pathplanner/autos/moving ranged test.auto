@@ -1,14 +1,33 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 3.0993985984531602,
+      "y": 6.729665176646867
+    },
+    "rotation": 0
+  },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "testMovingAutoShoot"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "testMovingAutoShoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AprilTagAim"
+                }
+              }
+            ]
           }
         }
       ]
