@@ -59,7 +59,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.commands.AprilTagAimRotateCommand;
+import frc.robot.commands.AprilTagAimCommand;
 import frc.robot.util.LimelightHelpers;
 
 public class Drivetrain extends SubsystemBase {
@@ -306,8 +306,8 @@ public class Drivetrain extends SubsystemBase {
     }
     // drives the robot, using limelight aim data if applicable
     public void autoDrive(ChassisSpeeds chassisSpeeds) {
-        if (AprilTagAimRotateCommand.autoAimOutputGood) {
-            this.chassisSpeeds = new ChassisSpeeds(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond, AprilTagAimRotateCommand.AUTO_TX);
+        if (AprilTagAimCommand.getTargetGood()) {
+            this.chassisSpeeds = new ChassisSpeeds(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond, AprilTagAimCommand.rotationCalculate());
         } else { 
             this.chassisSpeeds = chassisSpeeds; 
         }

@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.commands.AprilTagAimRotateCommand;
+import frc.robot.commands.AprilTagAimCommand;
 
 public class Arm extends SubsystemBase {
     private PIDController anglePID;
@@ -82,6 +82,7 @@ public class Arm extends SubsystemBase {
     public void setAngle(double angle) {
         System.out.println("setangle, " + angle);
         armMotor1.setVoltage(
+            angleFF.calculate((bigEncoder.get()*2*Math.PI), 0) + //TODO: check on this
             anglePID.calculate(bigEncoder.get(), angle)
         );
     }
@@ -115,8 +116,9 @@ public class Arm extends SubsystemBase {
         //medEncoderEntry.setDouble(medEncoder.getDistance()+medOffset);
     }
     public void autoAim(){
-        if (AprilTagAimRotateCommand.targetGood = true){
-            setAngle(AprilTagAimRotateCommand.armTarget);
+        if (AprilTagAimCommand.getTargetGood()){
+            //setAngle(AprilTagAimCommand.armAngleCalculate()); //TODO: rember
+            SmartDashboard.putNumber("autoaim", AprilTagAimCommand.armAngleCalculate());
         }
     }
 }

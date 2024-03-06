@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -33,7 +32,6 @@ public class SwerveModule extends SubsystemBase{
     private final CANcoder absoluteSteerEncoder;
     
     // Shuffling
-    // TODO: Consider moving these constanst to the Constants class
     private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
             .getLayout("Swerve PID", BuiltInLayouts.kList)
             .withSize(2, 2);

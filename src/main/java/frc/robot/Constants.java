@@ -140,11 +140,11 @@ public final class Constants {
 
     // Limelight/vision
     public static final String LL_NAME = "limelight";
-    public static final double LL_SPEED_LIMIT = 1.0;//0-1
+    public static final double LL_SPEED_LIMIT = 1.0; //0-1
     //height of the LL sensor from the ground in cm  
-    public static final double LL_HEIGHT = 14.5; //TODO: get the real number
+    public static final double LL_HEIGHT = 14.5;
     // Angle of LL from horizontal in degrees  
-    public static final double LL_ANGLE = 30.; //TODO: get the real number 
+    public static final double LL_ANGLE = 30.;
 
     // Shooter
     /**

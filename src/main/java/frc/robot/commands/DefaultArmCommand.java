@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Arm;
 import java.util.function.DoubleSupplier;
@@ -26,7 +27,9 @@ public class DefaultArmCommand extends Command {
      */
     @Override
     public void execute() {
-        arm.rotate(rotationSupplier.getAsDouble());
+        if (!DriverStation.isAutonomous()) {
+            arm.rotate(rotationSupplier.getAsDouble());
+        }
     }
 
     /** When the drive method is interupted, set all velocities to zero. */

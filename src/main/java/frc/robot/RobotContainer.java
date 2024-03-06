@@ -21,8 +21,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import frc.robot.commands.AprilTagAimRotateCommand;
+import frc.robot.commands.AprilTagAimCommand;
 import frc.robot.commands.DefaultArmCommand;
+import frc.robot.commands.DefaultClimbCommand;
 import frc.robot.commands.DefaultIntakeCommand;
 import frc.robot.commands.FieldOrientedDriveCommand;
 import frc.robot.commands.GroundPickUpCommand;
@@ -113,22 +114,20 @@ public class RobotContainer {
                  //driveSlewRateLimiter.calculate(
                     -modifyAxisGeneric(driverController.getLeftX(), 1.0, 0.05)* MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxisGeneric(driverController.getRightX(), 1.0, 0.05) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
-        // TODO: Do we want to run modifyAxis on intake commands? Do we want it to be
-        // the same as what we do for driving input? If not, maybe we want a more
-        // generic version of modifyAxis, I've taken a stab at this in Utilities, let me
-        // know what you think
+        
         intake.setDefaultCommand(new DefaultIntakeCommand(intake,
-                () -> modifyAxis(operatorController.getRightTriggerAxis()),
-                () -> modifyAxis(operatorController.getLeftTriggerAxis())));
+                () -> operatorController.getRightTriggerAxis(),
+                () -> operatorController.getLeftTriggerAxis()));
 
         arm.setDefaultCommand(new DefaultArmCommand(arm, () -> -operatorController.getLeftY()));
 
-        AprilTagAimRotateCommand.makeShuffleboard();
+        climber.setDefaultCommand(new DefaultClimbCommand(climber, () -> operatorController.getRightY()));
+
+        AprilTagAimCommand.makeShuffleboard();
         Intake.makeShuffleboard();
 
-        // register april aim with pathplanner, passing 0,0 as stick suppliers and
-        // targeting speaker
-        NamedCommands.registerCommand("AprilTagAim", new AprilTagAimRotateCommand(drivetrain, "speaker", thePDH));
+        // register commands with pathplanner
+        NamedCommands.registerCommand("AprilTagAim", new AprilTagAimCommand(drivetrain, thePDH, arm));
         NamedCommands.registerCommand("SpoolShooter", new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
         NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
         NamedCommands.registerCommand("FeedShooter", new InstantCommand(() -> Intake.feedShooter()));
@@ -155,23 +154,11 @@ public class RobotContainer {
                 () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
         // Automatically aims at speaker while the B button is held
-        new Trigger(driverController::getBButton).whileTrue(new AprilTagAimRotateCommand(drivetrain,
-                "speaker",
-                () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                        thePDH));
+        new Trigger(driverController::getBButton).whileTrue(new AprilTagAimCommand(drivetrain, thePDH, arm));
 
-        // TODO: Lets think about what we can do to move these functions onto the stick
-        // buttons, bumpers, or triggers, so the driver doesn't have to remove their
-        // thumbs from the sticks to execute
-        // RE: My immediate thought is reverting to the old throttle control systen and rebinding the triggers to FL+FR with default when both return false.
-        // Pressing Left and Right change drivebase the center of rotation, for defensive maneuvers. Pressing Up reverts to normal
-        new Trigger(d_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("default")));
-        new Trigger(d_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));
-        new Trigger(d_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> drivetrain.setMoves("FR")));
-
-        // If left trigger is pressed for 0.2 seconds, increase the speed limit
-        driverController.leftTrigger(triggerEventLoop).debounce(0.2).ifHigh(() -> speedUp());
+        driverController.leftTrigger(triggerEventLoop).debounce(0.2).ifHigh(() -> drivetrain.setMoves("FL"));
+        driverController.rightTrigger(triggerEventLoop).debounce(0.2).ifHigh(() -> drivetrain.setMoves("FR"));
+        driverController.rightTrigger(triggerEventLoop).debounce(0.2).and(driverController.leftTrigger(triggerEventLoop).debounce(0.2)).ifHigh(() -> drivetrain.setMoves("default"));
         // Pressing the Y Button rotates the arm to the amp pose
         new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));        
         // Pressing the X Button initiates ground intake of a game piece
@@ -181,7 +168,7 @@ public class RobotContainer {
         // B button for auto aim shooter
         new Trigger(operatorController::getBButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
         // Left bumper stops intake
-        new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> intake.stopBothIntakes()));
+        new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> Intake.stopBothIntakes()));
         // Right bumper autofeeds
         new Trigger(operatorController::getRightBumper).onTrue(new InstantCommand(() -> Intake.feedShooter()));
         // Up D-pad is stop shooter
@@ -192,7 +179,7 @@ public class RobotContainer {
         new Trigger(o_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY)));
 
         // Auto shoot when both B buttons are held
-        new Trigger(operatorController::getBButton).and(() -> driverController.getBButton()).whileTrue(new RepeatCommand(new InstantCommand(() -> intake.autoShoot())));
+        new Trigger(operatorController::getBButton).and(() -> driverController.getBButton()).whileTrue(new RepeatCommand(new InstantCommand(() -> Intake.autoShoot())));
     }
 
     public void configureAutos() {

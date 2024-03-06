@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 
+import static frc.robot.Constants.LL_SPEED_LIMIT;
 import static frc.robot.Constants.STEER_D;
 import static frc.robot.Constants.STEER_I;
 import static frc.robot.Constants.STEER_P;
@@ -48,8 +49,9 @@ public class FieldOrientedDriveCommand extends Command {
         // Command requires the drivetrain subsystem
         addRequirements(drivetrain);
     }
+
     @Override
-    public void initialize(){
+    public void initialize() {
         feildOrientEntry.setBoolean(true);
     }
 
@@ -61,12 +63,19 @@ public class FieldOrientedDriveCommand extends Command {
      */
     @Override
     public void execute() {
+        if (AprilTagAimCommand.getTargetGood()) {
             drivetrain.drive(ChassisSpeeds.discretize(ChassisSpeeds.fromFieldRelativeSpeeds(
-                translationXSupplier.getAsDouble(),
-                translationYSupplier.getAsDouble(),
-                rotationSupplier.getAsDouble(),
-                Rotation2d.fromDegrees((drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()))), 0.020)
-            );
+                    translationXSupplier.getAsDouble() * LL_SPEED_LIMIT,
+                    translationYSupplier.getAsDouble() * LL_SPEED_LIMIT,
+                    AprilTagAimCommand.rotationCalculate(),
+                    Rotation2d.fromDegrees((drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()))), 0.020));
+        } else {
+            drivetrain.drive(ChassisSpeeds.discretize(ChassisSpeeds.fromFieldRelativeSpeeds(
+                    translationXSupplier.getAsDouble(),
+                    translationYSupplier.getAsDouble(),
+                    rotationSupplier.getAsDouble(),
+                    Rotation2d.fromDegrees((drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()))), 0.020));
+        }
     }
 
     /** When the drive method is interupted, set all velocities to zero. */

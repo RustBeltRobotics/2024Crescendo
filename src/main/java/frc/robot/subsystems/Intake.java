@@ -15,7 +15,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.AprilTagAimRotateCommand;
+import frc.robot.commands.AprilTagAimCommand;
 
 public class Intake extends SubsystemBase{
     private static final CANSparkMax floorMotor = new CANSparkMax(GROUND_INTAKE, MotorType.kBrushless);;
@@ -37,18 +37,13 @@ public class Intake extends SubsystemBase{
         intakeMotor.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         intakeMotor.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
     }
-
-    @Override
-    public void periodic() {
-        getSwitch();
-    }
     
     public void runBothIntakes(double speed) {
         floorMotor.set(speed);
         intakeMotor.set(speed);
     }
 
-    public void stopBothIntakes() {
+    public static void stopBothIntakes() {
         floorMotor.set(0.);
         intakeMotor.set(0.);
     }
@@ -67,10 +62,8 @@ public class Intake extends SubsystemBase{
     }
     //runs the intake for 2 seconds in order to feed note into the shooter
     public static void feedShooter() {
-        runArmIntake(1);
-        double startTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - startTime < 200.0) {
-            runArmIntake(1);
+        while (getSwitch()) {
+            runArmIntake(0.5);
         }
         stopArmIntake();
     }
@@ -89,7 +82,7 @@ public class Intake extends SubsystemBase{
                 .getEntry();
     }
     public static void autoShoot() {
-        if (AprilTagAimRotateCommand.rotationTargetMet() && AprilTagAimRotateCommand.armAngleTargetMet()) {
+        if (AprilTagAimCommand.rotationTargetMet() && AprilTagAimCommand.armAngleTargetMet()) {
             feedShooter();
         }
     }

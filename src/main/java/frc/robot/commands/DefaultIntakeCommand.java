@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 import java.util.function.DoubleSupplier;
@@ -33,14 +34,14 @@ public class DefaultIntakeCommand extends Command {
         double outSpeed = outSpeedSupplier.getAsDouble();
         double netSpeed = (inSpeed - outSpeed);
         // dont always command zero so other commands can use the intake
-        //if (netSpeed != 0){
-            //intake.runBothIntakes(netSpeed);
-        //}
+        if (!DriverStation.isAutonomous()){
+            intake.runBothIntakes(netSpeed);
+        }
     }
 
     /** When the intake method is interupted, set all velocities to zero. */
     @Override
     public void end(boolean interrupted) {
-        intake.stopBothIntakes();
+        Intake.stopBothIntakes();
     }
 }
