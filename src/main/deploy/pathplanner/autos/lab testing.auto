@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 3.0993985984531602,
-      "y": 6.729665176646867
+      "x": 1.3418239508497367,
+      "y": 5.542834331081506
     },
     "rotation": 0
   },
@@ -24,13 +24,26 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "testMovingAutoShoot"
+                  "pathName": "New New New Path"
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "AprilTagAim"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "GroundPickUp"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AprilTagAim"
+                      }
+                    }
+                  ]
                 }
               }
             ]

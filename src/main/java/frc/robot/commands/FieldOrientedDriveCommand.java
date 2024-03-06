@@ -61,22 +61,12 @@ public class FieldOrientedDriveCommand extends Command {
      */
     @Override
     public void execute() {
-        if (translationYSupplier.getAsDouble() != 0) {
             drivetrain.drive(ChassisSpeeds.discretize(ChassisSpeeds.fromFieldRelativeSpeeds(
                 translationXSupplier.getAsDouble(),
                 translationYSupplier.getAsDouble(),
                 rotationSupplier.getAsDouble(),
                 Rotation2d.fromDegrees((drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()))), 0.020)
             );
-            lastCommandedHeading = drivetrain.getGyroscopeAngle();
-        } else {
-            drivetrain.drive(ChassisSpeeds.discretize(ChassisSpeeds.fromFieldRelativeSpeeds(
-                translationXSupplier.getAsDouble(),
-                translationYSupplier.getAsDouble(),
-                headingPID.calculate(drivetrain.getGyroscopeAngle(), lastCommandedHeading),
-                Rotation2d.fromDegrees((drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()))), 0.020)
-            );
-        }
     }
 
     /** When the drive method is interupted, set all velocities to zero. */

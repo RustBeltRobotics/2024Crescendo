@@ -3,78 +3,67 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.713012850911023,
-        "y": 4.371890168665659
+        "x": 1.3418239508497367,
+        "y": 5.542834331081506
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.718388391796033,
-        "y": 4.37390927426637
+        "x": 2.3418239508497347,
+        "y": 5.542834331081506
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.690628656926957,
-        "y": 4.092428687089518
+        "x": 3.7558275202559583,
+        "y": 5.542834331081506
       },
       "prevControl": {
-        "x": 2.681083794087231,
-        "y": 4.08865269739468
+        "x": 3.7612701802238466,
+        "y": 5.493923940829534
       },
       "nextControl": {
-        "x": 2.7054333405467066,
-        "y": 4.098285485005024
+        "x": 3.632535697437681,
+        "y": 6.650794630732318
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.471752365379731,
-        "y": 4.746514013117312
+        "x": 2.8489994652007655,
+        "y": 6.93196296369657
       },
       "prevControl": {
-        "x": 2.4393417871657173,
-        "y": 4.321059618681738
+        "x": 3.198322620842489,
+        "y": 6.521005361391457
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ranged1end"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 2,
-      "rotationDegrees": -9.083844960181349,
-      "rotateFast": true
-    },
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 0.0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
-      "name": "pickup and shoot",
-      "waypointRelativePos": 0.55,
+      "name": "New Event Marker",
+      "waypointRelativePos": 0,
       "command": {
-        "type": "sequential",
+        "type": "parallel",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
-                "name": "GroundPickUp"
+                "name": "SpoolShooter"
               }
             },
             {
               "type": "named",
               "data": {
-                "name": "AprilTagAim"
+                "name": "GroundPickUp"
               }
             }
           ]
@@ -90,13 +79,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -16.360073645428074,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -60.7149981375387,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": false

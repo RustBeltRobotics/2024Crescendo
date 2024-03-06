@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
@@ -67,6 +68,7 @@ public class AprilTagAimCommand extends Command {
         this.thePDH = thePDH;
         thePDH.setSwitchableChannel(false);
         addRequirements(drivetrain);
+        autonomous = false;
     }
 
     // constructor for autonomous
@@ -129,11 +131,11 @@ public class AprilTagAimCommand extends Command {
                 armTarget = doubleInterpolator.interpolate(0.5, 0.568783, MathUtil.inverseInterpolate(150, 516,
                         (Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan((Constants.LL_ANGLE + ty)*Math.PI/180)));
                         LLdistance.setDouble((Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan((Constants.LL_ANGLE + ty)*Math.PI/180));
+                SmartDashboard.putNumber("armtarget", armTarget);
                 if (autonomous) {
                     validTID = true;
                     AUTO_TX = steeringAdjust;
                     //arm.setAngle(armTarget);
-                    System.out.print("setpoint, " + armTarget);
                     autoAimCommand.setBoolean(true);
                 } else {
                     ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -154,7 +156,7 @@ public class AprilTagAimCommand extends Command {
                     thePDH.setSwitchableChannel(false);
                 }
                 // auto shoot
-                if (autonomous && rotationGood && (arm.getAngle() < armTarget+0.2 && arm.getAngle() > armTarget-0.2)) {
+                if (autonomous && rotationGood && (arm.getAngle() < armTarget+0.02 && arm.getAngle() > armTarget-0.02)) {
                     System.out.println("aimed");
                     Intake.feedShooter();
                     finished = true;
