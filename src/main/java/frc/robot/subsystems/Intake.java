@@ -15,7 +15,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.AprilTagAimCommand;
+import frc.robot.commands.AprilTagAimRotateCommand;
 
 public class Intake extends SubsystemBase{
     private static final CANSparkMax floorMotor = new CANSparkMax(GROUND_INTAKE, MotorType.kBrushless);;
@@ -88,8 +88,8 @@ public class Intake extends SubsystemBase{
                 .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
                 .getEntry();
     }
-    public void autoShoot() {
-        if (AprilTagAimCommand.aimCommand.getBoolean(false)) {
+    public static void autoShoot() {
+        if (AprilTagAimRotateCommand.rotationTargetMet() && AprilTagAimRotateCommand.armAngleTargetMet()) {
             feedShooter();
         }
     }

@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import frc.robot.commands.AprilTagAimCommand;
+import frc.robot.commands.AprilTagAimRotateCommand;
 import frc.robot.commands.DefaultArmCommand;
 import frc.robot.commands.DefaultIntakeCommand;
 import frc.robot.commands.FieldOrientedDriveCommand;
@@ -123,12 +123,12 @@ public class RobotContainer {
 
         arm.setDefaultCommand(new DefaultArmCommand(arm, () -> -operatorController.getLeftY()));
 
-        AprilTagAimCommand.makeShuffleboard();
+        AprilTagAimRotateCommand.makeShuffleboard();
         Intake.makeShuffleboard();
 
         // register april aim with pathplanner, passing 0,0 as stick suppliers and
         // targeting speaker
-        NamedCommands.registerCommand("AprilTagAim", new AprilTagAimCommand(drivetrain, "speaker", thePDH));
+        NamedCommands.registerCommand("AprilTagAim", new AprilTagAimRotateCommand(drivetrain, "speaker", thePDH));
         NamedCommands.registerCommand("SpoolShooter", new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
         NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
         NamedCommands.registerCommand("FeedShooter", new InstantCommand(() -> Intake.feedShooter()));
@@ -155,7 +155,7 @@ public class RobotContainer {
                 () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
         // Automatically aims at speaker while the B button is held
-        new Trigger(driverController::getBButton).whileTrue(new AprilTagAimCommand(drivetrain,
+        new Trigger(driverController::getBButton).whileTrue(new AprilTagAimRotateCommand(drivetrain,
                 "speaker",
                 () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
