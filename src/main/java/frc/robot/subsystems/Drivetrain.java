@@ -14,9 +14,6 @@ import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_ENCODER;
 import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_MOTOR;
 import static frc.robot.Constants.KINEMATICS;
 import static frc.robot.Constants.MAX_VELOCITY_METERS_PER_SECOND;
-import static frc.robot.Constants.STEER_D;
-import static frc.robot.Constants.STEER_I;
-import static frc.robot.Constants.STEER_P;
 import static frc.robot.Constants.LL_NAME;
 import static frc.robot.Constants.rotation_D;
 import static frc.robot.Constants.rotation_I;
@@ -33,9 +30,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -353,7 +348,7 @@ public class Drivetrain extends SubsystemBase {
 
         updateOdometry();
 
-        //updateTelemetry();
+        updateTelemetry();
     }
 
     private void handleMoves() {
@@ -399,28 +394,32 @@ public class Drivetrain extends SubsystemBase {
     }
 
     private void updateTelemetry() {
-        FLA.setDouble(frontLeftModule.getAbsolutePosition());
-        FRA.setDouble(frontRightModule.getAbsolutePosition());
-        BLA.setDouble(backLeftModule.getAbsolutePosition());
-        BRA.setDouble(backRightModule.getAbsolutePosition());
+        // FLA.setDouble(frontLeftModule.getAbsolutePosition());
+        // FRA.setDouble(frontRightModule.getAbsolutePosition());
+        // BLA.setDouble(backLeftModule.getAbsolutePosition());
+        // BRA.setDouble(backRightModule.getAbsolutePosition());
+        FLA.setDouble(states[0].speedMetersPerSecond);
+        FRA.setDouble(states[1].speedMetersPerSecond);
+        BLA.setDouble(states[2].speedMetersPerSecond);
+        BRA.setDouble(states[3].speedMetersPerSecond);
         FLV.setDouble(frontLeftModule.getDriveVelocity());
         FRV.setDouble(frontRightModule.getDriveVelocity());
         BLV.setDouble(backLeftModule.getDriveVelocity());
         BRV.setDouble(backRightModule.getDriveVelocity());
-        //Gyro.setDouble(getGyroscopeAngle()+getGyroOffset());
-        SmartDashboard.putNumber("navx angle", navx.getAngle());
-        SmartDashboard.putNumber("navx yaw", navx.getYaw());
-        SmartDashboard.putNumber("displacement X", navx.getDisplacementX());
-        SmartDashboard.putNumber("displacement Y", navx.getDisplacementY());
-        SmartDashboard.putNumber("getGyroscopeAngle()", getGyroscopeAngle());
+        Gyro.setDouble(getGyroscopeAngle()+getGyroOffset());
+        // SmartDashboard.putNumber("navx angle", navx.getAngle());
+        // SmartDashboard.putNumber("navx yaw", navx.getYaw());
+        // SmartDashboard.putNumber("displacement X", navx.getDisplacementX());
+        // SmartDashboard.putNumber("displacement Y", navx.getDisplacementY());
+        // SmartDashboard.putNumber("getGyroscopeAngle()", getGyroscopeAngle());
 
         // Periodically send a set of module states (I hope) I love the confidince!
-        statePublisher.set(new SwerveModuleState[] {
-            states[0],
-            states[1],
-            states[2],
-            states[3]
-        });
-        posePublisher.set(poseEstimator.getEstimatedPosition());
+        // statePublisher.set(new SwerveModuleState[] {
+        //     states[0],
+        //     states[1],
+        //     states[2],
+        //     states[3]
+        // });
+        // posePublisher.set(poseEstimator.getEstimatedPosition());
     }
 }
