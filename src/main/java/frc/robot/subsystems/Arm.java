@@ -16,6 +16,7 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -77,7 +78,9 @@ public class Arm extends SubsystemBase {
     public void periodic() {
         //anglePID.setPID(akP.getDouble(0), akI.getDouble(0), akD.getDouble(0));
         updateshuffle();
-        //setAngle(anglesetpoint.getDouble(0.5));
+        if (DriverStation.isTestEnabled()) {
+            setAngle(anglesetpoint.getDouble(0.5));
+        }
     }
     public void setAngle(double angle) {
         System.out.println("setangle, " + angle);

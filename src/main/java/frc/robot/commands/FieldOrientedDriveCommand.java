@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.GenericEntry;
@@ -9,9 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 
 import static frc.robot.Constants.LL_SPEED_LIMIT;
-import static frc.robot.Constants.STEER_D;
-import static frc.robot.Constants.STEER_I;
-import static frc.robot.Constants.STEER_P;
+
 
 import java.util.Map;
 import java.util.function.DoubleSupplier;
@@ -22,8 +19,6 @@ import java.util.function.DoubleSupplier;
  */
 public class FieldOrientedDriveCommand extends Command {
     private final Drivetrain drivetrain;
-    private PIDController headingPID = new PIDController(STEER_P, STEER_I, STEER_D);
-    private double lastCommandedHeading;
 
     // DoubleSupplier objects need to be used, not double
     private final DoubleSupplier translationXSupplier;
