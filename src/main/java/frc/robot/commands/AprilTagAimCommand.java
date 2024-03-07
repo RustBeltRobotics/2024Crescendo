@@ -3,11 +3,9 @@ package frc.robot.commands;
 import static frc.robot.Constants.LL_NAME;
 
 import java.util.Map;
-import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.interpolation.Interpolator;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -17,7 +15,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.util.LimelightHelpers;
 
@@ -27,8 +24,6 @@ public class AprilTagAimCommand extends Command {
     private static double sightedTID;
     private static double targetTID;
     private static double targetTID2;
-    private static DoubleSupplier stickX;
-    private static DoubleSupplier stickY;
     private static boolean finished;
     private static boolean validTID;
 
@@ -39,8 +34,6 @@ public class AprilTagAimCommand extends Command {
     private static GenericEntry autoAimWorking;
     private static GenericEntry LLdistance;
 
-    private final Drivetrain drivetrain;
-
     private final static Interpolator<Double> doubleInterpolator = Interpolator.forDouble();
 
     private static Arm arm;
@@ -48,9 +41,7 @@ public class AprilTagAimCommand extends Command {
     private static PIDController steerPID = new PIDController(kP.getDouble(0.13), kI.getDouble(0.0),
             kD.getDouble(0.01));
 
-    public AprilTagAimCommand(Drivetrain drivetrain, PowerDistribution thePDH, Arm arm) {
-        addRequirements(drivetrain);
-        this.drivetrain = drivetrain;
+    public AprilTagAimCommand(PowerDistribution thePDH, Arm arm) {
         AprilTagAimCommand.arm = arm;
         AprilTagAimCommand.thePDH = thePDH;
         steerPID.enableContinuousInput(0.0, 360.0);
@@ -170,11 +161,6 @@ public class AprilTagAimCommand extends Command {
                 .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
                 .getEntry();
         LLdistance = Shuffleboard.getTab("Diag").add("distance", 0.0).getEntry();
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        drivetrain.drive(new ChassisSpeeds(stickX.getAsDouble(), stickY.getAsDouble(), 0));
     }
 
     @Override

@@ -127,7 +127,7 @@ public class RobotContainer {
         Intake.makeShuffleboard();
 
         // register commands with pathplanner
-        NamedCommands.registerCommand("AprilTagAim", new AprilTagAimCommand(drivetrain, thePDH, arm));
+        NamedCommands.registerCommand("AprilTagAim", new AprilTagAimCommand(thePDH, arm));
         NamedCommands.registerCommand("SpoolShooter", new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
         NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
         NamedCommands.registerCommand("FeedShooter", new InstantCommand(() -> Intake.feedShooter()));
@@ -154,7 +154,7 @@ public class RobotContainer {
                 () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
         // Automatically aims at speaker while the B button is held
-        new Trigger(driverController::getBButton).whileTrue(new AprilTagAimCommand(drivetrain, thePDH, arm));
+        new Trigger(driverController::getBButton).whileTrue(new AprilTagAimCommand(thePDH, arm));
 
         driverController.leftTrigger(triggerEventLoop).debounce(0.2).ifHigh(() -> drivetrain.setMoves("FL"));
         driverController.rightTrigger(triggerEventLoop).debounce(0.2).ifHigh(() -> drivetrain.setMoves("FR"));
