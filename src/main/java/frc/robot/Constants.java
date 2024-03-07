@@ -135,15 +135,16 @@ public final class Constants {
     public static final int PDH = 5;
 
     // Field
-    /** The height of the speaker opening, in cm.*/
+    /** The height of the speaker opening, in cm */
     public static final double SPEAKER_HEIGHT = 204.0;
 
     // Limelight/vision
     public static final String LL_NAME = "limelight";
+    /** FIXME: What is this? units? */
     public static final double LL_SPEED_LIMIT = 1.0; //0-1
-    //height of the LL sensor from the ground in cm  
+    /** height of the LL sensor from the ground in cm */
     public static final double LL_HEIGHT = 14.5;
-    // Angle of LL from horizontal in degrees  
+    /** Angle of LL from horizontal in degrees */
     public static final double LL_ANGLE = 30.;
 
     // Shooter
@@ -155,7 +156,9 @@ public final class Constants {
 
     // Arm
     // Angles of interest (Rotations)
+    /** Target angle for amp scoring, units of rotations, 0.5 is horizontal */
     public static final double AMP_POSITION = 0.75;
+    /** Target angle for ground pickup & lay-up, units of rotations, 0.5 is horizontal */
     public static final double GROUND_POSITION = 0.5; 
     // Calculated feedForward gains
     public static final double ARM_FF_kA = 0.04;

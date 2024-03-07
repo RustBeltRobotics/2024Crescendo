@@ -27,6 +27,12 @@ public class DefaultArmCommand extends Command {
      */
     @Override
     public void execute() {
+        // FIXME: This is ok-ish for now, but we will want to figure out why
+        // this command is being run, despite other commands calling for the arm
+        // subsystem. The fact that this behavior is occuring is indicative of a
+        // systemic issue, and I suspect it could be related to the abnormal behavior
+        // you're seeing around the autoaim command. We should be addressing the
+        // underlying issue, not putting a bandaid on the symptom.
         if (DriverStation.isTeleopEnabled()) {
             arm.rotate(rotationSupplier.getAsDouble());
         }

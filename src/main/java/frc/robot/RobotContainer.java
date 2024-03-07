@@ -58,19 +58,21 @@ public class RobotContainer {
     public static final Arm arm = new Arm();
     public static final Climber climber = new Climber();
     public static final Shooter shooter = new Shooter();
-    PowerDistribution thePDH = new PowerDistribution(PDH, ModuleType.kRev);
+    private final PowerDistribution thePDH = new PowerDistribution(PDH, ModuleType.kRev);
 
     // The drive team controllers are defined here
     public static final XboxController driverController = new XboxController(0);
     public static final XboxController operatorController = new XboxController(1);
-    POVButton d_dpadUpButton = new POVButton(driverController, 0);
-    POVButton d_dpadLeftButton = new POVButton(driverController, 270);
-    POVButton d_dpadRightButton = new POVButton(driverController, 90);
-    POVButton o_dpadUpButton = new POVButton(operatorController, 0);
-    POVButton o_dpadDownButton = new POVButton(operatorController, 180);
-    POVButton o_dpadLeftButton = new POVButton(operatorController, 270);
-    POVButton o_dpadRightButton = new POVButton(operatorController, 90);
-    // Limits maximum speed
+    private final POVButton d_dpadUpButton = new POVButton(driverController, 0);
+    private final POVButton d_dpadLeftButton = new POVButton(driverController, 270);
+    private final POVButton d_dpadRightButton = new POVButton(driverController, 90);
+    private final POVButton o_dpadUpButton = new POVButton(operatorController, 0);
+    private final POVButton o_dpadDownButton = new POVButton(operatorController, 180);
+    private final POVButton o_dpadLeftButton = new POVButton(operatorController, 270);
+    private final POVButton o_dpadRightButton = new POVButton(operatorController, 90);
+    
+    /** Limits maximum speed of the drive base, units are 0-1 */
+    // TODO: Lets see if Andrzej is using this. if not, we should consider removing it.
     private double maxSpeedFactor = .2;
 
     private ShuffleboardTab comp = Shuffleboard.getTab("Competition");
@@ -89,6 +91,7 @@ public class RobotContainer {
 
     public static SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
+    /** FIXME: units? */
     SlewRateLimiter driveSlewRateLimiter = new SlewRateLimiter(0.5);
     //SlewRateLimiter rotationSlewRateLimiter = new SlewRateLimiter(0.5);
 
@@ -96,17 +99,18 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        // Set up the default command for the drivetrain
-        // The controls are for field-oriented driving
-        // Left stick Y axis -> forward and backwards movement
-        // Left stick X axis -> left and right movement
-        // Right stick X axis -> rotation
+        //  Set up the default command for the drivetrain
+        //  The controls are for field-oriented driving
+        //  Left stick Y axis -> forward and backwards movement
+        //  Left stick X axis -> left and right movement
+        //  Right stick X axis -> rotation
         // TODO: depending on driver feedback, we may want to consider different
         // maxSpeedFactors for translation vs rotation
         // TODO: depending on driver feedback, we may want to consider different methods
         // of modifiy axis. Steeper ramp, shallower ramp, larger or smaller deadband,
         // etc.
-        drivetrain.setDefaultCommand(new FieldOrientedDriveCommand(drivetrain,
+        drivetrain.setDefaultCommand(new FieldOrientedDriveCommand(
+                drivetrain,
                 () -> 
                 //driveSlewRateLimiter.calculate(
                     -modifyAxisGeneric(driverController.getLeftY(), 1.0, 0.05) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
@@ -115,12 +119,20 @@ public class RobotContainer {
                     -modifyAxisGeneric(driverController.getLeftX(), 1.0, 0.05)* MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxisGeneric(driverController.getRightX(), 1.0, 0.05) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
         
+        // Set up the default command for the intake
+        // Right trigger -> intake
+        // Left trigger -> outtake
         intake.setDefaultCommand(new DefaultIntakeCommand(intake,
                 () -> operatorController.getRightTriggerAxis(),
                 () -> operatorController.getLeftTriggerAxis()));
 
+        // Set up the default command for the intake
+        // Left stick up -> arm up
+        // Left stick down -> arm down
         arm.setDefaultCommand(new DefaultArmCommand(arm, () -> -operatorController.getLeftY()));
 
+        // Set up the default command for the climber
+        // Right stick up -> climb
         climber.setDefaultCommand(new DefaultClimbCommand(climber, () -> operatorController.getRightY()));
 
         AprilTagAimCommand.makeShuffleboard();
@@ -145,25 +157,35 @@ public class RobotContainer {
         // Pressing Y button locks the wheels in an X pattern
         new Trigger(driverController::getYButton).onTrue(new InstantCommand(() -> drivetrain.toggleWheelsLocked()));
         // Pressing Right Bumper sets the speed limit to the value on the Right Trigger
-        new Trigger(driverController::getRightBumper).whileTrue(new RunCommand(() -> speedThrottle()));
+        // TODO: Lets see if Andrzej is using this. if not, we should consider removing it.
+        new Trigger(driverController::getRightBumper).whileTrue(new RunCommand(() -> speedThrottle())); 
         // Pressing the Left Bumper shifts to low speed
+        // TODO: Lets see if Andrzej is using this. if not, we should consider removing it.
         new Trigger(driverController::getLeftBumper).onTrue(new InstantCommand(() -> speedDown()));
         // Pressing the X Button toggles between robot oriented and field oriented
+        // TODO: Lets see if Andrzej is using this. if not, we should consider removing it.
         new Trigger(driverController::getXButton).toggleOnTrue(new RobotOrientedDriveCommand(drivetrain,
                 () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
         // Automatically aims at speaker while the B button is held
         new Trigger(driverController::getBButton).whileTrue(new AprilTagAimCommand(thePDH, arm));
-
+        // FIXME: Provide description
+        // TODO: Lets see if Andrzej is using this. if not, we should consider removing it.
         driverController.leftTrigger(triggerEventLoop).debounce(0.2).ifHigh(() -> drivetrain.setMoves("FL"));
+        // FIXME: Provide description
+        // TODO: Lets see if Andrzej is using this. if not, we should consider removing it.
         driverController.rightTrigger(triggerEventLoop).debounce(0.2).ifHigh(() -> drivetrain.setMoves("FR"));
+        // FIXME: Provide description
+        // TODO: Lets see if Andrzej is using this. if not, we should consider removing it.
         driverController.rightTrigger(triggerEventLoop).debounce(0.2).and(driverController.leftTrigger(triggerEventLoop).debounce(0.2)).ifHigh(() -> drivetrain.setMoves("default"));
-        // Pressing the Y Button rotates the arm to the amp pose
+        
+        // Operator Controller Bindings
+        // Pressing and holding the Y Button rotates the arm to the amp pose
         new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));        
         // Pressing the X Button initiates ground intake of a game piece
         new Trigger(operatorController::getXButton).onTrue(new GroundPickUpCommand());
-        // Pressing the A Button rotates the arm to the ground pose
+        // Pressing and holding the A Button rotates the arm to the ground pose
         new Trigger(operatorController::getAButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.groundPose())));
         // B button for auto aim shooter
         new Trigger(operatorController::getBButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
@@ -197,9 +219,7 @@ public class RobotContainer {
         return autoChooser.getSelected();
     }
 
-    // TODO: lets work with you and Andrzej on Thursday or Saturday to test out a
-    // couple different throttle methods, and pick which one you guys like best,
-    // that way we can clean these next four methods up a bit
+    // TODO: Lets see if Andrzej is using this. if not, we should consider removing it.
     public void speedThrottle() {
         if (driverController.getRightTriggerAxis() != 0) {
             maxSpeedFactor = driverController.getRightTriggerAxis();
@@ -208,22 +228,30 @@ public class RobotContainer {
         }
     }
 
+    // TODO: Lets see if Andrzej is using this. if not, we should consider removing it.
     public void speedMax() {
         maxSpeedFactor = 1;
         speedometer.setValue(maxSpeedFactor);
     }
 
+    // TODO: Lets see if Andrzej is using this. if not, we should consider removing it.
     public void speedUp() {
         speedometer.setValue(maxSpeedFactor);
     }
 
+    // TODO: Lets see if Andrzej is using this. if not, we should consider removing it.
     public void speedDown() {
         maxSpeedFactor -= .1;
         maxSpeedFactor = MathUtil.clamp(maxSpeedFactor, .1, 1.);
         speedometer.setValue(maxSpeedFactor);
     }
-    public static void pollEventLoop() { triggerEventLoop.poll(); }
 
+    /** FIXME: provide description */
+    public static void pollEventLoop() {
+        triggerEventLoop.poll();
+    }
+
+    /** FIXME: provide description */
     public void rumble() {
         if(Intake.getSwitch()) {
             operatorController.setRumble(RumbleType.kLeftRumble, .5); 
@@ -237,6 +265,8 @@ public class RobotContainer {
             driverController.setRumble(RumbleType.kRightRumble, 0.0);
         }
     }
+
+    /** FIXME: provide description */
     public void rumble(String set){
         if (set.equals("stop")){
             operatorController.setRumble(RumbleType.kLeftRumble, 0.0); 

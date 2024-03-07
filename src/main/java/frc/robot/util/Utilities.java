@@ -40,8 +40,10 @@ public class Utilities {
         value = Math.copySign(Math.pow(Math.abs(value), power), value);
         return value;
     }
+
     /*
      * I didnt write this and i dont remember what it does
+     * FIXME: if you don't know what it does, is it even still necessary?
      */
     public static double reboundValue(double value, double anchor){
         double lowerBound = anchor - 180;

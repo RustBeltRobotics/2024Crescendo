@@ -23,7 +23,6 @@ public class Intake extends SubsystemBase{
     private static DigitalInput noteSwitch = new DigitalInput(1);
     static GenericEntry limitSwitch;
 
-
     public Intake() {
         floorMotor.restoreFactoryDefaults();
         floorMotor.setIdleMode(IdleMode.kCoast);
@@ -38,36 +37,43 @@ public class Intake extends SubsystemBase{
         intakeMotor.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
     }
     
+    /** FIXME: Provide a description. What are the units of speed? */
     public void runBothIntakes(double speed) {
         floorMotor.set(speed);
         intakeMotor.set(speed);
     }
 
+    /** FIXME: Provide a description.*/
     public static void stopBothIntakes() {
         floorMotor.set(0.);
         intakeMotor.set(0.);
     }
 
-    public static void runArmIntake(double speed) {
+     /** FIXME: Provide a description. What are the units of speed? */
+   public static void runArmIntake(double speed) {
         intakeMotor.set(speed);
     }
 
+    /** FIXME: Provide a description.*/
     public static void stopArmIntake() {
         intakeMotor.set(0);
     }
 
+    /** FIXME: Provide a description. What are the units of speed? */
     public void runFloorIntakes(double speed) {
-
         floorMotor.set(speed);
     }
-    //runs the intake for 2 seconds in order to feed note into the shooter
+
+    // runs the intake for 2 seconds in order to feed note into the shooter
+    /** FIXME: this descripion doesn't match the code */
     public static void feedShooter() {
-        while (getSwitch()) {
+        while (getSwitch()) { // FIXME: I suspect this while loop could be contributing to your loop overruns
             runArmIntake(0.5);
         }
         stopArmIntake();
     }
 
+    /** FIXME: Provide a description. What does true mean? what does false mean? */
     public static boolean getSwitch() {
         //limitSwitch.setBoolean(!noteSwitch.get());
         return !noteSwitch.get(); // Switch is currently wired as normally open, the rio returns high when the pins are open.
@@ -81,6 +87,7 @@ public class Intake extends SubsystemBase{
                 .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
                 .getEntry();
     }
+    /** FIXME: provide a description */
     public static void autoShoot() {
         if (AprilTagAimCommand.rotationTargetMet() && AprilTagAimCommand.armAngleTargetMet()) {
             feedShooter();

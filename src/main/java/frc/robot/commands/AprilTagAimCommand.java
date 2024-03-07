@@ -19,12 +19,19 @@ import frc.robot.subsystems.Intake;
 import frc.robot.util.LimelightHelpers;
 
 public class AprilTagAimCommand extends Command {
+    /** FIXME: Provide a descritpion */
     private static double tx;
+    /** FIXME: Provide a descritpion */
     private static double ty;
+    /** FIXME: Provide a descritpion */
     private static double sightedTID;
+    /** FIXME: Provide a descritpion */
     private static double targetTID;
+    /** FIXME: Provide a descritpion */
     private static double targetTID2;
+    /** FIXME: Provide a descritpion */
     private static boolean finished;
+    /** FIXME: Provide a descritpion */
     private static boolean validTID;
 
     private static GenericEntry kP;
@@ -44,8 +51,10 @@ public class AprilTagAimCommand extends Command {
     public AprilTagAimCommand(PowerDistribution thePDH, Arm arm) {
         AprilTagAimCommand.arm = arm;
         AprilTagAimCommand.thePDH = thePDH;
-        steerPID.enableContinuousInput(0.0, 360.0);
+        steerPID.enableContinuousInput(0.0, 360.0); // FIXME: This wrapping is different from your gyro wrapping. Is that intentional?
+        steerPID.setPID(kP.getDouble(0.13), kI.getDouble(0.0), kD.getDouble(0.01));
         thePDH.setSwitchableChannel(false);
+
     }
 
     @Override
@@ -55,8 +64,6 @@ public class AprilTagAimCommand extends Command {
 
     @Override
     public void execute() {
-        // Get PID gains from shuffleboard and apply them.
-        steerPID.setPID(kP.getDouble(0.13), kI.getDouble(0.0), kD.getDouble(0.01));
         // Grab the ID of the primary tag from LimeLight.
         sightedTID = LimelightHelpers.getFiducialID(LL_NAME);
 
@@ -78,16 +85,17 @@ public class AprilTagAimCommand extends Command {
             autoAimWorking.setBoolean(true);
             LLdistance.setDouble(getTagDistance());
 
+            // FIXME: Why is this only run in auto
             if (DriverStation.isAutonomous()) {
                 arm.autoAim();
                 // Auto shoot
+                // FIXME: Is this not the same code as Intake.autoShoot()??
                 if (rotationTargetMet() && armAngleTargetMet()) {
                     System.out.println("aim successful");
                     Intake.feedShooter();
                     finished = true;
                 }
             }
-
         } else {
             // Let the gang know that the thing is blind
             autoAimWorking.setBoolean(false);
@@ -95,26 +103,34 @@ public class AprilTagAimCommand extends Command {
         }
     }
 
-    // Function to let the other subsystems know weather to use outputs or not.
+    // Function to let the other subsystems know whether to use outputs or not.
     public final static boolean getTargetGood() {
         return validTID;
     }
 
+    /** FIXME: provide a description, what are the units?? */
     public static double rotationCalculate() {
         tx = LimelightHelpers.getTX(LL_NAME);
         ty = LimelightHelpers.getTY(LL_NAME);
         return steerPID.calculate(tx);
     }
 
+    /** FIXME: provide a description, what are the units?? */
     public static double armAngleCalculate() {
         return doubleInterpolator.interpolate(
+                /**
+                 * TODO: I doubt our desired angle vs distance from target is a linear function,
+                 * so we will eventually want to gather additional data points
+                 */
                 0.5,
                 0.568783,
                 MathUtil.inverseInterpolate(150, 516, getTagDistance()));
     }
 
-    // Straight line distance between camera sensor and tag across the XY plane in
-    // centimeters
+    /**
+     * @return Straight line distance between camera sensor and tag across the XY
+     *         plane in centimeters
+     */
     public static double getTagDistance() {
         return (Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan((Constants.LL_ANGLE + ty) * Math.PI / 180);
     }
@@ -124,8 +140,7 @@ public class AprilTagAimCommand extends Command {
         return (arm.getAngle() < armAngleCalculate() + 0.02 && arm.getAngle() > armAngleCalculate() - 0.02);
     }
 
-    // Determine if we are considered within margin for a note to go into the
-    // speaker
+    /** Determine if we are considered within margin for a note to go into the speaker */
     public static boolean rotationTargetMet() {
         if ((tx < 3.0 && tx > -3.0)) {
             shotTheashold.setBoolean(true);

@@ -79,9 +79,13 @@ public class Climber extends SubsystemBase {
         climber1PidController.setOutputRange(kMinOutput.getDouble(-1), kMaxOutput.getDouble(1));
         climber1PidController.setPositionPIDWrappingEnabled(true);
     }
+
+    /** FIXME: Provide description. what are the units of speed? */
     public void climb(double speed){
         climber1PidController.setReference(speed, ControlType.kDutyCycle);
     }
+
+    /** FIXME: Provide description. */
     public void stop(){
         climber1PidController.setReference(0, ControlType.kVelocity);
     }

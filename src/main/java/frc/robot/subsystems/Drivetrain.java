@@ -214,13 +214,15 @@ public class Drivetrain extends SubsystemBase {
     }
 
     /**
-     * Sets the gyroscope angle to zero. This can be used to set the direction the
-     * robot is currently facing to the 'forwards' direction.
+     * Sets the gyroOffset to the current gyroscope angle, effectively zeroing the
+     * gyroscope. This can be used to set the direction the robot is currently
+     * facing to the 'forwards' direction.
      */
     public void zeroGyroscope() {
         gyroOffset = -getGyroscopeAngle(); //we were calling the getgyrosocpe function shich was also negated
     }
 
+    /** FIXME: provide a description, what are the units? */
     public double getGyroOffset() {
         return gyroOffset;
     }
@@ -233,11 +235,15 @@ public class Drivetrain extends SubsystemBase {
         wheelsLocked = !wheelsLocked;
     }
 
+    /**
+     * @return The current angle of the gyroscope, in degrees, -180 to 180. 0
+     *         degrees is forward, and counterclockwise is positive
+     */
     public double getGyroscopeAngle() {
-        return -navx.getYaw(); // -180 to 180, 0 degres is forward, ccw is +
+        return -navx.getYaw();
     }
 
-    // Returns the measurment of the gyroscope yaw. Used for field-relative drive
+    /** Returns the measurment of the gyroscope yaw. Used for field-relative drive */
     public Rotation2d getGyroscopeRotation() {
         return Rotation2d.fromDegrees(getGyroscopeAngle());
     }
@@ -283,6 +289,7 @@ public class Drivetrain extends SubsystemBase {
         backRightModule.setState(states[3]);
     }
 
+    // TODO: Lets see if Andrzej is using this. if not, we should consider removing it.
     /**
      * Decide where the center of rotation is going to be based on function call (we got the moves)
      **/
@@ -299,8 +306,14 @@ public class Drivetrain extends SubsystemBase {
     public void drive(ChassisSpeeds chassisSpeeds) {
         this.chassisSpeeds = chassisSpeeds;
     }
+
     // drives the robot, using limelight aim data if applicable
     public void autoDrive(ChassisSpeeds chassisSpeeds) {
+        // FIXME: Commands aren't really intended to have public methods that you're
+        // calling, static or otherwise. I'm wondering if this is causing some of the
+        // abnormal behavior you're seeing. To be honest, with how much stuff we're
+        // doing with vision, its really getting to the point where it makes sense to
+        // have a Vision subsystem class to handle most of this.
         if (AprilTagAimCommand.getTargetGood()) {
             this.chassisSpeeds = new ChassisSpeeds(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond, AprilTagAimCommand.rotationCalculate());
         } else { 
@@ -341,7 +354,7 @@ public class Drivetrain extends SubsystemBase {
         if (visionPose2d.getX() != 0.0 && poseDifference < 0.5) {
             poseEstimator.addVisionMeasurement(visionPose2d, poseReadingTimestamp);
         }
-
+        // TODO: Lets see if Andrzej is using this. if not, we should consider removing it.
         handleMoves();
 
         handleLocked();
@@ -351,6 +364,7 @@ public class Drivetrain extends SubsystemBase {
         updateTelemetry();
     }
 
+    // TODO: Lets see if Andrzej is using this. if not, we should consider removing it.
     private void handleMoves() {
         switch (theMove){
             case "FL":

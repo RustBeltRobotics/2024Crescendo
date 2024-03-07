@@ -33,9 +33,11 @@ public class Arm extends SubsystemBase {
     private static final CANSparkMax armMotor1 = new CANSparkMax(LEFT_ROTATE, MotorType.kBrushless);;
     private static final CANSparkMax armMotor2 = new CANSparkMax(RIGHT_ROTATE, MotorType.kBrushless);;
     
+    /** FIXME: What is "bigEncoder"??? */
     private static final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(2);
     //private static final Encoder medEncoder = new Encoder(2, 3);
 
+    /** FIXME: provide discription/units */
     private double medOffset;
 
     private static ShuffleboardTab diag = Shuffleboard.getTab("Diag");
@@ -56,7 +58,7 @@ public class Arm extends SubsystemBase {
             .getEntry();
     
     public Arm() {
-        anglePID = new PIDController(60, 10, 2);
+        anglePID = new PIDController(60, 10, 2); // FIXME: move to constants folder
         angleFF = new ArmFeedforward(ARM_FF_kS, ARM_FF_kG, ARM_FF_kV, ARM_FF_kA);
         
         // set motor things
@@ -74,50 +76,65 @@ public class Arm extends SubsystemBase {
 
         armMotor2.follow(armMotor1, true);
     }
+
     @Override
     public void periodic() {
         //anglePID.setPID(akP.getDouble(0), akI.getDouble(0), akD.getDouble(0));
         updateshuffle();
+        //FIXME: why is this needed?
         if (DriverStation.isTestEnabled()) {
             setAngle(anglesetpoint.getDouble(0.5));
         }
     }
+
+    /** FIXME: Provide description. What are the units & orientation of angle?? */
     public void setAngle(double angle) {
         System.out.println("setangle, " + angle);
         armMotor1.setVoltage(
-            angleFF.calculate((bigEncoder.get()*2*Math.PI), 0) + //TODO: check on this
+            angleFF.calculate((bigEncoder.get() * 2. * Math.PI), 0.) + // FIXME: This should be using your target angle (the angle you're inputting to the method), not your current angle.
             anglePID.calculate(bigEncoder.get(), angle)
         );
     }
+
+    /** FIXME: Provide description What are the units & orientation of the return value? */
     public double getAngle() {
         //return medEncoder.getDistance()+medOffset;
         return bigEncoder.getAbsolutePosition();
     }
 
+    /** FIXME: Provide description. What are the units & orientation of speed?? */
     public void rotate(double speed) {
-        armMotor1.setVoltage(speed*6);
+        armMotor1.setVoltage(speed*6); // FIXME: What is the 6 for??
         System.out.println("rotate, " + speed);
     }
 
+    /** FIXME: Provide description. */
     public void ampPose() {
         setAngle(Constants.AMP_POSITION);
     }
 
+    /** FIXME: Provide description. */
     public void groundPose() {
         setAngle(Constants.GROUND_POSITION);
     }
 
+    /** FIXME: Provide description. */
     public void stop() {
         armMotor1.setVoltage(0);
         System.out.println("stop");
     }
+
+    /** FIXME: Provide description. */
     public void zeroBigEncoder() {
         bigEncoder.reset();
     }
+
     public void updateshuffle(){
         bigEncoderEntry.setDouble(bigEncoder.getAbsolutePosition());
         //medEncoderEntry.setDouble(medEncoder.getDistance()+medOffset);
     }
+
+    /** FIXME: Provide description. */
     public void autoAim(){
         if (AprilTagAimCommand.getTargetGood()){
             //setAngle(AprilTagAimCommand.armAngleCalculate()); //TODO: rember

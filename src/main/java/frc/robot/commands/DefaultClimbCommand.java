@@ -27,6 +27,11 @@ public class DefaultClimbCommand extends Command {
     @Override
     public void execute() {
         // dont always command zero so other commands can use the intake
+        // FIXME: This is ok-ish for now, but long term, we will want to figure out why
+        // this command is being run, despite other commands calling for the intake
+        // subsystem. The fact that this behavior is occuring is indicative of a
+        // systemic issue, and we should be addressing that, not putting a bandaid on
+        // the symptom.
         if (!DriverStation.isAutonomous()){
             climber.climb(speedSupplier.getAsDouble());
         }
