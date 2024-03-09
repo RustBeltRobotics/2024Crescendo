@@ -398,6 +398,15 @@ public class Drivetrain extends SubsystemBase {
         // FRA.setDouble(frontRightModule.getAbsolutePosition());
         // BLA.setDouble(backLeftModule.getAbsolutePosition());
         // BRA.setDouble(backRightModule.getAbsolutePosition());
+        // FLA.setDouble(states[0].angle.getDegrees());
+        // FRA.setDouble(states[1].angle.getDegrees());
+        // BLA.setDouble(states[2].angle.getDegrees());
+        // BRA.setDouble(states[3].angle.getDegrees());
+        // FLV.setDouble(frontLeftModule.getSteerPosition());
+        // FRV.setDouble(frontRightModule.getSteerPosition());
+        // BLV.setDouble(backLeftModule.getSteerPosition());
+        // BRV.setDouble(backRightModule.getSteerPosition());
+        // Gyro.setDouble(getGyroscopeAngle()+getGyroOffset());
         FLA.setDouble(states[0].speedMetersPerSecond);
         FRA.setDouble(states[1].speedMetersPerSecond);
         BLA.setDouble(states[2].speedMetersPerSecond);
@@ -407,6 +416,7 @@ public class Drivetrain extends SubsystemBase {
         BLV.setDouble(backLeftModule.getDriveVelocity());
         BRV.setDouble(backRightModule.getDriveVelocity());
         Gyro.setDouble(getGyroscopeAngle()+getGyroOffset());
+
         // SmartDashboard.putNumber("navx angle", navx.getAngle());
         // SmartDashboard.putNumber("navx yaw", navx.getYaw());
         // SmartDashboard.putNumber("displacement X", navx.getDisplacementX());

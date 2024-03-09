@@ -13,7 +13,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,6 +48,17 @@ public class Shooter extends SubsystemBase {
     private static GenericEntry kMinOutput =
         pidvals.add("shkMinOutput", -1.)
         .getEntry();
+    private static GenericEntry velocitySetpoint =
+        pidvals.add("Velocity Setpoint", 0)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .getEntry();
+
+    @Override
+    public void periodic() {
+        if (DriverStation.isTestEnabled()) {
+            spool(velocitySetpoint.getDouble(0));
+        }
+    }
 
     public Shooter(){
         shooterMotor1 = new CANSparkMax(LEFT_SHOOTER, MotorType.kBrushless);

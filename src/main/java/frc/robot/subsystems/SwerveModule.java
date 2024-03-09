@@ -41,7 +41,9 @@ public class SwerveModule extends SubsystemBase{
             .getEntry();
     private static GenericEntry kD = pidvals.add("skD", 0.0)
             .getEntry();
-    private static GenericEntry drive_kFF = pidvals.add("sdrive_kFF", 0.000015)
+    private static GenericEntry kIz = pidvals.add("skIz", 0.0)
+            .getEntry();
+    private static GenericEntry drive_kFF = pidvals.add("sdrive_kFF", 0.0)
             .getEntry();
     private static GenericEntry kMaxOutput = pidvals.add("skMaxOutput", 1.)
             .getEntry();
@@ -96,12 +98,12 @@ public class SwerveModule extends SubsystemBase{
     
     public void updatePIDs(){
         // set PID coefficients (drive)
-        drivePidController.setP(kP.getDouble(7e-5));
-        drivePidController.setI(kI.getDouble(0.));
-        drivePidController.setD(kD.getDouble(0.));
-        drivePidController.setIZone(0.);
-        drivePidController.setFF(drive_kFF.getDouble(0.));
-        drivePidController.setOutputRange(kMinOutput.getDouble(-1.), kMaxOutput.getDouble(1.));
+        drivePidController.setP(kP.getDouble(.7));
+        drivePidController.setI(kI.getDouble(0));
+        drivePidController.setD(kD.getDouble(0.005));
+        drivePidController.setFF(drive_kFF.getDouble(.22));
+        drivePidController.setIZone(kIz.getDouble(0.0));
+        //drivePidController.setOutputRange(kMinOutput.getDouble(-1.), kMaxOutput.getDouble(1.));
         drivePidController.setPositionPIDWrappingEnabled(false);
 
         // set PID coefficients (steer)
@@ -180,7 +182,7 @@ public class SwerveModule extends SubsystemBase{
             return;
         }
         state = SwerveModuleState.optimize(state, getState().angle);
-        drivePidController.setReference(state.speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND, CANSparkMax.ControlType.kDutyCycle);
+        drivePidController.setReference(state.speedMetersPerSecond, CANSparkMax.ControlType.kVelocity);
         setSteerAngle(state.angle.getDegrees());
     }
 

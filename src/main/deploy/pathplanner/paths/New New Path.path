@@ -3,61 +3,55 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7431474433261366,
-        "y": 4.344117039238543
+        "x": 1.3669778658364657,
+        "y": 5.529043807514221
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.7417314471905726,
-        "y": 4.344982370210277
+        "x": 2.366977865836466,
+        "y": 5.529043807514221
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.666714055526325,
-        "y": 4.100164221533801
+        "x": 2.7977722669894884,
+        "y": 5.529043807514221
       },
       "prevControl": {
-        "x": 2.6648298512848663,
-        "y": 4.100107798071511
+        "x": 1.7977722669894884,
+        "y": 5.529043807514221
       },
       "nextControl": {
-        "x": 2.8103227881834822,
-        "y": 4.104464658680315
+        "x": 3.7977722669894884,
+        "y": 5.529043807514221
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.3409413573414304,
-        "y": 5.506684771970462
+        "x": 1.3669778658364657,
+        "y": 5.529043807514221
       },
       "prevControl": {
-        "x": 2.6052121734404015,
-        "y": 4.850402949085715
+        "x": 1.4093055795056546,
+        "y": 5.3274447403252605
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "test"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.55,
+      "waypointRelativePos": 0,
       "command": {
-        "type": "parallel",
+        "type": "sequential",
         "data": {
           "commands": [
             {
@@ -72,15 +66,32 @@
     },
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 2.0,
+      "waypointRelativePos": 1.85,
       "command": {
-        "type": "parallel",
+        "type": "sequential",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
                 "name": "FeedShooter"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 2,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "GroundPickUp"
               }
             }
           ]
@@ -101,6 +112,9 @@
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
   "useDefaultConstraints": true
 }

@@ -70,7 +70,7 @@ public final class Constants {
      * measure of how fast the robot can move linearly. Calculated using the
      * emprical free speed velocity of a NEO.
      */
-    public static final double MAX_VELOCITY_METERS_PER_SECOND = 5676. * DRIVE_VELOCITY_CONVERSION;
+    public static final double MAX_VELOCITY_METERS_PER_SECOND = 4.089;
 
     /**
      * The maximum angular velocity of the robot in radians per second. This is a
@@ -133,7 +133,10 @@ public final class Constants {
     public static final int RIGHT_SHOOTER = 24;
     public static final int LEFT_SHOOTER = 25;
     public static final int PDH = 5;
-
+        // mass in ibs
+    public static final int MASS = 145;
+public static final double WIDTH = 24;
+public static final double LENGTH = 29.5;
     // Field
     /** The height of the speaker opening, in cm.*/
     public static final double SPEAKER_HEIGHT = 204.0;

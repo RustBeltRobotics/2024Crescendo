@@ -3,59 +3,53 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7431474433261366,
-        "y": 4.344117039238543
+        "x": 1.3809522630513151,
+        "y": 5.539156858130229
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.7417314471905726,
-        "y": 4.344982370210277
+        "x": 2.3809522630513156,
+        "y": 5.539156858130229
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.666714055526325,
-        "y": 4.100164221533801
+        "x": 8.042437091181522,
+        "y": 7.477736724395467
       },
       "prevControl": {
-        "x": 2.6648298512848663,
-        "y": 4.100107798071511
+        "x": 7.042437091181522,
+        "y": 7.477736724395467
       },
       "nextControl": {
-        "x": 2.8103227881834822,
-        "y": 4.104464658680315
+        "x": 9.042437091181522,
+        "y": 7.477736724395467
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.3409413573414304,
-        "y": 5.506684771970462
+        "x": 1.4023551556277425,
+        "y": 5.545261463229348
       },
       "prevControl": {
-        "x": 2.6052121734404015,
-        "y": 4.850402949085715
+        "x": 5.222396123404632,
+        "y": 6.511499093812407
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.55,
+      "waypointRelativePos": 0.8,
       "command": {
         "type": "parallel",
         "data": {
@@ -64,23 +58,6 @@
               "type": "named",
               "data": {
                 "name": "GroundPickUp"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 2.0,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "FeedShooter"
               }
             }
           ]
@@ -101,6 +78,9 @@
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
   "useDefaultConstraints": true
 }

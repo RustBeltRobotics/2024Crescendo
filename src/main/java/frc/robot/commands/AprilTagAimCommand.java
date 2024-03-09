@@ -3,8 +3,10 @@ package frc.robot.commands;
 import static frc.robot.Constants.LL_NAME;
 
 import java.util.Map;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -24,6 +26,7 @@ public class AprilTagAimCommand extends Command {
     private static double sightedTID;
     private static double targetTID;
     private static double targetTID2;
+    private static double armTarget;
     private static boolean finished;
     private static boolean validTID;
 
@@ -38,25 +41,27 @@ public class AprilTagAimCommand extends Command {
 
     private static Arm arm;
     private static PowerDistribution thePDH;
-    private static PIDController steerPID = new PIDController(kP.getDouble(0.13), kI.getDouble(0.0),
-            kD.getDouble(0.01));
+    private static PIDController steerPID;
+    private static SimpleMotorFeedforward steerFF;
 
     public AprilTagAimCommand(PowerDistribution thePDH, Arm arm) {
         AprilTagAimCommand.arm = arm;
         AprilTagAimCommand.thePDH = thePDH;
-        steerPID.enableContinuousInput(0.0, 360.0);
         thePDH.setSwitchableChannel(false);
     }
 
     @Override
     public void initialize() {
         finished = false;
+        steerPID = new PIDController(0.7, 0.0, 0.01);
+        steerPID.enableContinuousInput(0.0, 360.0);
+        steerFF = new SimpleMotorFeedforward(0.000001, 0.00001, 0.0000001);
     }
 
     @Override
     public void execute() {
         // Get PID gains from shuffleboard and apply them.
-        steerPID.setPID(kP.getDouble(0.13), kI.getDouble(0.0), kD.getDouble(0.01));
+        steerPID.setPID(kP.getDouble(0.7), kI.getDouble(0.0), kD.getDouble(0.01));
         // Grab the ID of the primary tag from LimeLight.
         sightedTID = LimelightHelpers.getFiducialID(LL_NAME);
 
@@ -97,43 +102,49 @@ public class AprilTagAimCommand extends Command {
 
     // Function to let the other subsystems know weather to use outputs or not.
     public final static boolean getTargetGood() {
-        return validTID;
+        if (LimelightHelpers.getFiducialID(LL_NAME) == targetTID || LimelightHelpers.getFiducialID(LL_NAME) == targetTID2) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static double rotationCalculate() {
         tx = LimelightHelpers.getTX(LL_NAME);
         ty = LimelightHelpers.getTY(LL_NAME);
-        return steerPID.calculate(tx);
+        return steerPID.calculate(tx) - steerFF.calculate(tx);
     }
 
     public static double armAngleCalculate() {
-        return doubleInterpolator.interpolate(
+        armTarget = doubleInterpolator.interpolate(
                 0.5,
                 0.568783,
                 MathUtil.inverseInterpolate(150, 516, getTagDistance()));
+        return armTarget;
     }
 
     // Straight line distance between camera sensor and tag across the XY plane in
     // centimeters
     public static double getTagDistance() {
+        ty = LimelightHelpers.getTY(LL_NAME);
         return (Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan((Constants.LL_ANGLE + ty) * Math.PI / 180);
     }
 
     // Are we there yet?
     public static boolean armAngleTargetMet() {
-        return (arm.getAngle() < armAngleCalculate() + 0.02 && arm.getAngle() > armAngleCalculate() - 0.02);
+        return (arm.getAngle() < armTarget + 0.02 && arm.getAngle() > armTarget - 0.02);
     }
 
     // Determine if we are considered within margin for a note to go into the
     // speaker
     public static boolean rotationTargetMet() {
         if ((tx < 3.0 && tx > -3.0)) {
-            shotTheashold.setBoolean(true);
-            thePDH.setSwitchableChannel(true);
+            //shotTheashold.setBoolean(true);
+            //thePDH.setSwitchableChannel(true);
             return true;
         } else {
-            shotTheashold.setBoolean(false);
-            thePDH.setSwitchableChannel(false);
+            //shotTheashold.setBoolean(false);
+            //thePDH.setSwitchableChannel(false);
             return false;
         }
     }
@@ -142,11 +153,17 @@ public class AprilTagAimCommand extends Command {
         ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
                 .getLayout("LL Aim", BuiltInLayouts.kList)
                 .withSize(2, 2);
-        kP = pidvals.add("kP", 0.13)
+        kP = pidvals.add("kP", 0.05)
                 .getEntry();
-        kI = pidvals.add("kI", 0.0)
+        kI = pidvals.add("kI", 0.1)
                 .getEntry();
-        kD = pidvals.add("kD", 0.0)
+        kD = pidvals.add("kD", 0.01)
+                .getEntry();
+        kP = pidvals.add("kV", 0.05)
+                .getEntry();
+        kI = pidvals.add("kS", 0.1)
+                .getEntry();
+        kD = pidvals.add("kA", 0.01)
                 .getEntry();
         shotTheashold = Shuffleboard.getTab("Competition")
                 .add("shot threashold", false)
@@ -161,6 +178,10 @@ public class AprilTagAimCommand extends Command {
                 .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
                 .getEntry();
         LLdistance = Shuffleboard.getTab("Diag").add("distance", 0.0).getEntry();
+    }
+    @Override
+    public void end(boolean interrupted) {
+        validTID = false;
     }
 
     @Override

@@ -113,7 +113,8 @@ public class RobotContainer {
                 () ->
                  //driveSlewRateLimiter.calculate(
                     -modifyAxisGeneric(driverController.getLeftX(), 1.0, 0.05)* MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxisGeneric(driverController.getRightX(), 1.0, 0.05) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
+                () -> -modifyAxisGeneric(driverController.getRightX(), 1.0, 0.05) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor, 
+                () -> driverController.getBButton()));
         
         intake.setDefaultCommand(new DefaultIntakeCommand(intake,
                 () -> operatorController.getRightTriggerAxis(),
@@ -156,9 +157,16 @@ public class RobotContainer {
         // Automatically aims at speaker while the B button is held
         new Trigger(driverController::getBButton).whileTrue(new AprilTagAimCommand(thePDH, arm));
 
-        driverController.leftTrigger(triggerEventLoop).debounce(0.2).ifHigh(() -> drivetrain.setMoves("FL"));
-        driverController.rightTrigger(triggerEventLoop).debounce(0.2).ifHigh(() -> drivetrain.setMoves("FR"));
-        driverController.rightTrigger(triggerEventLoop).debounce(0.2).and(driverController.leftTrigger(triggerEventLoop).debounce(0.2)).ifHigh(() -> drivetrain.setMoves("default"));
+        new Trigger(driverController.leftTrigger(triggerEventLoop).debounce(0.02)).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));
+        new Trigger(driverController.rightTrigger(triggerEventLoop).debounce(0.02)).onTrue(new InstantCommand(() -> drivetrain.setMoves("FR"))); 
+        new Trigger(driverController.rightTrigger(triggerEventLoop).debounce(0.02)).negate().and(
+                    driverController.leftTrigger(triggerEventLoop).debounce(0.02)).negate().onTrue(
+                        new InstantCommand(() -> drivetrain.setMoves("default"))
+        );
+        new Trigger(driverController.leftTrigger(triggerEventLoop).debounce(0.02)).negate().and(
+                    driverController.rightTrigger(triggerEventLoop).debounce(0.02)).negate().onTrue(
+                        new InstantCommand(() -> drivetrain.setMoves("default"))
+        );
         // Pressing the Y Button rotates the arm to the amp pose
         new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));        
         // Pressing the X Button initiates ground intake of a game piece

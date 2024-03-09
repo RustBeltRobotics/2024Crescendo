@@ -18,15 +18,9 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "New New New Path"
-                }
-              },
               {
                 "type": "sequential",
                 "data": {
@@ -34,19 +28,49 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "GroundPickUp"
+                        "name": "SpoolShooter"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.5
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "AprilTagAim"
+                        "name": "FeedShooter"
                       }
                     }
                   ]
                 }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "New New Path"
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "New New New Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
           }
         }
       ]

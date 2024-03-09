@@ -3,17 +3,16 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import static frc.robot.Constants.ARM_FF_kG;
-import static frc.robot.Constants.ARM_FF_kS;
-import static frc.robot.Constants.ARM_FF_kA;
-import static frc.robot.Constants.ARM_FF_kV;
 import static frc.robot.Constants.LEFT_ROTATE;
 import static frc.robot.Constants.NEO_SECONDARY_CURRENT_LIMIT;
 import static frc.robot.Constants.NEO_SMART_CURRENT_LIMIT;
 import static frc.robot.Constants.RIGHT_ROTATE;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
 import com.revrobotics.CANSparkMax;
-import edu.wpi.first.math.controller.ArmFeedforward;
+import com.revrobotics.RelativeEncoder;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -28,15 +27,16 @@ import frc.robot.Constants;
 import frc.robot.commands.AprilTagAimCommand;
 
 public class Arm extends SubsystemBase {
-    private PIDController anglePID;
-    private ArmFeedforward angleFF;
+    private PIDController anglePIDup;
+    private PIDController anglePIDdown;
     private static final CANSparkMax armMotor1 = new CANSparkMax(LEFT_ROTATE, MotorType.kBrushless);;
     private static final CANSparkMax armMotor2 = new CANSparkMax(RIGHT_ROTATE, MotorType.kBrushless);;
+    private static final RelativeEncoder throughBoreRelative = armMotor2.getAlternateEncoder(8192);
+
     
     private static final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(2);
     //private static final Encoder medEncoder = new Encoder(2, 3);
 
-    private double medOffset;
 
     private static ShuffleboardTab diag = Shuffleboard.getTab("Diag");
     private static GenericEntry bigEncoderEntry = diag.add("abs arm encoder", 0.0).getEntry();
@@ -56,17 +56,17 @@ public class Arm extends SubsystemBase {
             .getEntry();
     
     public Arm() {
-        anglePID = new PIDController(60, 10, 2);
-        angleFF = new ArmFeedforward(ARM_FF_kS, ARM_FF_kG, ARM_FF_kV, ARM_FF_kA);
+        anglePIDup = new PIDController(60, 10, 2);
+        anglePIDdown = new PIDController(30, 10, 2);
         
         // set motor things
-        armMotor1.restoreFactoryDefaults();
         armMotor1.setIdleMode(IdleMode.kBrake);
         armMotor1.setInverted(true);
         armMotor1.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         armMotor1.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
 
-        armMotor2.restoreFactoryDefaults();
+        throughBoreRelative.setPositionConversionFactor(1/8192);
+
         armMotor2.setIdleMode(IdleMode.kBrake);
         armMotor2.setInverted(false);
         armMotor2.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
@@ -82,21 +82,21 @@ public class Arm extends SubsystemBase {
             setAngle(anglesetpoint.getDouble(0.5));
         }
     }
-    public void setAngle(double angle) {
-        System.out.println("setangle, " + angle);
-        armMotor1.setVoltage(
-            angleFF.calculate((bigEncoder.get()*2*Math.PI), 0) + //TODO: check on this
-            anglePID.calculate(bigEncoder.get(), angle)
-        );
+    public void setAngle(double angle) { 
+        if (angle > throughBoreRelative.getPosition()) {
+            armMotor1.setVoltage(anglePIDup.calculate(throughBoreRelative.getPosition(), angle)); 
+        } else {
+            armMotor1.setVoltage(anglePIDdown.calculate(throughBoreRelative.getPosition(), angle)); 
+        }
+        SmartDashboard.putNumber("setAngle", angle);
     }
+
     public double getAngle() {
-        //return medEncoder.getDistance()+medOffset;
-        return bigEncoder.getAbsolutePosition();
+        return throughBoreRelative.getPosition();
     }
 
     public void rotate(double speed) {
         armMotor1.setVoltage(speed*6);
-        System.out.println("rotate, " + speed);
     }
 
     public void ampPose() {
@@ -109,19 +109,17 @@ public class Arm extends SubsystemBase {
 
     public void stop() {
         armMotor1.setVoltage(0);
-        System.out.println("stop");
     }
-    public void zeroBigEncoder() {
-        bigEncoder.reset();
+    public static void zeroThroughBoreRelative() {
+        System.out.println("bigenc: " + bigEncoder.getAbsolutePosition());
     }
     public void updateshuffle(){
         bigEncoderEntry.setDouble(bigEncoder.getAbsolutePosition());
-        //medEncoderEntry.setDouble(medEncoder.getDistance()+medOffset);
+        medEncoderEntry.setDouble(throughBoreRelative.getPosition());
     }
     public void autoAim(){
-        if (AprilTagAimCommand.getTargetGood()){
-            //setAngle(AprilTagAimCommand.armAngleCalculate()); //TODO: rember
-            SmartDashboard.putNumber("autoaim", AprilTagAimCommand.armAngleCalculate());
+        if (AprilTagAimCommand.getTargetGood()) {
+            setAngle(AprilTagAimCommand.armAngleCalculate());
         }
     }
 }

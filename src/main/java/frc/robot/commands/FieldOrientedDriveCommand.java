@@ -8,9 +8,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 
 import static frc.robot.Constants.LL_SPEED_LIMIT;
-
+import static frc.robot.Constants.MAX_VELOCITY_METERS_PER_SECOND;
 
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -24,6 +25,7 @@ public class FieldOrientedDriveCommand extends Command {
     private final DoubleSupplier translationXSupplier;
     private final DoubleSupplier translationYSupplier;
     private final DoubleSupplier rotationSupplier;
+    private final BooleanSupplier BbuttonSupplier;
 
     GenericEntry feildOrientEntry = Shuffleboard.getTab("Competition")
             .add("Field Oriented", false)
@@ -35,11 +37,13 @@ public class FieldOrientedDriveCommand extends Command {
     public FieldOrientedDriveCommand(Drivetrain drivetrain,
             DoubleSupplier translationXSupplier,
             DoubleSupplier translationYSupplier,
-            DoubleSupplier rotationSupplier) {
+            DoubleSupplier rotationSupplier, 
+            BooleanSupplier BbuttonSupplier) {
         this.drivetrain = drivetrain;
         this.translationXSupplier = translationXSupplier;
         this.translationYSupplier = translationYSupplier;
         this.rotationSupplier = rotationSupplier;
+        this.BbuttonSupplier = BbuttonSupplier;
 
         // Command requires the drivetrain subsystem
         addRequirements(drivetrain);
@@ -58,7 +62,7 @@ public class FieldOrientedDriveCommand extends Command {
      */
     @Override
     public void execute() {
-        if (AprilTagAimCommand.getTargetGood()) {
+        if (AprilTagAimCommand.getTargetGood() && BbuttonSupplier.getAsBoolean()) {
             drivetrain.drive(ChassisSpeeds.discretize(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationXSupplier.getAsDouble() * LL_SPEED_LIMIT,
                     translationYSupplier.getAsDouble() * LL_SPEED_LIMIT,
