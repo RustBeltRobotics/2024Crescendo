@@ -35,15 +35,15 @@ public class SwerveModule extends SubsystemBase{
     private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
             .getLayout("Swerve PID", BuiltInLayouts.kList)
             .withSize(2, 2);
-    private static GenericEntry kP = pidvals.add("skP", 7e-5)
+    private static GenericEntry kP = pidvals.add("skP", .7)
             .getEntry();
     private static GenericEntry kI = pidvals.add("skI", 0.0)
             .getEntry();
-    private static GenericEntry kD = pidvals.add("skD", 0.0)
+    private static GenericEntry kD = pidvals.add("skD", 0.005)
             .getEntry();
     private static GenericEntry kIz = pidvals.add("skIz", 0.0)
             .getEntry();
-    private static GenericEntry drive_kFF = pidvals.add("sdrive_kFF", 0.0)
+    private static GenericEntry drive_kFF = pidvals.add("sdrive_kFF", 0.22)
             .getEntry();
     private static GenericEntry kMaxOutput = pidvals.add("skMaxOutput", 1.)
             .getEntry();

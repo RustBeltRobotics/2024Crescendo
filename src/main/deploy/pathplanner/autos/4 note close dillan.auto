@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 0.7072392183775194,
+      "y": 4.492253858360928
+    },
+    "rotation": -59.08685501753691
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -33,7 +39,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New New New New Path"
+            "pathName": "dillan1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "dillan2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "dillan3"
           }
         },
         {

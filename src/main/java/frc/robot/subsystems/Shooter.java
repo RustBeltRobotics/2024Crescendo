@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
@@ -53,11 +54,15 @@ public class Shooter extends SubsystemBase {
         .withWidget(BuiltInWidgets.kNumberSlider)
         .getEntry();
 
+    static double setpoint;
+
     @Override
     public void periodic() {
         if (DriverStation.isTestEnabled()) {
             spool(velocitySetpoint.getDouble(0));
         }
+        SmartDashboard.putNumber("actual vel", getShooterVelocity());
+        SmartDashboard.putNumber("commanded", setpoint);
     }
 
     public Shooter(){
@@ -95,6 +100,7 @@ public class Shooter extends SubsystemBase {
         // currently unaware.
         // REV hardware client might be able to shed some insight
         shooter1PidController.setReference(velocity*4., ControlType.kVelocity);
+        setpoint = velocity;
     }
     public static void stop(){
         shooter1PidController.setReference(0., ControlType.kVoltage);

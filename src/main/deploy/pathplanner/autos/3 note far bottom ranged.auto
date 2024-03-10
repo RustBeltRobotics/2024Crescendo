@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3669778658364657,
-      "y": 5.529043807514221
+      "x": 0.5152390382905766,
+      "y": 2.0914688146340574
     },
-    "rotation": 0
+    "rotation": -0.0030705133685858623
   },
   "command": {
     "type": "sequential",
@@ -39,25 +39,38 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New New Path"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedShooter"
+            "pathName": "start - bottom midfield"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "New New New Path"
+            "pathName": "ranged8"
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "FeedShooter"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "bottom midfield - bottom shooting pose"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AprilTagAim"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged7"
           }
         }
       ]

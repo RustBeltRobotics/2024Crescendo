@@ -1,5 +1,7 @@
 package frc.robot;
 
+import static frc.robot.Constants.LL_NAME;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
@@ -12,6 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Shooter;
+import frc.robot.util.LimelightHelpers;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -73,6 +77,8 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.schedule();
         }
+        LimelightHelpers.setPipelineIndex(LL_NAME, 1);
+        robotContainer.forceVisionPose();
     }
 
     /** This function is called periodically during autonomous. */
@@ -99,6 +105,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         robotContainer.rumble("stop");
+        Shooter.stop();
     }
 
     /** This function is called periodically when disabled. */

@@ -48,6 +48,7 @@ public class AprilTagAimCommand extends Command {
         AprilTagAimCommand.arm = arm;
         AprilTagAimCommand.thePDH = thePDH;
         thePDH.setSwitchableChannel(false);
+        //temp
     }
 
     @Override
@@ -56,6 +57,7 @@ public class AprilTagAimCommand extends Command {
         steerPID = new PIDController(0.7, 0.0, 0.01);
         steerPID.enableContinuousInput(0.0, 360.0);
         steerFF = new SimpleMotorFeedforward(0.000001, 0.00001, 0.0000001);
+        LimelightHelpers.setPipelineIndex(LL_NAME, 0);
     }
 
     @Override
@@ -182,6 +184,7 @@ public class AprilTagAimCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         validTID = false;
+        LimelightHelpers.setPipelineIndex(LL_NAME, 1);
     }
 
     @Override

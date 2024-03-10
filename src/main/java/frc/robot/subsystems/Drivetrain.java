@@ -373,6 +373,25 @@ public class Drivetrain extends SubsystemBase {
                 break;
         }
     }
+    public void forceVisionPose() {
+        var alliance = DriverStation.getAlliance();
+        Pose2d visionPose2d;
+        if (alliance.isPresent()) {
+            if (alliance.get() == DriverStation.Alliance.Red) {
+                visionPose2d = LimelightHelpers.getBotPose2d_wpiRed(LL_NAME);
+            } else {
+                visionPose2d = LimelightHelpers.getBotPose2d_wpiBlue(LL_NAME);
+            }
+        } else {
+            visionPose2d = LimelightHelpers.getBotPose2d(LL_NAME);
+        }
+        double totalVisionLatencyMs = LimelightHelpers.getLatency_Capture(LL_NAME);
+        totalVisionLatencyMs += LimelightHelpers.getLatency_Pipeline(LL_NAME);
+        double poseReadingTimestamp = Timer.getFPGATimestamp() - (totalVisionLatencyMs / 1000.0);
+        poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), visionPose2d);
+        poseEstimator.addVisionMeasurement(visionPose2d, poseReadingTimestamp);
+        System.out.println("pose: " + visionPose2d);
+    }
     
     private void handleLocked(){
         if (!wheelsLocked) {
@@ -406,7 +425,7 @@ public class Drivetrain extends SubsystemBase {
         // FRV.setDouble(frontRightModule.getSteerPosition());
         // BLV.setDouble(backLeftModule.getSteerPosition());
         // BRV.setDouble(backRightModule.getSteerPosition());
-        // Gyro.setDouble(getGyroscopeAngle()+getGyroOffset());
+        
         FLA.setDouble(states[0].speedMetersPerSecond);
         FRA.setDouble(states[1].speedMetersPerSecond);
         BLA.setDouble(states[2].speedMetersPerSecond);

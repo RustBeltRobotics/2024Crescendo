@@ -3,59 +3,69 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7072392183775194,
-        "y": 4.492253858360928
+        "x": 5.859680452619834,
+        "y": 1.7913300781958705
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.7058232222419554,
-        "y": 4.493119189332662
+        "x": 6.859680452619834,
+        "y": 1.7913300781958705
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "bottomMidfieldBreak"
     },
     {
       "anchor": {
-        "x": 2.666714055526325,
-        "y": 4.100164221533801
+        "x": 7.690686803391955,
+        "y": 2.448902787713833
       },
       "prevControl": {
-        "x": 2.6648298512848663,
-        "y": 4.100107798071511
+        "x": 6.690686803391955,
+        "y": 2.448902787713833
       },
       "nextControl": {
-        "x": 2.8103227881834822,
-        "y": 4.104464658680315
+        "x": 8.690686803391955,
+        "y": 2.448902787713833
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.3409413573414304,
-        "y": 5.506684771970462
+        "x": 8.131652584979483,
+        "y": 2.448902787713833
       },
       "prevControl": {
-        "x": 2.6052121734404015,
-        "y": 4.850402949085715
+        "x": 8.351134948256135,
+        "y": 2.4706918149501447
+      },
+      "nextControl": {
+        "x": 7.91217022170283,
+        "y": 2.4271137604775217
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.859680452619834,
+        "y": 1.7913300781958705
+      },
+      "prevControl": {
+        "x": 6.880651879310395,
+        "y": 2.119369859132084
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "midLayupShoot"
+      "linkedName": "bottomMidfieldBreak"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1,
-      "rotationDegrees": 0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.55,
+      "waypointRelativePos": 0.95,
       "command": {
         "type": "parallel",
         "data": {
@@ -85,7 +95,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -60.88955688103884,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": true

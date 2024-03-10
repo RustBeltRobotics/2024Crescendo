@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -91,6 +92,7 @@ public class RobotContainer {
 
     SlewRateLimiter driveSlewRateLimiter = new SlewRateLimiter(0.5);
     //SlewRateLimiter rotationSlewRateLimiter = new SlewRateLimiter(0.5);
+    private GroundPickUpCommand gpk = new GroundPickUpCommand();
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -170,13 +172,13 @@ public class RobotContainer {
         // Pressing the Y Button rotates the arm to the amp pose
         new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));        
         // Pressing the X Button initiates ground intake of a game piece
-        new Trigger(operatorController::getXButton).onTrue(new GroundPickUpCommand());
+        new Trigger(operatorController::getXButton).onTrue(gpk);
         // Pressing the A Button rotates the arm to the ground pose
         new Trigger(operatorController::getAButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.groundPose())));
         // B button for auto aim shooter
         new Trigger(operatorController::getBButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
         // Left bumper stops intake
-        new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> Intake.stopBothIntakes()));
+        new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> gpk.cancel()));
         // Right bumper autofeeds
         new Trigger(operatorController::getRightBumper).onTrue(new InstantCommand(() -> Intake.feedShooter()));
         // Up D-pad is stop shooter
@@ -252,5 +254,9 @@ public class RobotContainer {
             driverController.setRumble(RumbleType.kLeftRumble, 0.0); 
             driverController.setRumble(RumbleType.kRightRumble, 0.0);
         }
+    }
+    // This is an elegant solution :)
+    public void forceVisionPose() {
+        drivetrain.forceVisionPose();
     }
 }

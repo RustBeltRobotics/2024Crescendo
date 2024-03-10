@@ -29,9 +29,9 @@ import frc.robot.commands.AprilTagAimCommand;
 public class Arm extends SubsystemBase {
     private PIDController anglePIDup;
     private PIDController anglePIDdown;
-    private static final CANSparkMax armMotor1 = new CANSparkMax(LEFT_ROTATE, MotorType.kBrushless);;
-    private static final CANSparkMax armMotor2 = new CANSparkMax(RIGHT_ROTATE, MotorType.kBrushless);;
-    private static final RelativeEncoder throughBoreRelative = armMotor2.getAlternateEncoder(8192);
+    private static final CANSparkMax armMotor1 = new CANSparkMax(LEFT_ROTATE, MotorType.kBrushless);
+    private static final CANSparkMax armMotor2 = new CANSparkMax(RIGHT_ROTATE, MotorType.kBrushless);
+    private static RelativeEncoder throughBoreRelative = armMotor2.getAlternateEncoder(8192);
 
     
     private static final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(2);
@@ -46,7 +46,7 @@ public class Arm extends SubsystemBase {
             .getLayout("Arm PID", BuiltInLayouts.kList)
             .withSize(2, 3)
             .withPosition(3, 2);
-    private static GenericEntry akP = pidvals.add("P", 10)
+    private static GenericEntry akP = pidvals.add("P", 100)
             .getEntry();
     private static GenericEntry akI = pidvals.add("I", 0.0)
             .getEntry();
@@ -56,8 +56,8 @@ public class Arm extends SubsystemBase {
             .getEntry();
     
     public Arm() {
-        anglePIDup = new PIDController(60, 10, 2);
-        anglePIDdown = new PIDController(30, 10, 2);
+        anglePIDup = new PIDController(100, 0, 0);
+        anglePIDdown = new PIDController(15, 20, 0);
         
         // set motor things
         armMotor1.setIdleMode(IdleMode.kBrake);
@@ -65,30 +65,27 @@ public class Arm extends SubsystemBase {
         armMotor1.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         armMotor1.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
 
-        throughBoreRelative.setPositionConversionFactor(1/8192);
-
         armMotor2.setIdleMode(IdleMode.kBrake);
         armMotor2.setInverted(false);
         armMotor2.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         armMotor2.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
+        throughBoreRelative.setPositionConversionFactor(1/8192);
 
         armMotor2.follow(armMotor1, true);
     }
     @Override
     public void periodic() {
-        //anglePID.setPID(akP.getDouble(0), akI.getDouble(0), akD.getDouble(0));
+        //anglePIDdown.setPID(akP.getDouble(100), akI.getDouble(0), akD.getDouble(0));
         updateshuffle();
         if (DriverStation.isTestEnabled()) {
             setAngle(anglesetpoint.getDouble(0.5));
         }
     }
     public void setAngle(double angle) { 
-        if (angle > throughBoreRelative.getPosition()) {
             armMotor1.setVoltage(anglePIDup.calculate(throughBoreRelative.getPosition(), angle)); 
-        } else {
+    }
+    public void setAngleDown(double angle) { 
             armMotor1.setVoltage(anglePIDdown.calculate(throughBoreRelative.getPosition(), angle)); 
-        }
-        SmartDashboard.putNumber("setAngle", angle);
     }
 
     public double getAngle() {
@@ -96,7 +93,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void rotate(double speed) {
-        armMotor1.setVoltage(speed*6);
+        armMotor1.setVoltage(speed*12);
     }
 
     public void ampPose() {
@@ -104,7 +101,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void groundPose() {
-        setAngle(Constants.GROUND_POSITION);
+        setAngleDown(Constants.GROUND_POSITION);
     }
 
     public void stop() {
@@ -112,6 +109,7 @@ public class Arm extends SubsystemBase {
     }
     public static void zeroThroughBoreRelative() {
         System.out.println("bigenc: " + bigEncoder.getAbsolutePosition());
+        throughBoreRelative.setPosition(bigEncoder.getAbsolutePosition());
     }
     public void updateshuffle(){
         bigEncoderEntry.setDouble(bigEncoder.getAbsolutePosition());
