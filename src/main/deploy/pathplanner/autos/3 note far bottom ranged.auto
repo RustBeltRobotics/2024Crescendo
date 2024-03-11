@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.5152390382905766,
-      "y": 2.0914688146340574
+      "x": 0.6635508397163584,
+      "y": 4.459597898553596
     },
-    "rotation": -0.0030705133685858623
+    "rotation": -59.91225066742815
   },
   "command": {
     "type": "sequential",
@@ -49,19 +49,19 @@
           }
         },
         {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "bottom midfield - bottom shooting pose"
-                }
-              },
               {
                 "type": "named",
                 "data": {
                   "name": "AprilTagAim"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "bottom midfield - bottom shooting pose"
                 }
               }
             ]
@@ -70,7 +70,38 @@
         {
           "type": "path",
           "data": {
+            "pathName": "bottom shooting pose - bottom midfield break"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "bottom midfield break - ranged 7"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
             "pathName": "ranged7"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "AprilTagAim"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "bottom midfield - bottom shooting pose"
+                }
+              }
+            ]
           }
         }
       ]

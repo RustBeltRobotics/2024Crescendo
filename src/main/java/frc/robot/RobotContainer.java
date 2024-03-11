@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,6 +28,7 @@ import frc.robot.commands.DefaultIntakeCommand;
 import frc.robot.commands.FieldOrientedDriveCommand;
 import frc.robot.commands.GroundPickUpCommand;
 import frc.robot.commands.RobotOrientedDriveCommand;
+import frc.robot.commands.SpeakerAimCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -126,14 +126,17 @@ public class RobotContainer {
 
         climber.setDefaultCommand(new DefaultClimbCommand(climber, () -> operatorController.getRightY()));
 
+        SpeakerAimCommand.makeShuffleboard();
         AprilTagAimCommand.makeShuffleboard();
         Intake.makeShuffleboard();
 
         // register commands with pathplanner
-        NamedCommands.registerCommand("AprilTagAim", new AprilTagAimCommand(thePDH, arm));
+        NamedCommands.registerCommand("AprilTagAim", new SpeakerAimCommand(thePDH, arm, drivetrain));
         NamedCommands.registerCommand("SpoolShooter", new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
         NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
         NamedCommands.registerCommand("FeedShooter", new InstantCommand(() -> Intake.feedShooter()));
+
+                NamedCommands.registerCommand("force", new InstantCommand(() -> drivetrain.forceVisionPose()));
 
         // Configure the button bindings
         configureButtonBindings();
@@ -157,7 +160,7 @@ public class RobotContainer {
                 () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
         // Automatically aims at speaker while the B button is held
-        new Trigger(driverController::getBButton).whileTrue(new AprilTagAimCommand(thePDH, arm));
+        new Trigger(driverController::getBButton).whileTrue(new SpeakerAimCommand(thePDH, arm, drivetrain));
 
         new Trigger(driverController.leftTrigger(triggerEventLoop).debounce(0.02)).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));
         new Trigger(driverController.rightTrigger(triggerEventLoop).debounce(0.02)).onTrue(new InstantCommand(() -> drivetrain.setMoves("FR"))); 
@@ -190,6 +193,8 @@ public class RobotContainer {
 
         // Auto shoot when both B buttons are held
         new Trigger(operatorController::getBButton).and(() -> driverController.getBButton()).whileTrue(new RepeatCommand(new InstantCommand(() -> Intake.autoShoot())));
+
+        new Trigger(driverController::getBackButton).onTrue(new InstantCommand(() -> forceVisionPose()));
     }
 
     public void configureAutos() {

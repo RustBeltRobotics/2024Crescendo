@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import static frc.robot.Constants.LL_NAME;
-
 import java.util.Map;
 
 import edu.wpi.first.math.MathUtil;
@@ -14,21 +12,21 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
-import frc.robot.util.LimelightHelpers;
 
-public class AprilTagAimCommand extends Command {
+public class SpeakerAimCommand extends Command {
     private static double tx;
     private static double ty;
-    private static double sightedTID;
-    private static double targetTID;
-    private static double targetTID2;
+    private static double speakerX;
+    private static double speakerY;
+    private static double heading;
     private static double armTarget;
     private static boolean finished;
-    private static boolean validTID;
+    private static boolean running;
 
     private static GenericEntry kP;
     private static GenericEntry kI;
@@ -43,12 +41,13 @@ public class AprilTagAimCommand extends Command {
     private static PowerDistribution thePDH;
     private static PIDController steerPID;
     private static SimpleMotorFeedforward steerFF;
+    private static Drivetrain drivetrain;
 
-    public AprilTagAimCommand(PowerDistribution thePDH, Arm arm) {
-        AprilTagAimCommand.arm = arm;
-        AprilTagAimCommand.thePDH = thePDH;
+    public SpeakerAimCommand(PowerDistribution thePDH, Arm arm, Drivetrain drivetrain) {
+        SpeakerAimCommand.arm = arm;
+        SpeakerAimCommand.thePDH = thePDH;
         thePDH.setSwitchableChannel(false);
-        //temp
+        SpeakerAimCommand.drivetrain = drivetrain;
     }
 
     @Override
@@ -57,34 +56,26 @@ public class AprilTagAimCommand extends Command {
         steerPID = new PIDController(0.7, 0.0, 0.01);
         steerPID.enableContinuousInput(0.0, 360.0);
         steerFF = new SimpleMotorFeedforward(0.000001, 0.00001, 0.0000001);
-        LimelightHelpers.setPipelineIndex(LL_NAME, 0);
+        running = true;
     }
 
     @Override
     public void execute() {
         // Get PID gains from shuffleboard and apply them.
         steerPID.setPID(kP.getDouble(0.7), kI.getDouble(0.0), kD.getDouble(0.01));
-        // Grab the ID of the primary tag from LimeLight.
-        sightedTID = LimelightHelpers.getFiducialID(LL_NAME);
 
         // The alliance needs to exist for the code to work.
         if (DriverStation.getAlliance().isPresent()) {
             // Logic to determine the tag ID's we want
             if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-                targetTID = 3.0;
-                targetTID2 = 4.0;
+                speakerX = 16.5608;
+                speakerY = 5.5479;
             } else { // It's Blue
-                targetTID = 7.0;
-                targetTID2 = 8.0;
+                speakerX = -1.5;
+                speakerY = 5.5479;
             }
-        }
-        // Determine if the primary tag id matches our target tag ID.
-        if (sightedTID == targetTID || sightedTID == targetTID2) {
-            // used to let outside functions and operator know we got the tags
-            validTID = true;
             autoAimWorking.setBoolean(true);
-            LLdistance.setDouble(getTagDistance());
-
+    
             if (DriverStation.isAutonomous()) {
                 arm.autoAim();
                 // Auto shoot
@@ -94,27 +85,21 @@ public class AprilTagAimCommand extends Command {
                     finished = true;
                 }
             }
-
-        } else {
-            // Let the gang know that the thing is blind
-            autoAimWorking.setBoolean(false);
-            validTID = false;
-        }
-    }
-
-    // Function to let the other subsystems know weather to use outputs or not.
-    public final static boolean getTargetGood() {
-        if (LimelightHelpers.getFiducialID(LL_NAME) == targetTID || LimelightHelpers.getFiducialID(LL_NAME) == targetTID2) {
-            return true;
-        } else {
-            return false;
         }
     }
 
     public static double rotationCalculate() {
-        tx = LimelightHelpers.getTX(LL_NAME);
-        ty = LimelightHelpers.getTY(LL_NAME);
-        return steerPID.calculate(tx) - steerFF.calculate(tx);
+        double robotX = drivetrain.getPose().getX();
+        double robotY = drivetrain.getPose().getY();
+
+        double deltaX = speakerX - robotX;
+        double deltaY = speakerY - robotY;
+
+        tx = Math.toDegrees(Math.atan(deltaY / deltaX));
+        heading = drivetrain.getPose().getRotation().getDegrees();
+        SmartDashboard.putNumber("calc: ", -heading + tx);
+        return steerPID.calculate(-(180-heading + tx));
+        //- steerFF.calculate(heading + tx)
     }
 
     public static double armAngleCalculate() {
@@ -128,8 +113,14 @@ public class AprilTagAimCommand extends Command {
     // Straight line distance between camera sensor and tag across the XY plane in
     // centimeters
     public static double getTagDistance() {
-        ty = LimelightHelpers.getTY(LL_NAME);
-        return (Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan((Constants.LL_ANGLE + ty) * Math.PI / 180);
+        double robotX = drivetrain.getPose().getX();
+        double robotY = drivetrain.getPose().getY();
+
+        double deltaX = speakerX - robotX;
+        double deltaY = speakerY - robotY;
+        
+        SmartDashboard.putNumber("dist, ", Math.hypot(deltaX, deltaY));
+        return Math.hypot(deltaX, deltaY);
     }
 
     // Are we there yet?
@@ -151,44 +142,48 @@ public class AprilTagAimCommand extends Command {
         }
     }
 
-    public final static void makeShuffleboard() {
-        ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
-                .getLayout("LL Aim", BuiltInLayouts.kList)
-                .withSize(2, 2);
-        kP = pidvals.add("atkP", 0.05)
-                .getEntry();
-        kI = pidvals.add("atkI", 0.1)
-                .getEntry();
-        kD = pidvals.add("atkD", 0.01)
-                .getEntry();
-        kP = pidvals.add("atkV", 0.05)
-                .getEntry();
-        kI = pidvals.add("atkS", 0.1)
-                .getEntry();
-        kD = pidvals.add("atkA", 0.01)
-                .getEntry();
-        shotTheashold = Shuffleboard.getTab("Competition")
-                .add("shot threashold", false)
-                .withWidget("Boolean Box")
-                .withPosition(10, 0)
-                .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
-                .getEntry();
-        autoAimWorking = Shuffleboard.getTab("Competition")
-                .add("auto aiming", false)
-                .withWidget("Boolean Box")
-                .withPosition(10, 2)
-                .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
-                .getEntry();
-        LLdistance = Shuffleboard.getTab("Diag").add("distance", 0.0).getEntry();
+    public static boolean isRunning() {
+        return running;
     }
+
     @Override
     public void end(boolean interrupted) {
-        validTID = false;
-        LimelightHelpers.setPipelineIndex(LL_NAME, 1);
+        running = true;
     }
 
     @Override
     public boolean isFinished() {
         return finished;
+    }
+
+    public final static void makeShuffleboard() {
+        ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
+                .getLayout("Pose Aim", BuiltInLayouts.kList)
+                .withSize(2, 2);
+        kP = pidvals.add("kP", 0.05)
+                .getEntry();
+        kI = pidvals.add("kI", 0.1)
+                .getEntry();
+        kD = pidvals.add("kD", 0.01)
+                .getEntry();
+        kP = pidvals.add("kV", 0.05)
+                .getEntry();
+        kI = pidvals.add("kS", 0.1)
+                .getEntry();
+        kD = pidvals.add("kA", 0.01)
+                .getEntry();
+        shotTheashold = Shuffleboard.getTab("Competition")
+                .add("pose shot threashold", false)
+                .withWidget("Boolean Box")
+                .withPosition(10, 0)
+                .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
+                .getEntry();
+        autoAimWorking = Shuffleboard.getTab("Competition")
+                .add("pose auto aiming", false)
+                .withWidget("Boolean Box")
+                .withPosition(10, 2)
+                .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
+                .getEntry();
+        LLdistance = Shuffleboard.getTab("Diag").add("pose distance", 0.0).getEntry();
     }
 }

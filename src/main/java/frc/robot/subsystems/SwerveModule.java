@@ -98,10 +98,10 @@ public class SwerveModule extends SubsystemBase{
     
     public void updatePIDs(){
         // set PID coefficients (drive)
-        drivePidController.setP(kP.getDouble(.7));
-        drivePidController.setI(kI.getDouble(0));
-        drivePidController.setD(kD.getDouble(0.005));
-        drivePidController.setFF(drive_kFF.getDouble(.22));
+        drivePidController.setP(.2);
+        drivePidController.setI(0);
+        drivePidController.setD(0.0);
+        drivePidController.setFF(.22);
         drivePidController.setIZone(kIz.getDouble(0.0));
         //drivePidController.setOutputRange(kMinOutput.getDouble(-1.), kMaxOutput.getDouble(1.));
         drivePidController.setPositionPIDWrappingEnabled(false);
@@ -177,7 +177,7 @@ public class SwerveModule extends SubsystemBase{
      */
     public void setState(SwerveModuleState state) {
         // If input is minimal, ignore input to avoid reseting steer angle to 0 degrees
-        if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+        if (Math.abs(state.speedMetersPerSecond) < 0.01) {
             stopModule();
             return;
         }

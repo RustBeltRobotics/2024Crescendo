@@ -43,19 +43,19 @@
           }
         },
         {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "top midfield -  top shooting pose"
-                }
-              },
               {
                 "type": "named",
                 "data": {
                   "name": "AprilTagAim"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "top midfield -  top shooting pose"
                 }
               }
             ]
@@ -68,19 +68,19 @@
           }
         },
         {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "top midfield -  top shooting pose"
-                }
-              },
               {
                 "type": "named",
                 "data": {
                   "name": "AprilTagAim"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "top midfield -  top shooting pose"
                 }
               }
             ]

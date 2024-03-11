@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 
 import static frc.robot.Constants.LL_SPEED_LIMIT;
-import static frc.robot.Constants.MAX_VELOCITY_METERS_PER_SECOND;
 
 import java.util.Map;
 import java.util.function.BooleanSupplier;
@@ -62,11 +61,11 @@ public class FieldOrientedDriveCommand extends Command {
      */
     @Override
     public void execute() {
-        if (AprilTagAimCommand.getTargetGood() && BbuttonSupplier.getAsBoolean()) {
+        if (SpeakerAimCommand.isRunning() && BbuttonSupplier.getAsBoolean()) {
             drivetrain.drive(ChassisSpeeds.discretize(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationXSupplier.getAsDouble() * LL_SPEED_LIMIT,
                     translationYSupplier.getAsDouble() * LL_SPEED_LIMIT,
-                    AprilTagAimCommand.rotationCalculate(),
+                    SpeakerAimCommand.rotationCalculate(),
                     Rotation2d.fromDegrees((drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()))), 0.020));
         } else {
             drivetrain.drive(ChassisSpeeds.discretize(ChassisSpeeds.fromFieldRelativeSpeeds(

@@ -8,8 +8,6 @@ import static frc.robot.Constants.NEO_SECONDARY_CURRENT_LIMIT;
 import static frc.robot.Constants.NEO_SMART_CURRENT_LIMIT;
 import static frc.robot.Constants.RIGHT_ROTATE;
 
-import javax.swing.text.StyleContext.SmallAttributeSet;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
@@ -42,18 +40,18 @@ public class Arm extends SubsystemBase {
     private static GenericEntry bigEncoderEntry = diag.add("abs arm encoder", 0.0).getEntry();
     private static GenericEntry medEncoderEntry = diag.add("rel arm encoder", 0.0).getEntry();
     private static GenericEntry anglesetpoint = diag.add("arm angle control", 0.5).getEntry();
-    private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
-            .getLayout("Arm PID", BuiltInLayouts.kList)
-            .withSize(2, 3)
-            .withPosition(3, 2);
-    private static GenericEntry akP = pidvals.add("P", 100)
-            .getEntry();
-    private static GenericEntry akI = pidvals.add("I", 0.0)
-            .getEntry();
-    private static GenericEntry akD = pidvals.add("D", 0.0)
-            .getEntry();
-    private static GenericEntry affkA = pidvals.add("FF_kA", 0)
-            .getEntry();
+    // private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
+    //         .getLayout("Arm PID", BuiltInLayouts.kList)
+    //         .withSize(2, 3)
+    //         .withPosition(3, 2);
+    // private static GenericEntry akP = pidvals.add("P", 100)
+    //         .getEntry();
+    // private static GenericEntry akI = pidvals.add("I", 0.0)
+    //         .getEntry();
+    // private static GenericEntry akD = pidvals.add("D", 0.0)
+    //         .getEntry();
+    // private static GenericEntry affkA = pidvals.add("FF_kA", 0)
+    //         .getEntry();
     
     public Arm() {
         anglePIDup = new PIDController(100, 0, 0);

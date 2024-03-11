@@ -319,25 +319,13 @@ public class Drivetrain extends SubsystemBase {
         // TODO: Consider moving the vision stuff to a Vision subsystem class, and passing the pose estimation info back to drivetrain
         var alliance = DriverStation.getAlliance();
         Pose2d visionPose2d;
+        visionPose2d = LimelightHelpers.getBotPose2d_wpiBlue(LL_NAME);
         
-        if (alliance.isPresent()) {
-            if (alliance.get() == DriverStation.Alliance.Red) {
-                visionPose2d = LimelightHelpers.getBotPose2d_wpiRed(LL_NAME);
-            } else {
-                visionPose2d = LimelightHelpers.getBotPose2d_wpiBlue(LL_NAME);
-            }
-        } else {
-            visionPose2d = LimelightHelpers.getBotPose2d(LL_NAME);
-        }
-
         double totalVisionLatencyMs = LimelightHelpers.getLatency_Capture(LL_NAME);
         totalVisionLatencyMs += LimelightHelpers.getLatency_Pipeline(LL_NAME);
-
         double poseReadingTimestamp = Timer.getFPGATimestamp() - (totalVisionLatencyMs / 1000.0);
-        
 		double poseDifference = poseEstimator.getEstimatedPosition().getTranslation()
         .getDistance(visionPose2d.getTranslation());
-
         if (visionPose2d.getX() != 0.0 && poseDifference < 0.5) {
             poseEstimator.addVisionMeasurement(visionPose2d, poseReadingTimestamp);
         }
@@ -374,24 +362,11 @@ public class Drivetrain extends SubsystemBase {
         }
     }
     public void forceVisionPose() {
-        var alliance = DriverStation.getAlliance();
         Pose2d visionPose2d;
-        if (alliance.isPresent()) {
-            if (alliance.get() == DriverStation.Alliance.Red) {
-                visionPose2d = LimelightHelpers.getBotPose2d_wpiRed(LL_NAME);
-            } else {
-                visionPose2d = LimelightHelpers.getBotPose2d_wpiBlue(LL_NAME);
-            }
-        } else {
-            visionPose2d = LimelightHelpers.getBotPose2d(LL_NAME);
-        }
-        double totalVisionLatencyMs = LimelightHelpers.getLatency_Capture(LL_NAME);
-        totalVisionLatencyMs += LimelightHelpers.getLatency_Pipeline(LL_NAME);
-        double poseReadingTimestamp = Timer.getFPGATimestamp() - (totalVisionLatencyMs / 1000.0);
+        visionPose2d = LimelightHelpers.getBotPose2d_wpiBlue(LL_NAME);
         poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), visionPose2d);
-        poseEstimator.addVisionMeasurement(visionPose2d, poseReadingTimestamp);
-        System.out.println("pose: " + visionPose2d);
-    }
+        System.out.println("forced vision heading");
+        }
     
     private void handleLocked(){
         if (!wheelsLocked) {
