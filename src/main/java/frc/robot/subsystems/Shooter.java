@@ -58,9 +58,6 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (DriverStation.isTestEnabled()) {
-            spool(velocitySetpoint.getDouble(0));
-        }
         SmartDashboard.putNumber("actual vel", getShooterVelocity());
         SmartDashboard.putNumber("commanded", setpoint);
     }

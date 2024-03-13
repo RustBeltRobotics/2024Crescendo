@@ -2,10 +2,8 @@ package frc.robot.commands;
 
 import java.util.Map;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -20,22 +18,18 @@ import frc.robot.subsystems.Intake;
 
 public class SpeakerAimCommand extends Command {
     private static double tx;
-    private static double ty;
     private static double speakerX;
     private static double speakerY;
     private static double heading;
     private static double armTarget;
     private static boolean finished;
     private static boolean running;
-
+    private static boolean turnAround;
     private static GenericEntry kP;
     private static GenericEntry kI;
     private static GenericEntry kD;
     private static GenericEntry shotTheashold;
     private static GenericEntry autoAimWorking;
-    private static GenericEntry LLdistance;
-
-    private final static Interpolator<Double> doubleInterpolator = Interpolator.forDouble();
 
     private static Arm arm;
     private static PowerDistribution thePDH;
@@ -70,9 +64,11 @@ public class SpeakerAimCommand extends Command {
             if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
                 speakerX = 16.5608;
                 speakerY = 5.5479;
+                turnAround = false;
             } else { // It's Blue
-                speakerX = -1.5;
+                speakerX = -0.0381;
                 speakerY = 5.5479;
+                turnAround = true;
             }
             autoAimWorking.setBoolean(true);
     
@@ -98,16 +94,24 @@ public class SpeakerAimCommand extends Command {
         tx = Math.toDegrees(Math.atan(deltaY / deltaX));
         heading = drivetrain.getPose().getRotation().getDegrees();
         SmartDashboard.putNumber("calc: ", -heading + tx);
-        return steerPID.calculate(-(180-heading + tx));
-        //- steerFF.calculate(heading + tx)
+        if (turnAround) { // Hi im blue
+            return steerPID.calculate(-(180-heading + tx));
+        } else {
+            return steerPID.calculate(-(180-heading + tx));
+        }
+        //- steerFF.calculate(heading + tx)  //TODO: REMEMBER TO ADD THIS BACK IT MAKES THE THING WORK GOOD
     }
 
-    public static double armAngleCalculate() {
-        armTarget = doubleInterpolator.interpolate(
-                0.5,
-                0.568783,
-                MathUtil.inverseInterpolate(150, 516, getTagDistance()));
-        return armTarget;
+    public static double armAngleCalculate() { //basic calculation
+        if (getTagDistance() < 1.6) {
+            return 0.5;
+        } else {
+            armTarget = (1.67*Math.pow(10, -3)*Math.pow(getTagDistance(), 2)) - (2.531*Math.pow(10, -2)*Math.pow(getTagDistance(), 2)) + (1.321*Math.pow(10,-1)*getTagDistance()) + 0.3467;
+            if (armTarget < 0.75 && armTarget > 0.5) { 
+                return armTarget; 
+            }
+        }
+        return 0.5;
     }
 
     // Straight line distance between camera sensor and tag across the XY plane in
@@ -116,11 +120,16 @@ public class SpeakerAimCommand extends Command {
         double robotX = drivetrain.getPose().getX();
         double robotY = drivetrain.getPose().getY();
 
-        double deltaX = speakerX - robotX;
-        double deltaY = speakerY - robotY;
+        double deltaX = robotX - speakerX;
+        double deltaY = robotY - speakerY ;
+
+        SmartDashboard.putNumber("deltaY", deltaY);
+        SmartDashboard.putNumber("deltaX", deltaX);
+        SmartDashboard.putNumber("robotX", robotX);
+        SmartDashboard.putNumber("robotY", robotY);
         
         SmartDashboard.putNumber("dist, ", Math.hypot(deltaX, deltaY));
-        return Math.hypot(deltaX, deltaY);
+        return Math.hypot(Math.abs(deltaX), Math.abs(deltaY));
     }
 
     // Are we there yet?
@@ -141,7 +150,7 @@ public class SpeakerAimCommand extends Command {
             return false;
         }
     }
-
+    
     public static boolean isRunning() {
         return running;
     }
@@ -184,6 +193,5 @@ public class SpeakerAimCommand extends Command {
                 .withPosition(10, 2)
                 .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
                 .getEntry();
-        LLdistance = Shuffleboard.getTab("Diag").add("pose distance", 0.0).getEntry();
     }
 }

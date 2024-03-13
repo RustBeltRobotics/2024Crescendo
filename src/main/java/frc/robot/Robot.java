@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.SpeakerAimCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Shooter;
 import frc.robot.util.LimelightHelpers;
@@ -64,6 +65,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
         timeEntry.setDouble(DriverStation.getMatchTime());
+        SmartDashboard.putNumber("dist: ", SpeakerAimCommand.getTagDistance());
     }
 
     /**

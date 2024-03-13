@@ -28,7 +28,9 @@ public class DefaultArmCommand extends Command {
     @Override
     public void execute() {
         if (DriverStation.isTeleopEnabled()) {
-            arm.rotate(rotationSupplier.getAsDouble());
+            if (rotationSupplier.getAsDouble() > 0.05 || rotationSupplier.getAsDouble() < -0.05) {
+                arm.rotate(rotationSupplier.getAsDouble());
+            } else { arm.stop(); }
         }
     }
 

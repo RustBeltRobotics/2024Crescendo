@@ -63,7 +63,7 @@ public class Intake extends SubsystemBase{
     //runs the intake for 2 seconds in order to feed note into the shooter
     public static void feedShooter() {
         while (getSwitch()) {
-            runArmIntake(0.5);
+            runArmIntake(0.25);
         }
         stopArmIntake();
     }

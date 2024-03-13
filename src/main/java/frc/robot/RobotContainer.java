@@ -192,7 +192,7 @@ public class RobotContainer {
         new Trigger(o_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY)));
 
         // Auto shoot when both B buttons are held
-        new Trigger(operatorController::getBButton).and(() -> driverController.getBButton()).whileTrue(new RepeatCommand(new InstantCommand(() -> Intake.autoShoot())));
+        // new Trigger(operatorController::getBButton).and(() -> driverController.getBButton()).whileTrue(new RepeatCommand(new InstantCommand(() -> Intake.autoShoot())));
 
         new Trigger(driverController::getBackButton).onTrue(new InstantCommand(() -> forceVisionPose()));
     }
