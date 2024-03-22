@@ -30,6 +30,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -38,6 +39,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
@@ -74,11 +76,14 @@ public class Drivetrain extends SubsystemBase {
     private final SwerveModule backLeftModule;
     private final SwerveModule backRightModule;
 
-    // The speed of the robot in x and y translational velocities and rotational velocity
+    // The speed of the robot in x and y translational velocities and rotational
+    // velocity
     private ChassisSpeeds chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
     // Boolean statement to control locking the wheels in an X-position
     private boolean wheelsLocked = false;
+
+    private double tagDist;
 
     private final SwerveDrivePoseEstimator poseEstimator;
 
@@ -130,9 +135,9 @@ public class Drivetrain extends SubsystemBase {
             .withProperties(Map.of("colorWhenTrue", "orange", "colorWhenFalse", "grey"))
             .getEntry();
 
-    //networktables publisher for advantagescope swerve visualization
+    // networktables publisher for advantagescope swerve visualization
     private final StructArrayPublisher<SwerveModuleState> statePublisher;
-    //networktables publisher for advantagescope 2d pose visualization
+    // networktables publisher for advantagescope 2d pose visualization
     StructPublisher<Pose2d> posePublisher = NetworkTableInstance.getDefault()
             .getStructTopic("MyPose", Pose2d.struct).publish();
 
@@ -141,21 +146,23 @@ public class Drivetrain extends SubsystemBase {
         statePublisher = NetworkTableInstance.getDefault()
                 .getStructArrayTopic("/SwerveStates", SwerveModuleState.struct).publish();
 
-         // Configure AutoBuilder last
+        // Configure AutoBuilder last
         AutoBuilder.configureHolonomic(
                 this::getPose, // Robot pose supplier
                 this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
                 this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
                 this::autoDrive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-                new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
+                                                 // Constants class
                         new PIDConstants(translation_P, translation_I, translation_D), // Translation PID constants
                         new PIDConstants(rotation_P, rotation_I, rotation_D), // Rotation PID constants
                         Constants.MAX_VELOCITY_METERS_PER_SECOND, // Max module speed, in m/s
-                        Constants.DRIVETRAIN_BASE_RADIUS, // Drive base radius in meters. Distance from robot center to furthest module.
-                        new ReplanningConfig()
-                ),
+                        Constants.DRIVETRAIN_BASE_RADIUS, // Drive base radius in meters. Distance from robot center to
+                                                          // furthest module.
+                        new ReplanningConfig()),
                 () -> {
-                    // Boolean supplier that controls when the path will be mirrored for the red alliance
+                    // Boolean supplier that controls when the path will be mirrored for the red
+                    // alliance
                     // This will flip the path being followed to the red side of the field.
                     // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
@@ -198,19 +205,16 @@ public class Drivetrain extends SubsystemBase {
         // Initialize and zero gyro
         navx = new AHRS(SPI.Port.kMXP);
         zeroGyroscope();
-
-        poseEstimator = new SwerveDrivePoseEstimator(KINEMATICS, getGyroscopeRotation(), getSwerveModulePositions(),
-                new Pose2d());
-
+        
+        // Create the poseEstimator with vectors to weight our vision measurements
+        poseEstimator = new SwerveDrivePoseEstimator(
+            KINEMATICS, 
+            getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(), 
+            VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+            VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30))
+        );
+        
         theMove = "default";
-        Shuffleboard.getTab("Diag").add(new InstantCommand(() -> updatePIDs()));
-    }
-
-    private void updatePIDs(){
-        frontLeftModule.updatePIDs();
-        frontRightModule.updatePIDs();
-        backLeftModule.updatePIDs();
-        backRightModule.updatePIDs();
     }
 
     /**
@@ -218,7 +222,7 @@ public class Drivetrain extends SubsystemBase {
      * robot is currently facing to the 'forwards' direction.
      */
     public void zeroGyroscope() {
-        gyroOffset = -getGyroscopeAngle(); //we were calling the getgyrosocpe function shich was also negated
+        gyroOffset = -getGyroscopeAngle(); // we were calling the getgyrosocpe function shich was also negated
     }
 
     public double getGyroOffset() {
@@ -252,6 +256,10 @@ public class Drivetrain extends SubsystemBase {
         return navx.getRoll();
     }
 
+    public static double getTagDistance() {
+        return (Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan((Constants.LL_ANGLE + LimelightHelpers.getTY(LL_NAME)) * Math.PI / 180);
+    }
+
     public SwerveModulePosition[] getSwerveModulePositions() {
         return new SwerveModulePosition[] {
                 frontLeftModule.getPosition(), frontRightModule.getPosition(), backLeftModule.getPosition(),
@@ -264,14 +272,34 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void updateOdometry() {
-        poseEstimator.update(getGyroscopeRotation(), getSwerveModulePositions());
+        // Update odometry from swerve states
+        poseEstimator.update(
+            getGyroscopeRotation(),
+            getSwerveModulePositions()
+        );
+
+        // Update odometry from vision if we can see two or more apriltags
+        LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(LL_NAME);
+        if (limelightMeasurement.tagCount >= 1) { //TODO: CHANGE 1 to 2 AT EVENT
+            // From LL example:  poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+            // (higher number -> trust vision less)
+            // Using our tag distance (m) divided by 3, as our weight, i made these up using the defualts from LL example (0.7). 
+            // So at 2 meters its one and at 1 meter is 0.5, against the speaker it would be around 0.25.
+            // 9999999 is our gyro weight because we trust that a whole bunch
+            tagDist = getTagDistance();
+            poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill((getTagDistance()/3), (getTagDistance()/2), 9999999));
+            poseEstimator.addVisionMeasurement(
+                limelightMeasurement.pose,
+                limelightMeasurement.timestampSeconds
+            );
+        }
     }
 
     public Pose2d getPose() {
         return poseEstimator.getEstimatedPosition();
     }
 
-    public ChassisSpeeds getRobotRelativeSpeeds(){
+    public ChassisSpeeds getRobotRelativeSpeeds() {
         return chassisSpeeds;
     }
 
@@ -284,9 +312,10 @@ public class Drivetrain extends SubsystemBase {
     }
 
     /**
-     * Decide where the center of rotation is going to be based on function call (we got the moves)
+     * Decide where the center of rotation is going to be based on function call (we
+     * got the moves)
      **/
-    public void setMoves(String theMove){
+    public void setMoves(String theMove) {
         this.theMove = theMove;
     }
 
@@ -299,12 +328,14 @@ public class Drivetrain extends SubsystemBase {
     public void drive(ChassisSpeeds chassisSpeeds) {
         this.chassisSpeeds = chassisSpeeds;
     }
+
     // drives the robot, using limelight aim data if applicable
     public void autoDrive(ChassisSpeeds chassisSpeeds) {
         if (AprilTagAimCommand.getTargetGood()) {
-            this.chassisSpeeds = new ChassisSpeeds(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond, AprilTagAimCommand.rotationCalculate());
-        } else { 
-            this.chassisSpeeds = chassisSpeeds; 
+            this.chassisSpeeds = new ChassisSpeeds(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond,
+                    AprilTagAimCommand.rotationCalculate());
+        } else {
+            this.chassisSpeeds = chassisSpeeds;
         }
     }
 
@@ -316,23 +347,6 @@ public class Drivetrain extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        // TODO: Consider moving the vision stuff to a Vision subsystem class, and passing the pose estimation info back to drivetrain
-        var alliance = DriverStation.getAlliance();
-        Pose2d visionPose2d;
-        visionPose2d = LimelightHelpers.getBotPose2d_wpiBlue(LL_NAME);
-        
-        double totalVisionLatencyMs = LimelightHelpers.getLatency_Capture(LL_NAME);
-        totalVisionLatencyMs += LimelightHelpers.getLatency_Pipeline(LL_NAME);
-        double poseReadingTimestamp = Timer.getFPGATimestamp() - (totalVisionLatencyMs / 1000.0);
-		double poseDifference = poseEstimator.getEstimatedPosition().getTranslation()
-        .getDistance(visionPose2d.getTranslation());
-        
-        if (visionPose2d.getX() != 0.0 && poseDifference < 0.5) {
-            poseEstimator.addVisionMeasurement(visionPose2d, poseReadingTimestamp);
-        } else {
-            SmartDashboard.putNumber("pose difference !", poseDifference);
-        }
-
         handleMoves();
 
         handleLocked();
@@ -343,35 +357,38 @@ public class Drivetrain extends SubsystemBase {
     }
 
     private void handleMoves() {
-        switch (theMove){
+        switch (theMove) {
             case "FL":
-                states = KINEMATICS.toSwerveModuleStates(chassisSpeeds, new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2., Constants.DRIVETRAIN_WHEELBASE_METERS / 2.));
+                states = KINEMATICS.toSwerveModuleStates(chassisSpeeds, new Translation2d(
+                        Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2., Constants.DRIVETRAIN_WHEELBASE_METERS / 2.));
                 defaultEntry.setBoolean(false);
                 FLEntry.setBoolean(true);
-                FREntry.setBoolean(false); 
+                FREntry.setBoolean(false);
                 break;
             case "FR":
-                states = KINEMATICS.toSwerveModuleStates(chassisSpeeds, new Translation2d(Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2., -Constants.DRIVETRAIN_WHEELBASE_METERS / 2.));
+                states = KINEMATICS.toSwerveModuleStates(chassisSpeeds, new Translation2d(
+                        Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2., -Constants.DRIVETRAIN_WHEELBASE_METERS / 2.));
                 defaultEntry.setBoolean(false);
                 FLEntry.setBoolean(false);
-                FREntry.setBoolean(true); 
+                FREntry.setBoolean(true);
                 break;
             case "default":
                 states = KINEMATICS.toSwerveModuleStates(chassisSpeeds);
                 defaultEntry.setBoolean(true);
                 FLEntry.setBoolean(false);
-                FREntry.setBoolean(false); 
+                FREntry.setBoolean(false);
                 break;
         }
     }
+
     public void forceVisionPose() {
         Pose2d visionPose2d;
         visionPose2d = LimelightHelpers.getBotPose2d_wpiBlue(LL_NAME);
         poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), visionPose2d);
         System.out.println("forced vision heading");
-        }
-    
-    private void handleLocked(){
+    }
+
+    private void handleLocked() {
         if (!wheelsLocked) {
             // If we are not in wheel's locked mode, set the states normally
             frontLeftModule.setState(states[0]);
@@ -403,7 +420,7 @@ public class Drivetrain extends SubsystemBase {
         // FRV.setDouble(frontRightModule.getSteerPosition());
         // BLV.setDouble(backLeftModule.getSteerPosition());
         // BRV.setDouble(backRightModule.getSteerPosition());
-        
+
         FLA.setDouble(states[0].speedMetersPerSecond);
         FRA.setDouble(states[1].speedMetersPerSecond);
         BLA.setDouble(states[2].speedMetersPerSecond);
@@ -412,7 +429,7 @@ public class Drivetrain extends SubsystemBase {
         FRV.setDouble(frontRightModule.getDriveVelocity());
         BLV.setDouble(backLeftModule.getDriveVelocity());
         BRV.setDouble(backRightModule.getDriveVelocity());
-        Gyro.setDouble(getGyroscopeAngle()+getGyroOffset());
+        Gyro.setDouble(getGyroscopeAngle() + getGyroOffset());
 
         // SmartDashboard.putNumber("navx angle", navx.getAngle());
         // SmartDashboard.putNumber("navx yaw", navx.getYaw());
@@ -422,10 +439,10 @@ public class Drivetrain extends SubsystemBase {
 
         // Periodically send a set of module states (I hope) I love the confidince!
         // statePublisher.set(new SwerveModuleState[] {
-        //     states[0],
-        //     states[1],
-        //     states[2],
-        //     states[3]
+        // states[0],
+        // states[1],
+        // states[2],
+        // states[3]
         // });
         // posePublisher.set(poseEstimator.getEstimatedPosition());
     }
