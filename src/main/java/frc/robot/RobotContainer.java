@@ -72,7 +72,7 @@ public class RobotContainer {
     POVButton o_dpadLeftButton = new POVButton(operatorController, 270);
     POVButton o_dpadRightButton = new POVButton(operatorController, 90);
     // Limits maximum speed
-    private double maxSpeedFactor = .2;
+    private double maxSpeedFactor = 1;
 
     private ShuffleboardTab comp = Shuffleboard.getTab("Competition");
     private GenericEntry speedometer = comp.add("Speed Limit", 0.0)
@@ -151,14 +151,14 @@ public class RobotContainer {
         // Pressing Y button locks the wheels in an X pattern
         new Trigger(driverController::getYButton).onTrue(new InstantCommand(() -> drivetrain.toggleWheelsLocked()));
         // Pressing Right Bumper sets the speed limit to the value on the Right Trigger
-        new Trigger(driverController::getRightBumper).whileTrue(new RunCommand(() -> speedThrottle()));
-        // Pressing the Left Bumper shifts to low speed
-        new Trigger(driverController::getLeftBumper).onTrue(new InstantCommand(() -> speedDown()));
+        // new Trigger(driverController::getRightBumper).whileTrue(new RunCommand(() -> speedThrottle()));
+        // // Pressing the Left Bumper shifts to low speed
+        // new Trigger(driverController::getLeftBumper).onTrue(new InstantCommand(() -> speedDown()));
         // Pressing the X Button toggles between robot oriented and field oriented
-        new Trigger(driverController::getXButton).toggleOnTrue(new RobotOrientedDriveCommand(drivetrain,
-                () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
+        // new Trigger(driverController::getXButton).toggleOnTrue(new RobotOrientedDriveCommand(drivetrain,
+        //         () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
+        //         () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
+        //         () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
         // Automatically aims at speaker while the B button is held
         new Trigger(driverController::getBButton).whileTrue(new SpeakerAimCommand(thePDH, arm, drivetrain));
 

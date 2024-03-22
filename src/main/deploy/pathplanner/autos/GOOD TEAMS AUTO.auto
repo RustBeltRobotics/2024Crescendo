@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4120269094895987,
-      "y": 5.522314032013386
+      "x": 1.343662687325376,
+      "y": 5.525487974052871
     },
     "rotation": 0
   },
@@ -28,6 +28,18 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "center - 1"
           }
         },
         {

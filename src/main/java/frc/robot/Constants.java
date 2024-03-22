@@ -98,11 +98,11 @@ public final class Constants {
     public static final double MAX_TRAJECTORY_ACCELERATION = 2.;
 
     // PID Constants for translation and rotation moves
-    public static final double translation_P = 10.0;
+    public static final double translation_P = 1.0;
     public static final double translation_I = 0.0;
     public static final double translation_D = 0.0;
 
-    public static final double rotation_P = 5.0;
+    public static final double rotation_P = 1.0;
     public static final double rotation_I = 0.0;
     public static final double rotation_D = 0.0;
 

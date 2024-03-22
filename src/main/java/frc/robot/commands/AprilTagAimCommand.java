@@ -184,7 +184,7 @@ public class AprilTagAimCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         validTID = false;
-        LimelightHelpers.setPipelineIndex(LL_NAME, 1);
+        LimelightHelpers.setPipelineIndex(LL_NAME, 0);
     }
 
     @Override

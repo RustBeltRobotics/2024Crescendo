@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3669778658364657,
-        "y": 5.529043807514221
+        "x": 1.3491521419562087,
+        "y": 5.574358195791997
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.366977865836466,
-        "y": 5.529043807514221
+        "x": 1.4194171612308977,
+        "y": 5.457249830334181
       },
       "isLocked": false,
-      "linkedName": "test"
+      "linkedName": "sourceLayup"
     },
     {
       "anchor": {
-        "x": 2.6172451198113404,
-        "y": 7.02209782573235
+        "x": 1.2554654495899562,
+        "y": 3.688913511921175
       },
       "prevControl": {
-        "x": 1.6172451198113404,
-        "y": 7.02209782573235
+        "x": 1.1734895937694858,
+        "y": 3.7357568581043012
       },
       "nextControl": {
-        "x": 3.6172451198113404,
-        "y": 7.02209782573235
+        "x": 1.3374413054104266,
+        "y": 3.642070165738049
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.3669778658364657,
-        "y": 5.529043807514221
+        "x": 0.787031987758696,
+        "y": 4.450117887396973
       },
       "prevControl": {
-        "x": 2.5035116589728594,
-        "y": 6.277630201476001
+        "x": 1.0973691562219061,
+        "y": 4.028527771748839
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,7 +49,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.8,
+      "waypointRelativePos": 0,
       "command": {
         "type": "parallel",
         "data": {
@@ -66,20 +66,20 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.8,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 356.0,
     "maxAngularAcceleration": 2291.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": -59.826479970355656,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": -60.0,
     "velocity": 0
   },
   "useDefaultConstraints": true

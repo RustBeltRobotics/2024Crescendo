@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4120269094895987,
-      "y": 5.522314032013386
+      "x": 0.7812469471092803,
+      "y": 6.6503194544850635
     },
-    "rotation": 0
+    "rotation": 60.0
   },
   "command": {
     "type": "sequential",
@@ -28,6 +28,24 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 10.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "start - top midfield"
           }
         },
         {

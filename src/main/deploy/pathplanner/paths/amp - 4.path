@@ -3,69 +3,91 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.3491521419562087,
-        "y": 5.574358195791997
+        "x": 0.8009808327308976,
+        "y": 6.660186397295872
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7364268184551028,
-        "y": 5.571232343783412
+        "x": 1.8009808327308976,
+        "y": 6.660186397295872
       },
       "isLocked": false,
-      "linkedName": "midLayupShoot"
+      "linkedName": "ampDillan"
     },
     {
       "anchor": {
-        "x": 2.23960542244479,
-        "y": 6.9884489482281715
+        "x": 4.777358785486803,
+        "y": 6.531916140755359
       },
       "prevControl": {
-        "x": 1.9484231141627422,
-        "y": 6.977673952480933
+        "x": 3.616693373599786,
+        "y": 6.770769683242145
       },
       "nextControl": {
-        "x": 2.7285960271255054,
-        "y": 7.006543700333684
+        "x": 5.93802419737382,
+        "y": 6.293062598268573
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.736983639104893,
-        "y": 6.9884489482281715
+        "x": 7.4414333444051515,
+        "y": 5.762294601512281
       },
       "prevControl": {
-        "x": 2.839769008093062,
-        "y": 6.9884489482281715
+        "x": 6.592876262675603,
+        "y": 6.087903714268967
       },
       "nextControl": {
-        "x": 2.551627160209857,
-        "y": 6.9884489482281715
+        "x": 7.561543464062432,
+        "y": 5.716205834667045
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.3491521419562087,
-        "y": 5.574358195791997
+        "x": 8.053183798675292,
+        "y": 5.762294601512281
       },
       "prevControl": {
-        "x": 1.9538704052918177,
-        "y": 6.338187715136815
+        "x": 8.281842871378052,
+        "y": 5.782028487133899
+      },
+      "nextControl": {
+        "x": 7.824524725972532,
+        "y": 5.742560715890662
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.8009808327308976,
+        "y": 6.660186397295872
+      },
+      "prevControl": {
+        "x": 4.362087493405758,
+        "y": 7.0301967527011975
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "midLayupShoot"
+      "linkedName": "ampDillan"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 3.0,
+      "rotationDegrees": 0,
+      "rotateFast": true
+    }
+  ],
   "constraintZones": [],
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 1.75,
       "command": {
         "type": "parallel",
         "data": {
@@ -89,13 +111,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 58.98120431145262,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 59.98163257239091,
     "velocity": 0
   },
   "useDefaultConstraints": true

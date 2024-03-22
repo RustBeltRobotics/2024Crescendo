@@ -326,8 +326,11 @@ public class Drivetrain extends SubsystemBase {
         double poseReadingTimestamp = Timer.getFPGATimestamp() - (totalVisionLatencyMs / 1000.0);
 		double poseDifference = poseEstimator.getEstimatedPosition().getTranslation()
         .getDistance(visionPose2d.getTranslation());
+        
         if (visionPose2d.getX() != 0.0 && poseDifference < 0.5) {
             poseEstimator.addVisionMeasurement(visionPose2d, poseReadingTimestamp);
+        } else {
+            SmartDashboard.putNumber("pose difference !", poseDifference);
         }
 
         handleMoves();

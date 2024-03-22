@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.schedule();
         }
-        LimelightHelpers.setPipelineIndex(LL_NAME, 1);
+        LimelightHelpers.setPipelineIndex(LL_NAME, 0);
         robotContainer.forceVisionPose();
     }
 

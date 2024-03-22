@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 1.3491521419562087,
+      "y": 5.574358195791997
+    },
+    "rotation": 0.0
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -33,57 +39,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "start - top midfield"
+            "pathName": "dillan3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "ranged4"
+            "pathName": "dillan2"
           }
         },
         {
-          "type": "deadline",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "AprilTagAim"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "top midfield -  top shooting pose"
-                }
-              }
-            ]
+            "name": "FeedShooter"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "ranged5"
+            "pathName": "center - 1"
           }
         },
         {
-          "type": "deadline",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "AprilTagAim"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "top midfield -  top shooting pose"
-                }
-              }
-            ]
+            "name": "FeedShooter"
           }
         }
       ]
