@@ -135,9 +135,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("SpoolShooter", new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
         NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
         NamedCommands.registerCommand("FeedShooter", new InstantCommand(() -> Intake.feedShooter()));
-
-                NamedCommands.registerCommand("force", new InstantCommand(() -> drivetrain.forceVisionPose()));
-
+        NamedCommands.registerCommand("RangedPose", new RepeatCommand(new InstantCommand(() -> arm.stagePose())));
         // Configure the button bindings
         configureButtonBindings();
         configureAutos();
@@ -177,7 +175,7 @@ public class RobotContainer {
         // Pressing the X Button initiates ground intake of a game piece
         new Trigger(operatorController::getXButton).onTrue(gpk);
         // Pressing the A Button rotates the arm to the ground pose
-        new Trigger(operatorController::getAButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.groundPose())));
+        new Trigger(operatorController::getAButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.stagePose())));
         // B button for auto aim shooter
         new Trigger(operatorController::getBButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
         // Left bumper stops intake
@@ -190,6 +188,7 @@ public class RobotContainer {
         new Trigger(o_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY/2)));
         // Right D-pad is speaker spool
         new Trigger(o_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY)));
+        new Trigger(o_dpadDownButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(BARF_SPOOL_VELOCITY)));
 
         // Auto shoot when both B buttons are held
         // new Trigger(operatorController::getBButton).and(() -> driverController.getBButton()).whileTrue(new RepeatCommand(new InstantCommand(() -> Intake.autoShoot())));

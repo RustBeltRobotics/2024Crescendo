@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 1.3491521419562087,
-      "y": 5.574358195791997
-    },
-    "rotation": 0.0
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -39,7 +33,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dillan3"
+            "pathName": "dillan3 mid"
           }
         },
         {
@@ -51,7 +45,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dillan2"
+            "pathName": "dillan2 mid"
           }
         },
         {
@@ -63,7 +57,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "center - 1"
+            "pathName": "dillan1 mid"
           }
         },
         {

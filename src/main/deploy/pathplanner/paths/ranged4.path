@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.628330354874996,
-        "y": 7.664174050446316
+        "x": 7.488389016342253,
+        "y": 7.443383541901012
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.279741021535615,
-        "y": 7.5497668071229
+        "x": 7.832195962557062,
+        "y": 7.431805087234028
       },
       "isLocked": false,
       "linkedName": "topMidfieldStart"
@@ -20,24 +20,24 @@
         "y": 7.443383541901012
       },
       "prevControl": {
-        "x": 7.275755254635509,
-        "y": 7.548219700234043
+        "x": 7.842566436279661,
+        "y": 7.457032551679783
       },
       "nextControl": {
-        "x": 8.983602135932719,
-        "y": 7.298969067561697
+        "x": 8.346841169456281,
+        "y": 7.41160671461185
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.8549604655012875,
-        "y": 6.493905688704234
+        "x": 5.652373870688108,
+        "y": 6.7601882021424595
       },
       "prevControl": {
-        "x": 7.5941799724001235,
-        "y": 7.0216526928589555
+        "x": 5.876846819634006,
+        "y": 6.791005425474155
       },
       "nextControl": null,
       "isLocked": false,
@@ -49,7 +49,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.85,
+      "waypointRelativePos": 0.0,
       "command": {
         "type": "sequential",
         "data": {
@@ -80,7 +80,7 @@
   "folder": null,
   "previewStartingState": {
     "rotation": 0,
-    "velocity": 3.0
+    "velocity": 2.0
   },
   "useDefaultConstraints": true
 }

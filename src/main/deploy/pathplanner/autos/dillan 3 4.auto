@@ -33,7 +33,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dillan2"
+            "pathName": "dillan3 amp"
           }
         },
         {
@@ -45,7 +45,32 @@
         {
           "type": "path",
           "data": {
-            "pathName": "midLayup - 5"
+            "pathName": "Amp - Top Midfield"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged4"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "top midfield break -  top shooting pose"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "RangedPose"
+                }
+              }
+            ]
           }
         },
         {

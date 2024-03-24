@@ -8,40 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.652373870688108,
-        "y": 6.7601882021424595
+        "x": 5.08821274523283,
+        "y": 6.746177030198098
       },
       "isLocked": false,
       "linkedName": "topMidfieldBreak"
     },
     {
       "anchor": {
-        "x": 8.080682809874794,
-        "y": 5.782348144398124
+        "x": 3.05,
+        "y": 6.61
       },
       "prevControl": {
-        "x": 7.08105832322776,
-        "y": 5.809750438018099
-      },
-      "nextControl": {
-        "x": 8.212152467882918,
-        "y": 5.778744220905874
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 5.652373870688108,
-        "y": 6.7601882021424595
-      },
-      "prevControl": {
-        "x": 7.350292297201566,
-        "y": 6.253009520067206
+        "x": 3.7091971632337764,
+        "y": 6.611029899238698
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "topMidfieldBreak"
+      "linkedName": "topShootingPose"
     }
   ],
   "rotationTargets": [],
@@ -54,15 +38,15 @@
     "maxAngularAcceleration": 2291.0
   },
   "goalEndState": {
-    "velocity": 3.0,
-    "rotation": 0,
-    "rotateFast": false
+    "velocity": 0,
+    "rotation": 11.93,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
     "rotation": 0,
-    "velocity": 0
+    "velocity": 3.0
   },
   "useDefaultConstraints": true
 }

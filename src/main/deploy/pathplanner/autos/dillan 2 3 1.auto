@@ -33,56 +33,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ranged1"
+            "pathName": "dillan2 mid"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "ranged2"
+            "pathName": "dillan3 mid nostop"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "ranged3"
+            "pathName": "dillan1 mid"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "ranged4"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "top midfield -  top shooting pose"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AprilTagAim"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ranged5"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "top midfield -  top shooting pose"
+            "name": "FeedShooter"
           }
         }
       ]

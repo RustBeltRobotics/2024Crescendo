@@ -2,6 +2,8 @@ package frc.robot;
 
 import static frc.robot.Constants.LL_NAME;
 
+import com.pathplanner.lib.commands.PathfindingCommand;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
@@ -51,6 +53,8 @@ public class Robot extends TimedRobot {
         //prints literally everything to the ds :)
         SmartDashboard.putData(CommandScheduler.getInstance());
         Arm.zeroThroughBoreRelative();
+
+        //PathfindingCommand.warmupCommand().schedule();
     }
 
     /**

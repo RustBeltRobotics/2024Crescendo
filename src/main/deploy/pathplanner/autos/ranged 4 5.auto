@@ -33,19 +33,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ranged1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ranged2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ranged3"
+            "pathName": "start - top midfield  avoid"
           }
         },
         {
@@ -55,22 +43,34 @@
           }
         },
         {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "top midfield -  top shooting pose"
+                  "pathName": "top midfield break -  top shooting pose"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "AprilTagAim"
+                  "name": "RangedPose"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "top shooting pose - top midfield break"
           }
         },
         {
@@ -80,22 +80,9 @@
           }
         },
         {
-          "type": "race",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "top midfield -  top shooting pose"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AprilTagAim"
-                }
-              }
-            ]
+            "pathName": "top midfield break -  top shooting pose"
           }
         }
       ]

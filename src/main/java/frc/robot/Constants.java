@@ -155,11 +155,14 @@ public static final double LENGTH = 29.5;
      * the emperical free speed of a NEO, assuming no gearing
      */
     public static final double SPOOL_VELOCITY = 4257;
+    public static final double BARF_SPOOL_VELOCITY = 2600;
 
     // Arm
     // Angles of interest (Rotations)
     public static final double AMP_POSITION = 0.75;
     public static final double GROUND_POSITION = 0.5; 
+
+    public static final double STAGE_ANGLE = 0.57;
     // Calculated feedForward gains
     public static final double ARM_FF_kA = 0.04;
     public static final double ARM_FF_kG = 0.62;

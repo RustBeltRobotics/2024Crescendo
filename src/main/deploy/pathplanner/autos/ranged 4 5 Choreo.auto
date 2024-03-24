@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.6953609807448974,
-      "y": 4.382701939142411
+      "x": 0.7560760974884033,
+      "y": 6.617427349090576
     },
-    "rotation": -59.38820137137708
+    "rotation": 59.6567452467808
   },
   "command": {
     "type": "sequential",
@@ -14,26 +14,25 @@
         {
           "type": "named",
           "data": {
-            "name": "force"
+            "name": "SpoolShooter"
           }
         },
         {
-          "type": "parallel",
+          "type": "wait",
           "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.5
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "SpoolShooter"
-                }
-              }
-            ]
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged 4 5.1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged 4 5.2"
           }
         },
         {
@@ -45,31 +44,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dillan1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedShooter"
+            "pathName": "ranged 4 5.3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "dillan2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedShooter"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "dillan3"
+            "pathName": "ranged 4 5.4"
           }
         },
         {
@@ -82,5 +63,5 @@
     }
   },
   "folder": null,
-  "choreoAuto": false
+  "choreoAuto": true
 }

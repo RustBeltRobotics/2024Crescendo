@@ -56,12 +56,6 @@ public class Shooter extends SubsystemBase {
 
     static double setpoint;
 
-    @Override
-    public void periodic() {
-        SmartDashboard.putNumber("actual vel", getShooterVelocity());
-        SmartDashboard.putNumber("commanded", setpoint);
-    }
-
     public Shooter(){
         shooterMotor1 = new CANSparkMax(LEFT_SHOOTER, MotorType.kBrushless);
         shooterMotor1.restoreFactoryDefaults();
@@ -89,6 +83,7 @@ public class Shooter extends SubsystemBase {
     public double getShooterVelocity() {
         return shooterMotor1.getEncoder().getVelocity();
     }
+    
 
     public static void spool(double velocity){
         // FIXME: We should figure out why we need a value of 4 here.

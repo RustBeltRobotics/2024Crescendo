@@ -73,7 +73,7 @@ public class SpeakerAimCommand extends Command {
             autoAimWorking.setBoolean(true);
     
             if (DriverStation.isAutonomous()) {
-                arm.autoAim();
+                // arm.autoAim();
                 // Auto shoot
                 if (rotationTargetMet() && armAngleTargetMet()) {
                     System.out.println("aim successful");
@@ -95,7 +95,7 @@ public class SpeakerAimCommand extends Command {
         heading = drivetrain.getPose().getRotation().getDegrees();
         SmartDashboard.putNumber("calc: ", -heading + tx);
         if (turnAround) { // Hi im blue
-            return steerPID.calculate(-(180-heading + tx));
+            return steerPID.calculate(-(-heading + tx));
         } else {
             return steerPID.calculate(-(180-heading + tx));
         }
@@ -104,10 +104,12 @@ public class SpeakerAimCommand extends Command {
 
     public static double armAngleCalculate() { //basic calculation
         if (getTagDistance() < 1.6) {
+            System.out.println("layup mode");
             return 0.5;
         } else {
             armTarget = (1.67*Math.pow(10, -3)*Math.pow(getTagDistance(), 2)) - (2.531*Math.pow(10, -2)*Math.pow(getTagDistance(), 2)) + (1.321*Math.pow(10,-1)*getTagDistance()) + 0.3467;
             if (armTarget < 0.75 && armTarget > 0.5) { 
+                System.out.println(armTarget);
                 return armTarget; 
             }
         }

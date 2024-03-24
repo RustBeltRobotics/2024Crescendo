@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.8009808327308976,
-        "y": 6.660186397295872
+        "x": 0.7758976383778456,
+        "y": 6.634859923962967
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8009808327308976,
-        "y": 6.660186397295872
+        "x": 1.7758976383778458,
+        "y": 6.634859923962967
       },
       "isLocked": false,
-      "linkedName": "ampDillan"
+      "linkedName": "ampLayup"
     },
     {
       "anchor": {
@@ -64,16 +64,16 @@
     },
     {
       "anchor": {
-        "x": 0.8009808327308976,
-        "y": 6.660186397295872
+        "x": 0.7758976383778456,
+        "y": 6.634859923962967
       },
       "prevControl": {
-        "x": 4.362087493405758,
-        "y": 7.0301967527011975
+        "x": 4.337004299052708,
+        "y": 7.004870279368292
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ampDillan"
+      "linkedName": "ampLayup"
     }
   ],
   "rotationTargets": [

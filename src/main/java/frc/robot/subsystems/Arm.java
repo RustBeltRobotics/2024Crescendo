@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.AprilTagAimCommand;
+import frc.robot.commands.SpeakerAimCommand;
 
 public class Arm extends SubsystemBase {
     private PIDController anglePIDup;
@@ -101,6 +102,9 @@ public class Arm extends SubsystemBase {
     public void groundPose() {
         setAngleDown(Constants.GROUND_POSITION);
     }
+    public void stagePose() {
+        setAngle(Constants.STAGE_ANGLE);
+    }
 
     public void stop() {
         armMotor1.setVoltage(0);
@@ -114,8 +118,8 @@ public class Arm extends SubsystemBase {
         medEncoderEntry.setDouble(throughBoreRelative.getPosition());
     }
     public void autoAim(){
-        if (AprilTagAimCommand.getTargetGood()) {
-            setAngle(AprilTagAimCommand.armAngleCalculate());
+        if (SpeakerAimCommand.isRunning()) {
+            setAngle(SpeakerAimCommand.armAngleCalculate());
         }
     }
 }

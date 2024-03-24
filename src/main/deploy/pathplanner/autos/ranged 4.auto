@@ -1,12 +1,6 @@
 {
   "version": 1.0,
-  "startingPose": {
-    "position": {
-      "x": 1.343662687325376,
-      "y": 5.525487974052871
-    },
-    "rotation": 0
-  },
+  "startingPose": null,
   "command": {
     "type": "sequential",
     "data": {
@@ -37,9 +31,15 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 10.5
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "center - 1"
+            "pathName": "start - top midfield  avoid"
           }
         },
         {

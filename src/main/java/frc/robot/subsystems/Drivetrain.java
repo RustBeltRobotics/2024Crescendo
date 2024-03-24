@@ -139,7 +139,7 @@ public class Drivetrain extends SubsystemBase {
     private final StructArrayPublisher<SwerveModuleState> statePublisher;
     // networktables publisher for advantagescope 2d pose visualization
     StructPublisher<Pose2d> posePublisher = NetworkTableInstance.getDefault()
-            .getStructTopic("MyPose", Pose2d.struct).publish();
+            .getStructTopic("/MyPose", Pose2d.struct).publish();
 
     public Drivetrain() {
         // Start publishing an array of module states with the "/SwerveStates" key
@@ -287,7 +287,7 @@ public class Drivetrain extends SubsystemBase {
             // So at 2 meters its one and at 1 meter is 0.5, against the speaker it would be around 0.25.
             // 9999999 is our gyro weight because we trust that a whole bunch
             tagDist = getTagDistance();
-            poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill((getTagDistance()/3), (getTagDistance()/2), 9999999));
+            poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill((tagDist/1000), (tagDist/1000), 9999999));
             poseEstimator.addVisionMeasurement(
                 limelightMeasurement.pose,
                 limelightMeasurement.timestampSeconds
@@ -408,6 +408,10 @@ public class Drivetrain extends SubsystemBase {
     }
 
     private void updateTelemetry() {
+
+        posePublisher.set(poseEstimator.getEstimatedPosition());
+
+
         // FLA.setDouble(frontLeftModule.getAbsolutePosition());
         // FRA.setDouble(frontRightModule.getAbsolutePosition());
         // BLA.setDouble(backLeftModule.getAbsolutePosition());
@@ -438,12 +442,11 @@ public class Drivetrain extends SubsystemBase {
         // SmartDashboard.putNumber("getGyroscopeAngle()", getGyroscopeAngle());
 
         // Periodically send a set of module states (I hope) I love the confidince!
-        // statePublisher.set(new SwerveModuleState[] {
-        // states[0],
-        // states[1],
-        // states[2],
-        // states[3]
-        // });
-        // posePublisher.set(poseEstimator.getEstimatedPosition());
+        statePublisher.set(new SwerveModuleState[] {
+        states[0],
+        states[1],
+        states[2],
+        states[3]
+        });
     }
 }
