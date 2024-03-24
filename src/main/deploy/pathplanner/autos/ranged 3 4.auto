@@ -33,7 +33,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dillan3 amp"
+            "pathName": "dillan1 amp"
           }
         },
         {
@@ -59,24 +59,44 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "top midfield break -  top shooting pose"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "RangedPose"
                 }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "top midfield break -  top shooting pose"
+                      }
+                    },
+                    {
+                      "type": "parallel",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "FeedShooter"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 2.0
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedShooter"
           }
         }
       ]

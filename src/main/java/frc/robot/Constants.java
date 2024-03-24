@@ -147,7 +147,7 @@ public static final double LENGTH = 29.5;
     //height of the LL sensor from the ground in cm  
     public static final double LL_HEIGHT = 14.5;
     // Angle of LL from horizontal in degrees  
-    public static final double LL_ANGLE = 30.;
+    public static final double LL_ANGLE = 45.;
 
     // Shooter
     /**
