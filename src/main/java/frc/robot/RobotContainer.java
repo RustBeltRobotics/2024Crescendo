@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import frc.robot.commands.AprilTagAimCommand;
 import frc.robot.commands.DefaultArmCommand;
 import frc.robot.commands.DefaultClimbCommand;
 import frc.robot.commands.DefaultIntakeCommand;
@@ -127,7 +126,6 @@ public class RobotContainer {
         climber.setDefaultCommand(new DefaultClimbCommand(climber, () -> operatorController.getRightY()));
 
         SpeakerAimCommand.makeShuffleboard();
-        AprilTagAimCommand.makeShuffleboard();
         Intake.makeShuffleboard();
 
         // register commands with pathplanner

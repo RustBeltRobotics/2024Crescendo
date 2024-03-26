@@ -56,7 +56,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.commands.AprilTagAimCommand;
+import frc.robot.commands.SpeakerAimCommand;
 import frc.robot.util.LimelightHelpers;
 
 public class Drivetrain extends SubsystemBase {
@@ -151,7 +151,7 @@ public class Drivetrain extends SubsystemBase {
                 this::getPose, // Robot pose supplier
                 this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
                 this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                this::autoDrive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+                this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
                 new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
                                                  // Constants class
                         new PIDConstants(translation_P, translation_I, translation_D), // Translation PID constants
@@ -335,9 +335,9 @@ public class Drivetrain extends SubsystemBase {
 
     // drives the robot, using limelight aim data if applicable
     public void autoDrive(ChassisSpeeds chassisSpeeds) {
-        if (AprilTagAimCommand.getTargetGood()) {
+        if (SpeakerAimCommand.isRunning()) {
             this.chassisSpeeds = new ChassisSpeeds(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond,
-                    AprilTagAimCommand.rotationCalculate());
+                    SpeakerAimCommand.rotationCalculate());
         } else {
             this.chassisSpeeds = chassisSpeeds;
         }

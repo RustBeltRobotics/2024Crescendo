@@ -159,7 +159,7 @@ public class SpeakerAimCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        running = true;
+        running = false;
     }
 
     @Override
