@@ -57,9 +57,10 @@ public final class Constants {
             new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2., DRIVETRAIN_WHEELBASE_METERS / 2.),
             new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2., -DRIVETRAIN_WHEELBASE_METERS / 2.));
 
+            
     /** Conversion between motor rotations and drive meters */
     public static final double DRIVE_POSITION_CONVERSION = Math.PI
-            * 0.1016 // 4" wheel diameter
+            * 0.0967 // wheel diameter in meters
             * (14.0 / 50.0) * (28.0 / 16.0) * (15.0 / 45.0);
             
     /** Conversion between motor rotations per minute and drive meters per seconds */
@@ -145,9 +146,11 @@ public static final double LENGTH = 29.5;
     public static final String LL_NAME = "limelight";
     public static final double LL_SPEED_LIMIT = 1.0; //0-1
     //height of the LL sensor from the ground in cm  
-    public static final double LL_HEIGHT = 14.5;
+    // public static final double LL_HEIGHT = 14.5;  //low mount
+    public static final double LL_HEIGHT = 52.3;  //high mount
     // Angle of LL from horizontal in degrees  
-    public static final double LL_ANGLE = 45.;
+    // public static final double LL_ANGLE = 45.;  //low mount
+    public static final double LL_ANGLE = 32.;  //high mount
 
     // Shooter
     /**
