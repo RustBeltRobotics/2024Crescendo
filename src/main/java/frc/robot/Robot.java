@@ -2,11 +2,9 @@ package frc.robot;
 
 import static frc.robot.Constants.LL_NAME;
 
-import com.pathplanner.lib.commands.PathfindingCommand;
-
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -45,16 +43,19 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         robotContainer = new RobotContainer();
 
+        // Port forwarding for LimeLight
         for (int port = 5800; port <= 5807; port++) {
             PortForwarder.add(port, "limelight.local", port);
         }
-        CameraServer.startAutomaticCapture();
 
-        //prints literally everything to the ds :)
-        SmartDashboard.putData(CommandScheduler.getInstance());
+        // Set our relative encoder offset based on the position of the absolute encoder
         Arm.zeroThroughBoreRelative();
 
-        //PathfindingCommand.warmupCommand().schedule();
+        // Start datalogging of all networkTables entrys onto the RIO
+        DataLogManager.start();
+
+        // Start datalogging of all DS data and joystick data onto the RIO
+        DriverStation.startDataLog(DataLogManager.getLog());
     }
 
     /**
@@ -78,12 +79,18 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        robotContainer.rumble("stop");
         autonomousCommand = robotContainer.getAutonomousCommand();
         if (autonomousCommand != null) {
             autonomousCommand.schedule();
         }
+
+        // Stop the stupid controllers from vibrating all the time
+        robotContainer.rumble(false);
+
+        // Force our LL to pipeline zero because we have paranoia
         LimelightHelpers.setPipelineIndex(LL_NAME, 0);
+
+        // Full reset our pose using LL on init, done to avoid pose spiraling
         robotContainer.forceVisionPose();
     }
 
@@ -110,7 +117,7 @@ public class Robot extends TimedRobot {
     /** This function is called once when the robot is disabled. */
     @Override
     public void disabledInit() {
-        robotContainer.rumble("stop");
+        robotContainer.rumble(false);
         Shooter.stop();
     }
 

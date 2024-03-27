@@ -28,7 +28,6 @@ public class SpeakerAimCommand extends Command {
     private static GenericEntry kP;
     private static GenericEntry kI;
     private static GenericEntry kD;
-    private static GenericEntry shotTheashold;
     private static GenericEntry autoAimWorking;
 
     private static Arm arm;
@@ -95,11 +94,10 @@ public class SpeakerAimCommand extends Command {
         heading = drivetrain.getPose().getRotation().getDegrees();
         SmartDashboard.putNumber("calc: ", -heading + tx);
         if (turnAround) { // Hi im blue
-            return steerPID.calculate(-(-heading + tx));
+            return steerPID.calculate(heading + tx) - steerFF.calculate(heading + tx);
         } else {
-            return steerPID.calculate(-(180-heading + tx));
+            return steerPID.calculate(-(180-heading + tx)) - steerFF.calculate(-(180-heading + tx));
         }
-        //- steerFF.calculate(heading + tx)  //TODO: REMEMBER TO ADD THIS BACK IT MAKES THE THING WORK GOOD
     }
 
     public static double armAngleCalculate() { //basic calculation
@@ -143,11 +141,9 @@ public class SpeakerAimCommand extends Command {
     // speaker
     public static boolean rotationTargetMet() {
         if ((tx < 3.0 && tx > -3.0)) {
-            //shotTheashold.setBoolean(true);
             thePDH.setSwitchableChannel(true);
             return true;
         } else {
-            //shotTheashold.setBoolean(false);
             thePDH.setSwitchableChannel(false);
             return false;
         }
@@ -182,12 +178,6 @@ public class SpeakerAimCommand extends Command {
         kI = pidvals.add("kS", 0.1)
                 .getEntry();
         kD = pidvals.add("kA", 0.01)
-                .getEntry();
-        shotTheashold = Shuffleboard.getTab("Competition")
-                .add("pose shot threashold", false)
-                .withWidget("Boolean Box")
-                .withPosition(10, 0)
-                .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
                 .getEntry();
         autoAimWorking = Shuffleboard.getTab("Competition")
                 .add("pose auto aiming", false)

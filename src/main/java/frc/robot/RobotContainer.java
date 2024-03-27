@@ -1,17 +1,12 @@
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.EventLoop;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -74,18 +69,6 @@ public class RobotContainer {
     private double maxSpeedFactor = 1;
 
     private ShuffleboardTab comp = Shuffleboard.getTab("Competition");
-    private GenericEntry speedometer = comp.add("Speed Limit", 0.0)
-            .withWidget(BuiltInWidgets.kDial)
-            .withProperties(Map.of("min", 0, "max", 1))
-            .withPosition(1, 1)
-            .withSize(2, 2)
-            .getEntry();
-    private ComplexWidget webcamWidget = comp.addCamera("Webcam", "webcam0", "10.4.24.2")
-            .withPosition(3, 1)
-            .withSize(4, 4);
-    //private ComplexWidget limeLightWidget = comp.addCamera("LimeLight", "limelight", "10.4.24.2")
-    //        .withPosition(7, 1)
-    //        .withSize(3, 4);
 
     public static SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
@@ -97,16 +80,6 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-        // Set up the default command for the drivetrain
-        // The controls are for field-oriented driving
-        // Left stick Y axis -> forward and backwards movement
-        // Left stick X axis -> left and right movement
-        // Right stick X axis -> rotation
-        // TODO: depending on driver feedback, we may want to consider different
-        // maxSpeedFactors for translation vs rotation
-        // TODO: depending on driver feedback, we may want to consider different methods
-        // of modifiy axis. Steeper ramp, shallower ramp, larger or smaller deadband,
-        // etc.
         drivetrain.setDefaultCommand(new FieldOrientedDriveCommand(drivetrain,
                 () -> 
                 //driveSlewRateLimiter.calculate(
@@ -134,32 +107,35 @@ public class RobotContainer {
         NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
         NamedCommands.registerCommand("FeedShooter", new InstantCommand(() -> Intake.feedShooter()));
         NamedCommands.registerCommand("RangedPose", new RepeatCommand(new InstantCommand(() -> arm.stagePose())));
-        // Configure the button bindings
+        
         configureButtonBindings();
         configureAutos();
     }
 
     /** Button -> command mappings are defined here. */
     private void configureButtonBindings() {
-        // Driver Controller Bindings
+        // Driver Controller Bindings ---
+
         // Pressing A button zeros the gyroscope
         new Trigger(driverController::getAButton).onTrue(new InstantCommand(() -> drivetrain.zeroGyroscope()));
         // Pressing Y button locks the wheels in an X pattern
         new Trigger(driverController::getYButton).onTrue(new InstantCommand(() -> drivetrain.toggleWheelsLocked()));
-        // Pressing Right Bumper sets the speed limit to the value on the Right Trigger
-        // new Trigger(driverController::getRightBumper).whileTrue(new RunCommand(() -> speedThrottle()));
-        // // Pressing the Left Bumper shifts to low speed
-        // new Trigger(driverController::getLeftBumper).onTrue(new InstantCommand(() -> speedDown()));
+
         // Pressing the X Button toggles between robot oriented and field oriented
         // new Trigger(driverController::getXButton).toggleOnTrue(new RobotOrientedDriveCommand(drivetrain,
         //         () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
         //         () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
         //         () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
+
         // Automatically aims at speaker while the B button is held
         new Trigger(driverController::getBButton).whileTrue(new SpeakerAimCommand(thePDH, arm, drivetrain));
-
+        
+        //TODO: is driver using the buttons?
+        // When left trigger is pressed change center of rotation to front left module
         new Trigger(driverController.leftTrigger(triggerEventLoop).debounce(0.02)).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));
+        // When right trigger is pressed change center of rotation to front right module
         new Trigger(driverController.rightTrigger(triggerEventLoop).debounce(0.02)).onTrue(new InstantCommand(() -> drivetrain.setMoves("FR"))); 
+        // When neither trigger is pressed drive normal
         new Trigger(driverController.rightTrigger(triggerEventLoop).debounce(0.02)).negate().and(
                     driverController.leftTrigger(triggerEventLoop).debounce(0.02)).negate().onTrue(
                         new InstantCommand(() -> drivetrain.setMoves("default"))
@@ -168,6 +144,9 @@ public class RobotContainer {
                     driverController.rightTrigger(triggerEventLoop).debounce(0.02)).negate().onTrue(
                         new InstantCommand(() -> drivetrain.setMoves("default"))
         );
+
+        // Operator Controller Bindings ---
+
         // Pressing the Y Button rotates the arm to the amp pose
         new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));        
         // Pressing the X Button initiates ground intake of a game piece
@@ -186,12 +165,13 @@ public class RobotContainer {
         new Trigger(o_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY/2)));
         // Right D-pad is speaker spool
         new Trigger(o_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY)));
+        // Down D-pad is relay spool
         new Trigger(o_dpadDownButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(BARF_SPOOL_VELOCITY)));
 
         // Auto shoot when both B buttons are held
         // new Trigger(operatorController::getBButton).and(() -> driverController.getBButton()).whileTrue(new RepeatCommand(new InstantCommand(() -> Intake.autoShoot())));
 
-        new Trigger(driverController::getBackButton).onTrue(new InstantCommand(() -> forceVisionPose()));
+        new Trigger(driverController::getBackButton).onTrue(new InstantCommand(() -> forceVisionPose())); //TODO: this is debug code remove it or dont doesnt matter
     }
 
     public void configureAutos() {
@@ -209,55 +189,50 @@ public class RobotContainer {
         return autoChooser.getSelected();
     }
 
-    // TODO: lets work with you and Andrzej on Thursday or Saturday to test out a
-    // couple different throttle methods, and pick which one you guys like best,
-    // that way we can clean these next four methods up a bit
     public void speedThrottle() {
         if (driverController.getRightTriggerAxis() != 0) {
             maxSpeedFactor = driverController.getRightTriggerAxis();
             maxSpeedFactor = MathUtil.clamp(maxSpeedFactor, 0.1, 1.0);
-            speedometer.setValue(maxSpeedFactor);
         }
     }
 
     public void speedMax() {
         maxSpeedFactor = 1;
-        speedometer.setValue(maxSpeedFactor);
     }
 
     public void speedUp() {
-        speedometer.setValue(maxSpeedFactor);
     }
 
     public void speedDown() {
         maxSpeedFactor -= .1;
         maxSpeedFactor = MathUtil.clamp(maxSpeedFactor, .1, 1.);
-        speedometer.setValue(maxSpeedFactor);
     }
-    public static void pollEventLoop() { triggerEventLoop.poll(); }
+    public static void pollEventLoop() { 
+        triggerEventLoop.poll(); 
+    }
 
     public void rumble() {
         if(Intake.getSwitch()) {
+            rumble(true);
+        } else { 
+            rumble(false);
+        }
+    }
+
+    public void rumble(boolean set){
+        if (set){
             operatorController.setRumble(RumbleType.kLeftRumble, .5); 
             operatorController.setRumble(RumbleType.kRightRumble, .5);
             driverController.setRumble(RumbleType.kLeftRumble, .5); 
             driverController.setRumble(RumbleType.kRightRumble, .5);
-        } else { 
+        } else {
             operatorController.setRumble(RumbleType.kLeftRumble, 0.0); 
             operatorController.setRumble(RumbleType.kRightRumble, 0.0);
             driverController.setRumble(RumbleType.kLeftRumble, 0.0); 
             driverController.setRumble(RumbleType.kRightRumble, 0.0);
         }
     }
-    public void rumble(String set){
-        if (set.equals("stop")){
-            operatorController.setRumble(RumbleType.kLeftRumble, 0.0); 
-            operatorController.setRumble(RumbleType.kRightRumble, 0.0);
-            driverController.setRumble(RumbleType.kLeftRumble, 0.0); 
-            driverController.setRumble(RumbleType.kRightRumble, 0.0);
-        }
-    }
-    // This is an elegant solution :)
+    // This is an elegant solution (it took me 2 seconds and it works)
     public void forceVisionPose() {
         drivetrain.forceVisionPose();
     }
