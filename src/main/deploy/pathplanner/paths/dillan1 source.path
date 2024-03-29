@@ -3,13 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7713800042984719,
-        "y": 4.440124264863915
+        "x": 0.8193436978391813,
+        "y": 4.508105408509923
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0871221742443502,
-        "y": 4.380922607999063
+        "x": 1.340898762066817,
+        "y": 4.416141178761455
+      },
+      "isLocked": false,
+      "linkedName": "sourceLayup"
+    },
+    {
+      "anchor": {
+        "x": 2.4379257910301533,
+        "y": 4.124382094918037
+      },
+      "prevControl": {
+        "x": 1.736426340686227,
+        "y": 4.124382094918037
+      },
+      "nextControl": {
+        "x": 2.4746102623845534,
+        "y": 4.124382094918037
       },
       "isLocked": false,
       "linkedName": null
@@ -32,27 +48,27 @@
     },
     {
       "anchor": {
-        "x": 0.761513061487663,
-        "y": 4.440124264863915
+        "x": 0.8193436978391813,
+        "y": 4.508105408509923
       },
       "prevControl": {
-        "x": 1.7136730427307028,
-        "y": 4.277319708485571
+        "x": 1.7706465544194137,
+        "y": 4.340365048069793
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "sourceLayup"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.8,
+      "waypointRelativePos": 1.2,
       "rotationDegrees": -2.1685972936244,
-      "rotateFast": true
+      "rotateFast": false
     },
     {
-      "waypointRelativePos": 2.0,
-      "rotationDegrees": -59.31482691040487,
+      "waypointRelativePos": 1.7,
+      "rotationDegrees": 0.0,
       "rotateFast": false
     }
   ],
@@ -84,13 +100,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -57.15494169722222,
+    "rotation": -60.0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -60.395549253995114,
+    "rotation": -60.0,
     "velocity": 0
   },
   "useDefaultConstraints": false
