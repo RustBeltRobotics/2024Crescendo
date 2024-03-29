@@ -33,6 +33,18 @@
         {
           "type": "path",
           "data": {
+            "pathName": "dillan1 amp"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
             "pathName": "Amp - top midfield start"
           }
         },
@@ -43,53 +55,9 @@
           }
         },
         {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "RangedPose"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "top midfield break -  top shooting pose"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "FeedShooter"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "top shooting pose - top midfield break"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ranged5"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "top midfield break -  top shooting pose"
+            "pathName": "Top midfield break - amp"
           }
         },
         {

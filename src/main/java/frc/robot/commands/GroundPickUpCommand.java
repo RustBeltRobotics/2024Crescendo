@@ -21,7 +21,7 @@ public class GroundPickUpCommand extends Command {
     
     @Override
     public void execute() {
-        //arm.groundPose();
+        arm.groundPose();
         intake.runBothIntakes(1);
         switchEventLoop.poll();
         loaded.ifHigh(() -> Intake.stopArmIntake());

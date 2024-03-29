@@ -277,7 +277,7 @@ public class Drivetrain extends SubsystemBase {
 
         // Update odometry from vision if we can see two or more apriltags
         LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(LL_NAME);
-        if (limelightMeasurement.tagCount >= 2) {
+        if (limelightMeasurement.tagCount >= 1) {
             // From LL example:  poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
             // (higher number -> trust vision less)
             // Using our tag distance (m) divided by 3, as our weight, i made these up using the defualts from LL example (0.7). 
@@ -285,9 +285,8 @@ public class Drivetrain extends SubsystemBase {
             // 9999999 is our gyro weight because we trust that a whole bunch
             tagDist = getTagDistance();
             System.out.println(tagDist);
-            if (tagDist < 460) {
-                System.out.println("adding vision");
-                poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill((tagDist/1000), (tagDist/1000), 9999999));
+            if (tagDist < 540) {
+                poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(((tagDist/20000)), (tagDist/20000), 9999999));
                 poseEstimator.addVisionMeasurement(
                     limelightMeasurement.pose,
                     limelightMeasurement.timestampSeconds

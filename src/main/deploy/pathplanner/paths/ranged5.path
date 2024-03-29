@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.652373870688108,
+        "x": 6.652373870688109,
         "y": 6.7601882021424595
       },
       "isLocked": false,
@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 8.080682809874794,
-        "y": 5.782348144398124
+        "x": 8.140735943169133,
+        "y": 5.778413248340258
       },
       "prevControl": {
-        "x": 7.08105832322776,
-        "y": 5.809750438018099
+        "x": 5.7232387744592,
+        "y": 5.743734678409724
       },
       "nextControl": {
-        "x": 8.212152467882918,
-        "y": 5.778744220905874
+        "x": 9.140633072065958,
+        "y": 5.792756596062271
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 6.7601882021424595
       },
       "prevControl": {
-        "x": 7.350292297201566,
-        "y": 6.253009520067206
+        "x": 7.359945663698666,
+        "y": 6.281546710169109
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,7 +46,25 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.85,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "GroundPickUp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,

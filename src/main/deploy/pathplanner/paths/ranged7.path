@@ -3,45 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.553925852829385,
-        "y": 2.444221233308537
+        "x": 5.850038041819203,
+        "y": 1.4336260553255058
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.558149036498967,
-        "y": 2.4436485982346956
+        "x": 6.850038041819203,
+        "y": 1.4336260553255062
       },
       "isLocked": false,
-      "linkedName": "ranged7start"
+      "linkedName": "bottomMidfieldBreak"
     },
     {
       "anchor": {
-        "x": 8.07692062370732,
-        "y": 2.444221233308537
+        "x": 7.415133755152831,
+        "y": 2.4169087730377306
       },
       "prevControl": {
-        "x": 8.0792469536948,
-        "y": 2.4380296165726256
+        "x": 7.1207493033360025,
+        "y": 2.4225321808161473
       },
       "nextControl": {
-        "x": 8.074594293719839,
-        "y": 2.4504128500444486
+        "x": 7.9021969347713314,
+        "y": 2.407604766471001
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.859680452619834,
-        "y": 1.7913300781958705
+        "x": 8.066230341176277,
+        "y": 2.4169087730377306
       },
       "prevControl": {
-        "x": 6.981991512811152,
-        "y": 2.1521975437924086
+        "x": 7.904053784024999,
+        "y": 2.4048098870280317
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "bottomMidfieldBreak"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -49,7 +49,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 1.3,
       "command": {
         "type": "parallel",
         "data": {
@@ -72,7 +72,7 @@
     "maxAngularAcceleration": 2291.0
   },
   "goalEndState": {
-    "velocity": 2.0,
+    "velocity": 0,
     "rotation": 0,
     "rotateFast": false
   },

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.775897638377844,
-        "y": 6.634859923962967
+        "x": 1.1021896346248048,
+        "y": 7.052680938509199
       },
       "isLocked": false,
       "linkedName": "ampLayup"
@@ -48,16 +48,16 @@
     },
     {
       "anchor": {
-        "x": 0.9150899895836491,
+        "x": 0.7758976383778456,
         "y": 6.634859923962967
       },
       "prevControl": {
-        "x": 1.7543582165297011,
-        "y": 6.859180766717376
+        "x": 1.0954611725071666,
+        "y": 7.037219791515476
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "matts allowance"
+      "linkedName": "ampLayup"
     }
   ],
   "rotationTargets": [

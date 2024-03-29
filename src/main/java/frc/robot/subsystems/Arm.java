@@ -8,6 +8,7 @@ import static frc.robot.Constants.NEO_SECONDARY_CURRENT_LIMIT;
 import static frc.robot.Constants.NEO_SMART_CURRENT_LIMIT;
 import static frc.robot.Constants.RIGHT_ROTATE;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
@@ -27,6 +28,7 @@ public class Arm extends SubsystemBase {
     private static final CANSparkMax armMotor1 = new CANSparkMax(LEFT_ROTATE, MotorType.kBrushless);
     private static final CANSparkMax armMotor2 = new CANSparkMax(RIGHT_ROTATE, MotorType.kBrushless);
     private static RelativeEncoder throughBoreRelative = armMotor2.getAlternateEncoder(8192);
+    //private static AbsoluteEncoder throughBoreAbsolute = armMotor1.getAbsoluteEncoder();
 
     
     private static final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(2);
@@ -108,6 +110,7 @@ public class Arm extends SubsystemBase {
     public static void zeroThroughBoreRelative() {
         System.out.println("bigenc: " + bigEncoder.getAbsolutePosition());
         throughBoreRelative.setPosition(bigEncoder.getAbsolutePosition());
+        //throughBoreRelative.setPosition(throughBoreAbsolute.getPosition());
     }
     public void updateshuffle(){
         bigEncoderEntry.setDouble(bigEncoder.getAbsolutePosition());
