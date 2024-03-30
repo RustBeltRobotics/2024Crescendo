@@ -39,7 +39,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "start - top midfield  avoid"
+            "pathName": "amp - top midfield start avoid"
           }
         },
         {
@@ -62,6 +62,12 @@
                 "type": "sequential",
                 "data": {
                   "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "SpoolShooter"
+                      }
+                    },
                     {
                       "type": "path",
                       "data": {

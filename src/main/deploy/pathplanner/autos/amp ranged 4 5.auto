@@ -33,13 +33,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Amp - top midfield start"
+            "pathName": "amp - top midfield start avoid"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "ranged4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SpoolShooter"
           }
         },
         {
@@ -81,9 +87,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "StopShooter"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "ranged5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SpoolShooter"
           }
         },
         {

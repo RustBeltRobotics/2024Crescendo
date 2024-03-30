@@ -22,6 +22,7 @@ import frc.robot.commands.DefaultClimbCommand;
 import frc.robot.commands.DefaultIntakeCommand;
 import frc.robot.commands.FieldOrientedDriveCommand;
 import frc.robot.commands.GroundPickUpCommand;
+import frc.robot.commands.LockNoteCommand;
 import frc.robot.commands.RobotOrientedDriveCommand;
 import frc.robot.commands.SpeakerAimCommand;
 import frc.robot.subsystems.Arm;
@@ -75,9 +76,7 @@ public class RobotContainer {
 
     SlewRateLimiter driveSlewRateLimiter = new SlewRateLimiter(0.5);
     //SlewRateLimiter rotationSlewRateLimiter = new SlewRateLimiter(0.5);
-    private GroundPickUpCommand gpk = new GroundPickUpCommand(false);
-    private GroundPickUpCommand gpklock = new GroundPickUpCommand(true);
-
+    private GroundPickUpCommand gpk = new GroundPickUpCommand();
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
@@ -106,10 +105,12 @@ public class RobotContainer {
         // register commands with pathplanner
         NamedCommands.registerCommand("AprilTagAim", new SpeakerAimCommand(thePDH, arm, drivetrain));
         NamedCommands.registerCommand("SpoolShooter", new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
-        NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand(false));
+        NamedCommands.registerCommand("StopShooter", new InstantCommand(() -> Shooter.stop()));
+        NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
         NamedCommands.registerCommand("FeedShooter", new InstantCommand(() -> Intake.feedShooter()));
-        NamedCommands.registerCommand("RangedPose", new RepeatCommand(new InstantCommand(() -> arm.stagePose())));
-        
+        NamedCommands.registerCommand("RangedPose", new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
+        NamedCommands.registerCommand("LockNote", new LockNoteCommand());
+
         configureButtonBindings();
         configureAutos();
     }
@@ -159,10 +160,9 @@ public class RobotContainer {
         new Trigger(operatorController::getBButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
         // Left bumper stops intake
         new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> gpk.cancel()));
-        new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> gpklock.cancel()));
         // Right bumper autofeeds
         new Trigger(operatorController::getRightBumper).onTrue(new InstantCommand(() -> Intake.feedShooter()));
-        new Trigger(operatorController::getStartButton).onTrue(gpklock);
+        new Trigger(operatorController::getStartButton).onTrue(new LockNoteCommand());
         // Up D-pad is stop shooter
         new Trigger(o_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.stop()));
         // Left D-pad is amp spool

@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
 /**
@@ -136,8 +137,8 @@ public final class Constants {
     public static final int PDH = 5;
         // mass in ibs
     public static final int MASS = 145;
-public static final double WIDTH = 24;
-public static final double LENGTH = 29.5;
+    public static final double WIDTH = 24;
+    public static final double LENGTH = 29.5;
     // Field
     /** The height of the speaker opening, in cm.*/
     public static final double SPEAKER_HEIGHT = 204.0;
@@ -165,9 +166,15 @@ public static final double LENGTH = 29.5;
     // Arm
     // Angles of interest (Rotations)
     public static final double AMP_POSITION = 0.75;
-    public static final double GROUND_POSITION = 0.4976; 
+    public static final double GROUND_POSITION = 0.4976;
 
-    public static final double STAGE_ANGLE = 0.57;
+    public static final InterpolatingDoubleTreeMap DISTANCE_MAP = new InterpolatingDoubleTreeMap();
+
+    static {
+        DISTANCE_MAP.put(2.77, 0.55);
+        DISTANCE_MAP.put(5.06439, 0.576);
+    }
+
     // Calculated feedForward gains
     public static final double ARM_FF_kA = 0.04;
     public static final double ARM_FF_kG = 0.62;

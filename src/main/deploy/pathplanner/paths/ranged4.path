@@ -63,6 +63,23 @@
           ]
         }
       }
+    },
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 1.4,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "LockNote"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "globalConstraints": {

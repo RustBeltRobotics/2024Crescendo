@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import static frc.robot.Constants.DISTANCE_MAP;
+
 import java.util.Map;
 
 import edu.wpi.first.math.MathUtil;
@@ -110,7 +112,7 @@ public class SpeakerAimCommand extends Command {
             System.out.println("layup mode");
             return 0.5;
         } else {
-            armTarget = doubleInterpolator.interpolate(0.55, 0.576, MathUtil.inverseInterpolate(2.77, 5.06439, getTagDistance()));
+            armTarget = DISTANCE_MAP.get(getTagDistance());
             if (armTarget < 0.75 && armTarget > 0.5) {
                 System.out.println(armTarget);
                 return armTarget;
