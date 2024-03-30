@@ -282,8 +282,7 @@ public class Drivetrain extends SubsystemBase {
         LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(LL_NAME);
         if (limelightMeasurement.tagCount >= 1) {
             tagDist = getTagDistance();
-            System.out.println("dist" + tagDist);
-            if (tagDist < 600) {
+            if (tagDist < 450) {
                 // Desmos format equation for comp tuning: \frac{1}{3.6}\left(x-600\right)^{\frac{1}{5}}+1
                 /** How to craft the java function:
                  *  change the 600 to the distance the LL pose starts jumping

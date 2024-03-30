@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase{
         floorMotor.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
         
         intakeMotor.restoreFactoryDefaults();
-        intakeMotor.setIdleMode(IdleMode.kCoast);
+        intakeMotor.setIdleMode(IdleMode.kBrake);
         intakeMotor.setInverted(false);
         intakeMotor.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         intakeMotor.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);

@@ -158,13 +158,14 @@ public static final double LENGTH = 29.5;
      * Target velocity for the shooter wheels, in rotations per minute. Uses 75% of
      * the emperical free speed of a NEO, assuming no gearing
      */
-    public static final double SPOOL_VELOCITY = 4257;
+    // public static final double SPOOL_VELOCITY = 4257;
+    public static final double SPOOL_VELOCITY = 4700;
     public static final double BARF_SPOOL_VELOCITY = 2600;
 
     // Arm
     // Angles of interest (Rotations)
     public static final double AMP_POSITION = 0.75;
-    public static final double GROUND_POSITION = 0.5; 
+    public static final double GROUND_POSITION = 0.4976; 
 
     public static final double STAGE_ANGLE = 0.57;
     // Calculated feedForward gains

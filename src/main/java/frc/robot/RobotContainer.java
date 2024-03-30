@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -74,7 +75,8 @@ public class RobotContainer {
 
     SlewRateLimiter driveSlewRateLimiter = new SlewRateLimiter(0.5);
     //SlewRateLimiter rotationSlewRateLimiter = new SlewRateLimiter(0.5);
-    private GroundPickUpCommand gpk = new GroundPickUpCommand();
+    private GroundPickUpCommand gpk = new GroundPickUpCommand(false);
+    private GroundPickUpCommand gpklock = new GroundPickUpCommand(true);
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -104,7 +106,7 @@ public class RobotContainer {
         // register commands with pathplanner
         NamedCommands.registerCommand("AprilTagAim", new SpeakerAimCommand(thePDH, arm, drivetrain));
         NamedCommands.registerCommand("SpoolShooter", new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
-        NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
+        NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand(false));
         NamedCommands.registerCommand("FeedShooter", new InstantCommand(() -> Intake.feedShooter()));
         NamedCommands.registerCommand("RangedPose", new RepeatCommand(new InstantCommand(() -> arm.stagePose())));
         
@@ -157,8 +159,10 @@ public class RobotContainer {
         new Trigger(operatorController::getBButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
         // Left bumper stops intake
         new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> gpk.cancel()));
+        new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> gpklock.cancel()));
         // Right bumper autofeeds
         new Trigger(operatorController::getRightBumper).onTrue(new InstantCommand(() -> Intake.feedShooter()));
+        new Trigger(operatorController::getStartButton).onTrue(gpklock);
         // Up D-pad is stop shooter
         new Trigger(o_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.stop()));
         // Left D-pad is amp spool
@@ -176,7 +180,7 @@ public class RobotContainer {
 
     public void configureAutos() {
         autoChooser = AutoBuilder.buildAutoChooser();
-        comp.add("Auto Chooser", autoChooser).withPosition(0, 4);
+        SmartDashboard.putData("auto machine", autoChooser);
     }
 
     /**

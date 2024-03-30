@@ -2,8 +2,10 @@ package frc.robot.commands;
 
 import java.util.Map;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -12,6 +14,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -29,6 +32,8 @@ public class SpeakerAimCommand extends Command {
     private static GenericEntry kI;
     private static GenericEntry kD;
     private static GenericEntry autoAimWorking;
+
+    private final static Interpolator<Double> doubleInterpolator = Interpolator.forDouble();
 
     private static Arm arm;
     private static PowerDistribution thePDH;
@@ -94,7 +99,7 @@ public class SpeakerAimCommand extends Command {
         heading = drivetrain.getPose().getRotation().getDegrees();
         SmartDashboard.putNumber("calc: ", -heading + tx);
         if (turnAround) { // Hi im blue
-            return steerPID.calculate(heading + tx) - steerFF.calculate(heading + tx);
+            return steerPID.calculate(heading - tx) - steerFF.calculate(heading - tx);
         } else {
             return steerPID.calculate(-(180-heading + tx)) - steerFF.calculate(-(180-heading + tx));
         }
@@ -105,13 +110,14 @@ public class SpeakerAimCommand extends Command {
             System.out.println("layup mode");
             return 0.5;
         } else {
-            armTarget = (1.67*Math.pow(10, -3)*Math.pow(getTagDistance(), 2)) - (2.531*Math.pow(10, -2)*Math.pow(getTagDistance(), 2)) + (1.321*Math.pow(10,-1)*getTagDistance()) + 0.3467;
-            if (armTarget < 0.75 && armTarget > 0.5) { 
+            armTarget = doubleInterpolator.interpolate(0.55, 0.576, MathUtil.inverseInterpolate(2.77, 5.06439, getTagDistance()));
+            if (armTarget < 0.75 && armTarget > 0.5) {
                 System.out.println(armTarget);
-                return armTarget; 
+                return armTarget;
             }
         }
-        return 0.5;
+        System.out.println(armTarget);
+        return(0.5);
     }
 
     // Straight line distance between camera sensor and tag across the XY plane in
@@ -128,7 +134,7 @@ public class SpeakerAimCommand extends Command {
         SmartDashboard.putNumber("robotX", robotX);
         SmartDashboard.putNumber("robotY", robotY);
         
-        SmartDashboard.putNumber("dist, ", Math.hypot(deltaX, deltaY));
+        SmartDashboard.putNumber("speaker dist, ", Math.hypot(deltaX, deltaY));
         return Math.hypot(Math.abs(deltaX), Math.abs(deltaY));
     }
 

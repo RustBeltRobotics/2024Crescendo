@@ -56,17 +56,23 @@ public class Shooter extends SubsystemBase {
 
     static double setpoint;
 
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("shooter vel: ", shooterMotor1.getEncoder().getVelocity());
+        SmartDashboard.putNumber("shooter setpoint: ", setpoint);
+    }
+
     public Shooter(){
         shooterMotor1 = new CANSparkMax(LEFT_SHOOTER, MotorType.kBrushless);
         shooterMotor1.restoreFactoryDefaults();
-        shooterMotor1.setIdleMode(IdleMode.kCoast);
+        shooterMotor1.setIdleMode(IdleMode.kBrake);
         shooterMotor1.setInverted(false);
         shooterMotor1.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         shooterMotor1.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
 
         shooterMotor2 = new CANSparkMax(RIGHT_SHOOTER, MotorType.kBrushless);
         shooterMotor2.restoreFactoryDefaults();
-        shooterMotor2.setIdleMode(IdleMode.kCoast);
+        shooterMotor2.setIdleMode(IdleMode.kBrake);
         shooterMotor2.setInverted(false);
         shooterMotor2.setSmartCurrentLimit(NEO_SMART_CURRENT_LIMIT);
         shooterMotor2.setSecondaryCurrentLimit(NEO_SECONDARY_CURRENT_LIMIT);
@@ -91,7 +97,7 @@ public class Shooter extends SubsystemBase {
         // don't understand it, it could be an issue elsewhere as well and we're
         // currently unaware.
         // REV hardware client might be able to shed some insight
-        shooter1PidController.setReference(velocity*4., ControlType.kVelocity);
+        shooter1PidController.setReference(velocity*4, ControlType.kVelocity);
         setpoint = velocity;
     }
     public static void stop(){

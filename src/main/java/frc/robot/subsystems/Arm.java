@@ -28,11 +28,11 @@ public class Arm extends SubsystemBase {
     private static final CANSparkMax armMotor1 = new CANSparkMax(LEFT_ROTATE, MotorType.kBrushless);
     private static final CANSparkMax armMotor2 = new CANSparkMax(RIGHT_ROTATE, MotorType.kBrushless);
     private static RelativeEncoder throughBoreRelative = armMotor2.getAlternateEncoder(8192);
-    //private static AbsoluteEncoder throughBoreAbsolute = armMotor1.getAbsoluteEncoder();
+    private static AbsoluteEncoder throughBoreAbsolute = armMotor1.getAbsoluteEncoder();
 
     
-    private static final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(2);
-    //private static final Encoder medEncoder = new Encoder(2, 3);
+    // private static final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(2);
+    // private static final Encoder medEncoder = new Encoder(2, 3);
 
 
     private static ShuffleboardTab diag = Shuffleboard.getTab("Diag");
@@ -74,9 +74,6 @@ public class Arm extends SubsystemBase {
     public void periodic() {
         //anglePIDdown.setPID(akP.getDouble(100), akI.getDouble(0), akD.getDouble(0));
         updateshuffle();
-        if (DriverStation.isTestEnabled()) {
-            setAngle(anglesetpoint.getDouble(0.5));
-        }
     }
     public void setAngle(double angle) { 
             armMotor1.setVoltage(anglePIDup.calculate(throughBoreRelative.getPosition(), angle)); 
@@ -101,24 +98,24 @@ public class Arm extends SubsystemBase {
         setAngleDown(Constants.GROUND_POSITION);
     }
     public void stagePose() {
-        setAngle(Constants.STAGE_ANGLE);
+        //setAngle(Constants.STAGE_ANGLE);
+        setAngle(anglesetpoint.getDouble(0.5));
     }
 
     public void stop() {
         armMotor1.setVoltage(0);
     }
     public static void zeroThroughBoreRelative() {
-        System.out.println("bigenc: " + bigEncoder.getAbsolutePosition());
-        throughBoreRelative.setPosition(bigEncoder.getAbsolutePosition());
-        //throughBoreRelative.setPosition(throughBoreAbsolute.getPosition());
+        //System.out.println("bigenc: " + bigEncoder.getAbsolutePosition());
+        // throughBoreRelative.setPosition(bigEncoder.getAbsolutePosition());
+        throughBoreRelative.setPosition(throughBoreAbsolute.getPosition());
     }
     public void updateshuffle(){
-        bigEncoderEntry.setDouble(bigEncoder.getAbsolutePosition());
+        // bigEncoderEntry.setDouble(bigEncoder.getAbsolutePosition());
         medEncoderEntry.setDouble(throughBoreRelative.getPosition());
     }
     public void autoAim(){
-        if (SpeakerAimCommand.isRunning()) {
+            System.out.println("autoaim");
             setAngle(SpeakerAimCommand.armAngleCalculate());
-        }
     }
 }
