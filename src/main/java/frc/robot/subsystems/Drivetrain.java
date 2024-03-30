@@ -22,6 +22,7 @@ import static frc.robot.Constants.translation_D;
 import static frc.robot.Constants.translation_I;
 import static frc.robot.Constants.translation_P;
 
+import java.sql.Driver;
 import java.util.Map;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -46,6 +47,7 @@ import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -81,6 +83,7 @@ public class Drivetrain extends SubsystemBase {
     private boolean wheelsLocked = false;
 
     private double tagDist;
+    private double visionWeight;
 
     private final SwerveDrivePoseEstimator poseEstimator;
 
@@ -284,9 +287,10 @@ public class Drivetrain extends SubsystemBase {
             // So at 2 meters its one and at 1 meter is 0.5, against the speaker it would be around 0.25.
             // 9999999 is our gyro weight because we trust that a whole bunch
             tagDist = getTagDistance();
-            System.out.println(tagDist);
-            if (tagDist < 540) {
-                poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(((tagDist/20000)), (tagDist/20000), 9999999));
+            System.out.println("dist" + tagDist);
+            if (tagDist < 600) {
+                visionWeight = (1/3.6) * (Math.pow(Math.abs(tagDist-600), 1.0 / 5.0) * -1 + 3.6);
+                poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(visionWeight, visionWeight, 9999999));
                 poseEstimator.addVisionMeasurement(
                     limelightMeasurement.pose,
                     limelightMeasurement.timestampSeconds
@@ -384,8 +388,38 @@ public class Drivetrain extends SubsystemBase {
     public void forceVisionPose() {
         Pose2d visionPose2d;
         visionPose2d = LimelightHelpers.getBotPose2d_wpiBlue(LL_NAME);
-        poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), visionPose2d);
-        System.out.println("forced vision heading");
+        if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LL_NAME).tagCount >= 1) {
+            poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), visionPose2d);
+            System.out.println("force vision heading successful");
+        } else if (DriverStation.getAlliance().get() == Alliance.Red) { // Take a guess as to where we are based on alliance and DS position, hope vision kicks in
+            System.err.println("NO TAG FOUND, DEFUALTING TO SUBWOOFER POSITIONS");
+            switch (DriverStation.getLocation().getAsInt()) {
+                case 1:
+                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(0.78, 6.63, new Rotation2d(Math.toRadians(60))));
+                    break;
+                case 2:
+                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(1.34, 5.55, new Rotation2d(Math.toRadians(0))));
+                    break;
+                case 3:
+                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(0.82, 4.51, new Rotation2d(Math.toRadians(-60))));
+                    break;
+            }
+        } else if (DriverStation.getAlliance().get() == Alliance.Blue) {
+            System.err.println("NO TAG FOUND, DEFUALTING TO SUBWOOFER POSITIONS");
+            switch (DriverStation.getLocation().getAsInt()) {
+                case 1:
+                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(15.74, 6.59, new Rotation2d(Math.toRadians(120))));
+                    break;
+                case 2:
+                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(15.24, 5.55, new Rotation2d(Math.toRadians(180))));
+                    break;
+                case 3:
+                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(15.74, 4.52, new Rotation2d(Math.toRadians(-120))));
+                    break;
+            }
+        } else {
+            System.err.println("NO TAGS OR DS POSITION FOUND, POSE NOT SET");
+        }
     }
 
     private void handleLocked() {

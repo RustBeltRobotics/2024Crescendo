@@ -145,12 +145,13 @@ public static final double LENGTH = 29.5;
     // Limelight/vision
     public static final String LL_NAME = "limelight";
     public static final double LL_SPEED_LIMIT = 1.0; //0-1
-    //height of the LL sensor from the ground in cm  
-    // public static final double LL_HEIGHT = 14.5;  //low mount
+    /**height of the LL sensor from the ground in cm  */
     public static final double LL_HEIGHT = 52.3;  //high mount
-    // Angle of LL from horizontal in degrees  
-    // public static final double LL_ANGLE = 45.;  //low mount
+    // public static final double LL_HEIGHT = 14.5;  //low mount
+
+    /** The angle of the camera from horizontal in degrees*/
     public static final double LL_ANGLE = 32.;  //high mount
+    // public static final double LL_ANGLE = 45.;  //low mount
 
     // Shooter
     /**
