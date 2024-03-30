@@ -281,15 +281,19 @@ public class Drivetrain extends SubsystemBase {
         // Update odometry from vision if we can see two or more apriltags
         LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(LL_NAME);
         if (limelightMeasurement.tagCount >= 1) {
-            // From LL example:  poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-            // (higher number -> trust vision less)
-            // Using our tag distance (m) divided by 3, as our weight, i made these up using the defualts from LL example (0.7). 
-            // So at 2 meters its one and at 1 meter is 0.5, against the speaker it would be around 0.25.
-            // 9999999 is our gyro weight because we trust that a whole bunch
             tagDist = getTagDistance();
             System.out.println("dist" + tagDist);
             if (tagDist < 600) {
+                // Desmos format equation for comp tuning: \frac{1}{3.6}\left(x-600\right)^{\frac{1}{5}}+1
+                /** How to craft the java function:
+                 *  change the 600 to the distance the LL pose starts jumping
+                 *  adjust the denominator of the amplitude so that the line just about hits zero making sure it doesnt go below that
+                 *  replace the 1 on the end with the value of the numerator from the amplitude
+                 */
                 visionWeight = (1/3.6) * (Math.pow(Math.abs(tagDist-600), 1.0 / 5.0) * -1 + 3.6);
+                // From LL example:  poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+                // (higher number -> trust vision less)
+                // 9999999 is our gyro weight because we trust that a whole bunch
                 poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(visionWeight, visionWeight, 9999999));
                 poseEstimator.addVisionMeasurement(
                     limelightMeasurement.pose,
