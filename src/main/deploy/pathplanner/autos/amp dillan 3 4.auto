@@ -55,6 +55,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "SpoolShooter"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Top midfield break - amp"

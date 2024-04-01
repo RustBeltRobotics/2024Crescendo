@@ -43,10 +43,9 @@ public class SpeakerAimCommand extends Command {
     private static SimpleMotorFeedforward steerFF;
     private static Drivetrain drivetrain;
 
-    public SpeakerAimCommand(PowerDistribution thePDH, Arm arm, Drivetrain drivetrain) {
+    public SpeakerAimCommand(Arm arm, Drivetrain drivetrain) {
         SpeakerAimCommand.arm = arm;
-        SpeakerAimCommand.thePDH = thePDH;
-        thePDH.setSwitchableChannel(false);
+        //thePDH.setSwitchableChannel(false);
         SpeakerAimCommand.drivetrain = drivetrain;
     }
 
@@ -149,10 +148,10 @@ public class SpeakerAimCommand extends Command {
     // speaker
     public static boolean rotationTargetMet() {
         if ((tx < 3.0 && tx > -3.0)) {
-            thePDH.setSwitchableChannel(true);
+            //thePDH.setSwitchableChannel(true);
             return true;
         } else {
-            thePDH.setSwitchableChannel(false);
+            //thePDH.setSwitchableChannel(false);
             return false;
         }
     }

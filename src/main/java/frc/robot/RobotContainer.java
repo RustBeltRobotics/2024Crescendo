@@ -50,12 +50,12 @@ public class RobotContainer {
     private static EventLoop triggerEventLoop = new EventLoop();
 
     // The robot's subsystems are defined here
+    
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Intake intake = new Intake();
     public static final Arm arm = new Arm();
     public static final Climber climber = new Climber();
     public static final Shooter shooter = new Shooter();
-    PowerDistribution thePDH = new PowerDistribution(PDH, ModuleType.kRev);
 
     // The drive team controllers are defined here
     public static final XboxController driverController = new XboxController(0);
@@ -103,7 +103,7 @@ public class RobotContainer {
         Intake.makeShuffleboard();
 
         // register commands with pathplanner
-        NamedCommands.registerCommand("AprilTagAim", new SpeakerAimCommand(thePDH, arm, drivetrain));
+        NamedCommands.registerCommand("AprilTagAim", new SpeakerAimCommand(arm, drivetrain));
         NamedCommands.registerCommand("SpoolShooter", new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
         NamedCommands.registerCommand("StopShooter", new InstantCommand(() -> Shooter.stop()));
         NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
@@ -131,7 +131,7 @@ public class RobotContainer {
         //         () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
 
         // Automatically aims at speaker while the B button is held
-        new Trigger(driverController::getBButton).whileTrue(new SpeakerAimCommand(thePDH, arm, drivetrain));
+        new Trigger(driverController::getBButton).whileTrue(new SpeakerAimCommand(arm, drivetrain));
         
         //TODO: is driver using the buttons?
         // When left trigger is pressed change center of rotation to front left module

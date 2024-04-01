@@ -172,6 +172,7 @@ public final class Constants {
 
     static {
         DISTANCE_MAP.put(2.77, 0.55);
+        DISTANCE_MAP.put(4.1, 0.57);
         DISTANCE_MAP.put(5.06439, 0.576);
     }
 

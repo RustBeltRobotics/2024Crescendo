@@ -14,6 +14,7 @@ import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_ENCODER;
 import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_MOTOR;
 import static frc.robot.Constants.KINEMATICS;
 import static frc.robot.Constants.MAX_VELOCITY_METERS_PER_SECOND;
+import static frc.robot.Constants.PDH;
 import static frc.robot.Constants.LL_NAME;
 import static frc.robot.Constants.rotation_D;
 import static frc.robot.Constants.rotation_I;
@@ -48,6 +49,8 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -140,8 +143,9 @@ public class Drivetrain extends SubsystemBase {
     // networktables publisher for advantagescope 2d pose visualization
     StructPublisher<Pose2d> posePublisher = NetworkTableInstance.getDefault()
             .getStructTopic("/MyPose", Pose2d.struct).publish();
-
-    public Drivetrain() {
+           
+    PowerDistribution thePDH = new PowerDistribution(PDH, ModuleType.kRev);
+        public Drivetrain() {
         // Start publishing an array of module states with the "/SwerveStates" key
         statePublisher = NetworkTableInstance.getDefault()
                 .getStructArrayTopic("/SwerveStates", SwerveModuleState.struct).publish();
@@ -283,6 +287,8 @@ public class Drivetrain extends SubsystemBase {
         if (limelightMeasurement.tagCount >= 1) {
             tagDist = getTagDistance();
             if (tagDist < 450) {
+                thePDH.setSwitchableChannel(true);
+                System.out.println("true");
                 // Desmos format equation for comp tuning: \frac{1}{3.6}\left(x-600\right)^{\frac{1}{5}}+1
                 /** How to craft the java function:
                  *  change the 600 to the distance the LL pose starts jumping
@@ -299,6 +305,9 @@ public class Drivetrain extends SubsystemBase {
                     limelightMeasurement.timestampSeconds
                 );
             }
+        } else {
+            System.out.println("false");
+            thePDH.setSwitchableChannel(false);
         }
     }
 

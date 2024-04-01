@@ -9,13 +9,21 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Intake;
 
 public class LockNoteCommand extends Command {
+    boolean finished = false;
     @Override
     public void initialize() {
+        finished = false;
         if (Intake.getSwitch()) {
+            System.out.println("lock");
             new SequentialCommandGroup(
                 new ParallelRaceGroup(new WaitCommand(.4), new RepeatCommand(new InstantCommand(() -> Intake.runArmIntake(.35)))), 
                 new ParallelRaceGroup(new RepeatCommand(new InstantCommand(() -> Intake.runArmIntake(-1))), new WaitCommand(0.25)), 
-                new InstantCommand(() -> Intake.stopArmIntake()));
+                new InstantCommand(() -> Intake.stopArmIntake())).schedule();
         }
+        finished = true;
+    }
+    @Override
+    public boolean isFinished() {
+        return finished;
     }
 }
