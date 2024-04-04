@@ -283,28 +283,30 @@ public class Drivetrain extends SubsystemBase {
         );
 
         // Update odometry from vision if we can see two or more apriltags
+        // LimelightHelpers.SetRobotOrientation(LL_NAME, poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(LL_NAME);
-        if (limelightMeasurement.tagCount >= 1) {
             tagDist = getTagDistance();
-            if (tagDist < 450) {
-                thePDH.setSwitchableChannel(true);
-                System.out.println("true");
-                // Desmos format equation for comp tuning: \frac{1}{3.6}\left(x-600\right)^{\frac{1}{5}}+1
-                /** How to craft the java function:
-                 *  change the 600 to the distance the LL pose starts jumping
-                 *  adjust the denominator of the amplitude so that the line just about hits zero making sure it doesnt go below that
-                 *  replace the 1 on the end with the value of the numerator from the amplitude
-                 */
-                visionWeight = (1/3.6) * (Math.pow(Math.abs(tagDist-600), 1.0 / 5.0) * -1 + 3.6);
-                // From LL example:  poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-                // (higher number -> trust vision less)
-                // 9999999 is our gyro weight because we trust that a whole bunch
-                poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(visionWeight, visionWeight, 9999999));
-                poseEstimator.addVisionMeasurement(
-                    limelightMeasurement.pose,
-                    limelightMeasurement.timestampSeconds
-                );
-            }
+            System.out.println(tagDist);
+            if (limelightMeasurement.tagCount >= 1) {
+                if (tagDist < 450) {
+                    thePDH.setSwitchableChannel(true);
+                    System.out.println("true");
+                    // Desmos format equation for comp tuning: \frac{1}{3.6}\left(x-600\right)^{\frac{1}{5}}+1
+                    /** How to craft the java function:
+                     *  change the 600 to the distance the LL pose starts jumping
+                     *  adjust the denominator of the amplitude so that the line just about hits zero making sure it doesnt go below that
+                     *  replace the 1 on the end with the value of the numerator from the amplitude
+                     */
+                    visionWeight = (1/3.6) * (Math.pow(Math.abs(tagDist-600), 1.0 / 5.0) * -1 + 3.6);
+                    // From LL example:  poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+                    // (higher number -> trust vision less)
+                    // 9999999 is our gyro weight because we trust that a whole bunch
+                    poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(visionWeight, visionWeight, 9999999));
+                    poseEstimator.addVisionMeasurement(
+                        limelightMeasurement.pose,
+                        limelightMeasurement.timestampSeconds
+                    );
+                }
         } else {
             System.out.println("false");
             thePDH.setSwitchableChannel(false);
