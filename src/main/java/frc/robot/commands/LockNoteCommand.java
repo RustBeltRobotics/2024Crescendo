@@ -6,12 +6,13 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Robot;
 import frc.robot.subsystems.Intake;
 
 public class LockNoteCommand extends Command {
     @Override
     public void initialize() {
-        if (Intake.getSwitch()) {
+        if (Intake.getSwitch() && Robot.intakeLockEntry.getBoolean(false)) {
             new SequentialCommandGroup(
                 new ParallelRaceGroup(new WaitCommand(.4), new RepeatCommand(new InstantCommand(() -> Intake.runArmIntake(.35)))), 
                 new ParallelRaceGroup(new RepeatCommand(new InstantCommand(() -> Intake.runArmIntake(-1))), new WaitCommand(0.25)), 

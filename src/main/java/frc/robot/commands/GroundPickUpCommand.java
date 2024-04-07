@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Robot;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
 
@@ -22,8 +23,8 @@ public class GroundPickUpCommand extends Command {
     
     @Override
     public void execute() {
-        arm.groundPose();
-        intake.runBothIntakes(1);
+        if (Robot.intakeEntry.getBoolean(false))
+        intake.runBothIntakes(Robot.intakeSpeedEntry.getDouble(0));
         switchEventLoop.poll();
         loaded.ifHigh(() -> finished = true);
         loaded.ifHigh(() -> new InstantCommand(() -> Intake.stopBothIntakes()));

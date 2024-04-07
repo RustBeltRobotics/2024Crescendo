@@ -2,6 +2,8 @@ package frc.robot;
 
 import static frc.robot.Constants.LL_NAME;
 
+import java.util.Map;
+
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -10,6 +12,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -29,12 +32,18 @@ public class Robot extends TimedRobot {
     private RobotContainer robotContainer;
     private Command autonomousCommand;
 
-    private ShuffleboardTab matchTab = Shuffleboard.getTab("Competition");
-    private GenericEntry timeEntry = matchTab.add("Time Left", 0.0)
-            .withWidget(BuiltInWidgets.kNumberBar)
-            .withPosition(4, 0)
-            .withSize(2, 1)
-            .getEntry();
+    static ShuffleboardTab demo = Shuffleboard.getTab("demo");
+    public static GenericEntry intakeEntry = demo.add("Intake", false).withWidget(BuiltInWidgets.kToggleSwitch).withPosition(3, 2).getEntry();
+    public static GenericEntry shooterEntry = demo.add("Shooter", false).withWidget(BuiltInWidgets.kToggleSwitch).withPosition(3, 0).getEntry();
+    public static GenericEntry armEntry = demo.add("arm", false).withWidget(BuiltInWidgets.kToggleSwitch).withPosition(3, 1).getEntry();
+    public static GenericEntry armSetpointsEntry = demo.add("Arm Setpoints", false).withWidget(BuiltInWidgets.kToggleSwitch).withPosition(2, 1).getEntry();
+    public static GenericEntry intakeLockEntry = demo.add("Intake lock button", false).withWidget(BuiltInWidgets.kToggleSwitch).withPosition(2, 0).getEntry();
+    public static GenericEntry climberEntry = demo.add("climber", false).withWidget(BuiltInWidgets.kToggleSwitch).withPosition(3, 3).getEntry();
+    public static GenericEntry shooterVelEntry = demo.add("Shooter vel", 0).withWidget(BuiltInWidgets.kNumberSlider).withPosition(0, 2).withProperties(Map.of("min", 0, "max", 5000)).getEntry();
+    public static GenericEntry driveEntry = demo.add("Drive Speed Control", 0.2).withWidget(BuiltInWidgets.kNumberSlider).withPosition(0, 3).withProperties(Map.of("min", 0, "max", 1)).getEntry();
+    public static GenericEntry intakeSpeedEntry = demo.add("Intake Speed Control", 0.5).withWidget(BuiltInWidgets.kNumberSlider).withPosition(0, 0).withProperties(Map.of("min", 0, "max", 1)).getEntry();
+    public static GenericEntry armSpeedEntry = demo.add("Arm Speed Control", 0.5).withWidget(BuiltInWidgets.kNumberSlider).withPosition(0, 1).withProperties(Map.of("min", 0, "max", 1)).getEntry();
+
     /**
      * This function is run once when the robot is first started up and should be
      * used for any initialization code.
@@ -69,7 +78,6 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-        timeEntry.setDouble(DriverStation.getMatchTime());
         SmartDashboard.putNumber("dist: ", SpeakerAimCommand.getTagDistance());
     }
 
@@ -112,6 +120,8 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         RobotContainer.pollEventLoop();
         robotContainer.rumble();
+
+        
     }
 
     /** This function is called once when the robot is disabled. */

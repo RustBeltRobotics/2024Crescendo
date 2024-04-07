@@ -83,19 +83,18 @@ public class RobotContainer {
     public RobotContainer() {
         drivetrain.setDefaultCommand(new FieldOrientedDriveCommand(drivetrain,
                 () -> 
-                //driveSlewRateLimiter.calculate(
-                    -modifyAxisGeneric(driverController.getLeftY(), 1.0, 0.05) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
+                    -modifyAxisGeneric(driverController.getLeftY(), 1.0, 0.05) * MAX_VELOCITY_METERS_PER_SECOND * Robot.driveEntry.getDouble(0),
                 () ->
-                 //driveSlewRateLimiter.calculate(
-                    -modifyAxisGeneric(driverController.getLeftX(), 1.0, 0.05)* MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxisGeneric(driverController.getRightX(), 1.0, 0.05) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor, 
+                    -modifyAxisGeneric(driverController.getLeftX(), 1.0, 0.05)* MAX_VELOCITY_METERS_PER_SECOND * Robot.driveEntry.getDouble(0),
+                () -> -modifyAxisGeneric(driverController.getRightX(), 1.0, 0.05) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * Robot.driveEntry.getDouble(0), 
                 () -> driverController.getBButton()));
         
         intake.setDefaultCommand(new DefaultIntakeCommand(intake,
-                () -> operatorController.getRightTriggerAxis(),
-                () -> operatorController.getLeftTriggerAxis()));
+                () -> operatorController.getRightTriggerAxis() * Robot.intakeSpeedEntry.getDouble(0),
+                () -> operatorController.getLeftTriggerAxis() * Robot.intakeSpeedEntry.getDouble(0)
+        ));
 
-        arm.setDefaultCommand(new DefaultArmCommand(arm, () -> -operatorController.getLeftY()));
+        arm.setDefaultCommand(new DefaultArmCommand(arm, () -> -operatorController.getLeftY() * Robot.armSpeedEntry.getDouble(0)));
 
         climber.setDefaultCommand(new DefaultClimbCommand(climber, () -> operatorController.getRightY()));
 
@@ -125,57 +124,24 @@ public class RobotContainer {
         new Trigger(driverController::getYButton).onTrue(new InstantCommand(() -> drivetrain.toggleWheelsLocked()));
 
         // Pressing the X Button toggles between robot oriented and field oriented
-        // new Trigger(driverController::getXButton).toggleOnTrue(new RobotOrientedDriveCommand(drivetrain,
-        //         () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-        //         () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-        //         () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
+        new Trigger(driverController::getXButton).toggleOnTrue(new RobotOrientedDriveCommand(drivetrain,
+                () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * Robot.driveEntry.getDouble(0),
+                () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * Robot.driveEntry.getDouble(0),
+                () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * Robot.driveEntry.getDouble(0)));
 
-        // Automatically aims at speaker while the B button is held
-        new Trigger(driverController::getBButton).whileTrue(new SpeakerAimCommand(thePDH, arm, drivetrain));
-        
-        //TODO: is driver using the buttons?
-        // When left trigger is pressed change center of rotation to front left module
-        new Trigger(driverController.leftTrigger(triggerEventLoop).debounce(0.02)).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));
-        // When right trigger is pressed change center of rotation to front right module
-        new Trigger(driverController.rightTrigger(triggerEventLoop).debounce(0.02)).onTrue(new InstantCommand(() -> drivetrain.setMoves("FR"))); 
-        // When neither trigger is pressed drive normal
-        new Trigger(driverController.rightTrigger(triggerEventLoop).debounce(0.02)).negate().and(
-                    driverController.leftTrigger(triggerEventLoop).debounce(0.02)).negate().onTrue(
-                        new InstantCommand(() -> drivetrain.setMoves("default"))
-        );
-        new Trigger(driverController.leftTrigger(triggerEventLoop).debounce(0.02)).negate().and(
-                    driverController.rightTrigger(triggerEventLoop).debounce(0.02)).negate().onTrue(
-                        new InstantCommand(() -> drivetrain.setMoves("default"))
-        );
 
         // Operator Controller Bindings ---
 
         // Pressing the Y Button rotates the arm to the amp pose
-        new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));        
+        
+        new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));
         // Pressing the X Button initiates ground intake of a game piece
         new Trigger(operatorController::getXButton).onTrue(gpk);
-        // Pressing the A Button rotates the arm to the ground pose
-        new Trigger(operatorController::getAButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.stagePose())));
-        // B button for auto aim shooter
-        new Trigger(operatorController::getBButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
-        // Left bumper stops intake
-        new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> gpk.cancel()));
-        // Right bumper autofeeds
-        new Trigger(operatorController::getRightBumper).onTrue(new InstantCommand(() -> Intake.feedShooter()));
         new Trigger(operatorController::getStartButton).onTrue(new LockNoteCommand());
         // Up D-pad is stop shooter
         new Trigger(o_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.stop()));
         // Left D-pad is amp spool
-        new Trigger(o_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY/2)));
-        // Right D-pad is speaker spool
-        new Trigger(o_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY)));
-        // Down D-pad is relay spool
-        new Trigger(o_dpadDownButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(BARF_SPOOL_VELOCITY)));
-
-        // Auto shoot when both B buttons are held
-        // new Trigger(operatorController::getBButton).and(() -> driverController.getBButton()).whileTrue(new RepeatCommand(new InstantCommand(() -> Intake.autoShoot())));
-
-        new Trigger(driverController::getBackButton).onTrue(new InstantCommand(() -> forceVisionPose())); //TODO: this is debug code remove it or dont doesnt matter
+        new Trigger(o_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY)));
     }
 
     public void configureAutos() {

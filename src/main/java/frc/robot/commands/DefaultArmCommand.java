@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
 import frc.robot.subsystems.Arm;
 import java.util.function.DoubleSupplier;
 
@@ -27,7 +28,7 @@ public class DefaultArmCommand extends Command {
      */
     @Override
     public void execute() {
-        if (DriverStation.isTeleopEnabled()) {
+        if (DriverStation.isTeleopEnabled() && Robot.armEntry.getBoolean(false)) {
             if (rotationSupplier.getAsDouble() > 0.05 || rotationSupplier.getAsDouble() < -0.05) {
                 arm.rotate(rotationSupplier.getAsDouble());
             } else { arm.stop(); }

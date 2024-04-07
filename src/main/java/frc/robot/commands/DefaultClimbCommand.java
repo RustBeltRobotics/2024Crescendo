@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Robot;
 import frc.robot.subsystems.Climber;
 import java.util.function.DoubleSupplier;
 
@@ -27,7 +28,7 @@ public class DefaultClimbCommand extends Command {
     @Override
     public void execute() {
         // dont always command zero so other commands can use the intake
-        if (!DriverStation.isAutonomous()){
+        if (!DriverStation.isAutonomous() && Robot.climberEntry.getBoolean(false)){
             climber.climb(speedSupplier.getAsDouble());
         }
     }

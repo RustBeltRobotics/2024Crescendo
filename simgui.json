@@ -5,7 +5,8 @@
       "/Shuffleboard/Competition/Auto Chooser": "String Chooser",
       "/Shuffleboard/Competition/autoChooser": "String Chooser",
       "/SmartDashboard/Auto Chooser": "String Chooser",
-      "/SmartDashboard/Scheduler": "Scheduler"
+      "/SmartDashboard/Scheduler": "Scheduler",
+      "/SmartDashboard/auto machine": "String Chooser"
     }
   },
   "NetworkTables": {

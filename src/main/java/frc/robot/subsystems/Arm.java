@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.commands.SpeakerAimCommand;
 
 public class Arm extends SubsystemBase {
@@ -76,7 +77,7 @@ public class Arm extends SubsystemBase {
         updateshuffle();
     }
     public void setAngle(double angle) { 
-            armMotor1.setVoltage(anglePIDup.calculate(throughBoreRelative.getPosition(), angle)); 
+            armMotor1.setVoltage(anglePIDup.calculate(throughBoreRelative.getPosition(), angle));
     }
     public void setAngleDown(double angle) { 
             armMotor1.setVoltage(anglePIDdown.calculate(throughBoreRelative.getPosition(), angle)); 
@@ -91,7 +92,9 @@ public class Arm extends SubsystemBase {
     }
 
     public void ampPose() {
-        setAngle(Constants.AMP_POSITION);
+        if (Robot.armSetpointsEntry.getBoolean(false)) {
+            setAngle(Constants.AMP_POSITION);
+        }
     }
 
     public void groundPose() {
