@@ -137,6 +137,7 @@ public class RobotContainer {
         new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));
         // Pressing the X Button initiates ground intake of a game piece
         new Trigger(operatorController::getXButton).onTrue(gpk);
+        new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> gpk.cancel()));
         new Trigger(operatorController::getStartButton).onTrue(new LockNoteCommand());
         // Up D-pad is stop shooter
         new Trigger(o_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.stop()));
