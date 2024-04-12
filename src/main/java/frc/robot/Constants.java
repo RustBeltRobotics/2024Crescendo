@@ -166,7 +166,7 @@ public final class Constants {
     // Arm
     // Angles of interest (Rotations)
     public static final double AMP_POSITION = 0.75;
-    public static final double GROUND_POSITION = 0.4976;
+    public static final double GROUND_POSITION = 0.495;
 
     public static final InterpolatingDoubleTreeMap DISTANCE_MAP = new InterpolatingDoubleTreeMap();
 

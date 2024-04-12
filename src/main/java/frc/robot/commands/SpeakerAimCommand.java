@@ -113,11 +113,9 @@ public class SpeakerAimCommand extends Command {
         } else {
             armTarget = DISTANCE_MAP.get(getTagDistance());
             if (armTarget < 0.75 && armTarget > 0.5) {
-                System.out.println(armTarget);
                 return armTarget;
             }
         }
-        System.out.println(armTarget);
         return(0.5);
     }
 

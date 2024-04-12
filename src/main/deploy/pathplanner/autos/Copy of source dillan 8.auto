@@ -31,21 +31,39 @@
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 1.5
+            "pathName": "source - bottom midfield start"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "amp - top midfield start avoid"
+            "pathName": "ranged8"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "ranged4"
+            "pathName": "Source midfield break- source layup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "source layup - source midfield break"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged7"
           }
         },
         {
@@ -63,15 +81,9 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
-                      "data": {
-                        "name": "SpoolShooter"
-                      }
-                    },
-                    {
                       "type": "path",
                       "data": {
-                        "pathName": "top midfield break -  top shooting pose"
+                        "pathName": "New Path"
                       }
                     },
                     {
@@ -84,12 +96,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedShooter"
           }
         }
       ]

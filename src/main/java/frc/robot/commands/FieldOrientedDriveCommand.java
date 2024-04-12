@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.GenericEntry;
@@ -72,7 +73,7 @@ public class FieldOrientedDriveCommand extends Command {
                     translationXSupplier.getAsDouble(),
                     translationYSupplier.getAsDouble(),
                     rotationSupplier.getAsDouble(),
-                    Rotation2d.fromDegrees((drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()))), 0.020));
+                    drivetrain.getPoseRotation()), 0.020));
         }
     }
 

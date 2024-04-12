@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.DefaultArmCommand;
 import frc.robot.commands.DefaultClimbCommand;
 import frc.robot.commands.DefaultIntakeCommand;
+import frc.robot.commands.FeedShooterCommand;
 import frc.robot.commands.FieldOrientedDriveCommand;
 import frc.robot.commands.GroundPickUpCommand;
 import frc.robot.commands.LockNoteCommand;
@@ -35,6 +36,7 @@ import static frc.robot.Constants.*;
 import static frc.robot.util.Utilities.*;
 
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -56,6 +58,8 @@ public class RobotContainer {
     public static final Arm arm = new Arm();
     public static final Climber climber = new Climber();
     public static final Shooter shooter = new Shooter();
+    private final static SendableChooser<Integer> startingPos = new SendableChooser<>();
+
 
     // The drive team controllers are defined here
     public static final XboxController driverController = new XboxController(0);
@@ -107,7 +111,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("SpoolShooter", new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
         NamedCommands.registerCommand("StopShooter", new InstantCommand(() -> Shooter.stop()));
         NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
-        NamedCommands.registerCommand("FeedShooter", new InstantCommand(() -> Intake.feedShooter()));
+        NamedCommands.registerCommand("FeedShooter", new RunCommand(() -> Intake.feedShooter()).until(() -> !Intake.getSwitch()));
         NamedCommands.registerCommand("RangedPose", new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
         NamedCommands.registerCommand("LockNote", new LockNoteCommand());
 
@@ -117,6 +121,7 @@ public class RobotContainer {
 
     /** Button -> command mappings are defined here. */
     private void configureButtonBindings() {
+        FeedShooterCommand feedShoot = new FeedShooterCommand();
         // Driver Controller Bindings ---
 
         // Pressing A button zeros the gyroscope
@@ -161,7 +166,7 @@ public class RobotContainer {
         // Left bumper stops intake
         new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> gpk.cancel()));
         // Right bumper autofeeds
-        new Trigger(operatorController::getRightBumper).onTrue(new InstantCommand(() -> Intake.feedShooter()));
+        new Trigger(operatorController::getRightBumper).onTrue(new RunCommand(() -> Intake.feedShooter()).until(() -> !Intake.getSwitch()).onlyIf(() -> Shooter.stopped()));
         new Trigger(operatorController::getStartButton).onTrue(new LockNoteCommand());
         // Up D-pad is stop shooter
         new Trigger(o_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.stop()));
@@ -181,6 +186,13 @@ public class RobotContainer {
     public void configureAutos() {
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("auto machine", autoChooser);
+        startingPos.addOption("1", 1);
+        startingPos.addOption("2", 2);
+        startingPos.addOption("3", 3);
+        SmartDashboard.putData("where am I?", startingPos);
+    }
+    public static int getPosition() {
+        return startingPos.getSelected();
     }
 
     /**

@@ -115,7 +115,6 @@ public class Arm extends SubsystemBase {
         medEncoderEntry.setDouble(throughBoreRelative.getPosition());
     }
     public void autoAim(){
-            System.out.println("autoaim");
             setAngle(SpeakerAimCommand.armAngleCalculate());
     }
 }

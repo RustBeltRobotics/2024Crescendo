@@ -86,7 +86,7 @@ public class Shooter extends SubsystemBase {
         shooter1PidController.setFF(kFF.getDouble(0.));
         shooter1PidController.setOutputRange(kMinOutput.getDouble(-1.), kMaxOutput.getDouble(1.)); 
     }
-    public double getShooterVelocity() {
+    public static double getShooterVelocity() {
         return shooterMotor1.getEncoder().getVelocity();
     }
     
@@ -102,5 +102,12 @@ public class Shooter extends SubsystemBase {
     }
     public static void stop(){
         shooter1PidController.setReference(0., ControlType.kVoltage);
+    }
+    public static boolean stopped() {
+        if (getShooterVelocity() == 0.0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

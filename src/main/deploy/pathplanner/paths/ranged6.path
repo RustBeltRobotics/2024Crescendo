@@ -12,7 +12,7 @@
         "y": 4.123867273962226
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "centerMidfieldBreak2"
     },
     {
       "anchor": {
@@ -32,11 +32,11 @@
     },
     {
       "anchor": {
-        "x": 5.889275693171922,
+        "x": 6.32646880678377,
         "y": 4.1271241359447
       },
       "prevControl": {
-        "x": 6.966952294395661,
+        "x": 7.404145408007508,
         "y": 4.106742544121248
       },
       "nextControl": null,

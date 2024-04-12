@@ -58,6 +58,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.commands.SpeakerAimCommand;
 import frc.robot.util.LimelightHelpers;
 
@@ -274,6 +275,9 @@ public class Drivetrain extends SubsystemBase {
     public void resetPose(Pose2d pose) {
         poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), pose);
     }
+    public Rotation2d getPoseRotation() {
+        return poseEstimator.getEstimatedPosition().getRotation();
+    }
 
     public void updateOdometry() {
         // Update odometry from swerve states
@@ -286,11 +290,9 @@ public class Drivetrain extends SubsystemBase {
         // LimelightHelpers.SetRobotOrientation(LL_NAME, poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(LL_NAME);
             tagDist = getTagDistance();
-            System.out.println(tagDist);
             if (limelightMeasurement.tagCount >= 1) {
                 if (tagDist < 450) {
                     thePDH.setSwitchableChannel(true);
-                    System.out.println("true");
                     // Desmos format equation for comp tuning: \frac{1}{3.6}\left(x-600\right)^{\frac{1}{5}}+1
                     /** How to craft the java function:
                      *  change the 600 to the distance the LL pose starts jumping
@@ -308,7 +310,6 @@ public class Drivetrain extends SubsystemBase {
                     );
                 }
         } else {
-            System.out.println("false");
             thePDH.setSwitchableChannel(false);
         }
     }
@@ -405,9 +406,9 @@ public class Drivetrain extends SubsystemBase {
         if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LL_NAME).tagCount >= 1) {
             poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), visionPose2d);
             System.out.println("force vision heading successful");
-        } else if (DriverStation.getAlliance().get() == Alliance.Red) { // Take a guess as to where we are based on alliance and DS position, hope vision kicks in
+        } else if (DriverStation.getAlliance().get() == Alliance.Blue) { // Take a guess as to where we are based on alliance and DS position, hope vision kicks in
             System.err.println("NO TAG FOUND, DEFUALTING TO SUBWOOFER POSITIONS");
-            switch (DriverStation.getLocation().getAsInt()) {
+            switch (RobotContainer.getPosition()) {
                 case 1:
                     poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(0.78, 6.63, new Rotation2d(Math.toRadians(60))));
                     break;
@@ -418,16 +419,16 @@ public class Drivetrain extends SubsystemBase {
                     poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(0.82, 4.51, new Rotation2d(Math.toRadians(-60))));
                     break;
             }
-        } else if (DriverStation.getAlliance().get() == Alliance.Blue) {
+        } else if (DriverStation.getAlliance().get() == Alliance.Red) {
             System.err.println("NO TAG FOUND, DEFUALTING TO SUBWOOFER POSITIONS");
-            switch (DriverStation.getLocation().getAsInt()) {
-                case 1:
+            switch (RobotContainer.getPosition()) {
+                case 3:
                     poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(15.74, 6.59, new Rotation2d(Math.toRadians(120))));
                     break;
                 case 2:
                     poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(15.24, 5.55, new Rotation2d(Math.toRadians(180))));
                     break;
-                case 3:
+                case 1:
                     poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(15.74, 4.52, new Rotation2d(Math.toRadians(-120))));
                     break;
             }

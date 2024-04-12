@@ -7,6 +7,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -83,12 +84,15 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.schedule();
         }
-
+        if (DriverStation.getAlliance().get() == Alliance.Blue){
+            LimelightHelpers.setPipelineIndex(LL_NAME, 0);
+        } else if (DriverStation.getAlliance().get() == Alliance.Red) {
+            LimelightHelpers.setPipelineIndex(LL_NAME, 1);
+        } else {
+            System.err.println("NO ALLIANCE, LL PIPELINE NOT SET");
+        }
         // Stop the stupid controllers from vibrating all the time
         robotContainer.rumble(false);
-
-        // Force our LL to pipeline zero because we have paranoia
-        LimelightHelpers.setPipelineIndex(LL_NAME, 0);
 
         // Full reset our pose using LL on init, done to avoid pose spiraling
         robotContainer.forceVisionPose();
