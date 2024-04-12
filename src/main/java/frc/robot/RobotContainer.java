@@ -1,16 +1,12 @@
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.event.EventLoop;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -20,11 +16,9 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.DefaultArmCommand;
 import frc.robot.commands.DefaultClimbCommand;
 import frc.robot.commands.DefaultIntakeCommand;
-import frc.robot.commands.FeedShooterCommand;
 import frc.robot.commands.FieldOrientedDriveCommand;
 import frc.robot.commands.GroundPickUpCommand;
 import frc.robot.commands.LockNoteCommand;
-import frc.robot.commands.RobotOrientedDriveCommand;
 import frc.robot.commands.SpeakerAimCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Climber;
@@ -36,7 +30,6 @@ import static frc.robot.Constants.*;
 import static frc.robot.util.Utilities.*;
 
 import java.util.Map;
-import java.util.function.BooleanSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -52,14 +45,13 @@ public class RobotContainer {
     private static EventLoop triggerEventLoop = new EventLoop();
 
     // The robot's subsystems are defined here
-    
+
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Intake intake = new Intake();
     public static final Arm arm = new Arm();
     public static final Climber climber = new Climber();
     public static final Shooter shooter = new Shooter();
-    private final static SendableChooser<Integer> startingPos = new SendableChooser<>();
-
+    static SendableChooser<Integer> startingPos = new SendableChooser<>();
 
     // The drive team controllers are defined here
     public static final XboxController driverController = new XboxController(0);
@@ -74,27 +66,29 @@ public class RobotContainer {
     // Limits maximum speed
     private double maxSpeedFactor = 1;
 
-    private ShuffleboardTab comp = Shuffleboard.getTab("Competition");
-
-    public static SendableChooser<Command> autoChooser = new SendableChooser<Command>();
+    SendableChooser<Command> autoChooser = new SendableChooser<Command>();
 
     SlewRateLimiter driveSlewRateLimiter = new SlewRateLimiter(0.5);
-    //SlewRateLimiter rotationSlewRateLimiter = new SlewRateLimiter(0.5);
+    // SlewRateLimiter rotationSlewRateLimiter = new SlewRateLimiter(0.5);
     private GroundPickUpCommand gpk = new GroundPickUpCommand();
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
         drivetrain.setDefaultCommand(new FieldOrientedDriveCommand(drivetrain,
-                () -> 
-                //driveSlewRateLimiter.calculate(
-                    -modifyAxisGeneric(driverController.getLeftY(), 1.0, 0.05) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
                 () ->
-                 //driveSlewRateLimiter.calculate(
-                    -modifyAxisGeneric(driverController.getLeftX(), 1.0, 0.05)* MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-                () -> -modifyAxisGeneric(driverController.getRightX(), 1.0, 0.05) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor, 
+                // driveSlewRateLimiter.calculate(
+                -modifyAxisGeneric(driverController.getLeftY(), 1.0, 0.05) * MAX_VELOCITY_METERS_PER_SECOND
+                        * maxSpeedFactor,
+                () ->
+                // driveSlewRateLimiter.calculate(
+                -modifyAxisGeneric(driverController.getLeftX(), 1.0, 0.05) * MAX_VELOCITY_METERS_PER_SECOND
+                        * maxSpeedFactor,
+                () -> -modifyAxisGeneric(driverController.getRightX(), 1.0, 0.05)
+                        * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor,
                 () -> driverController.getBButton()));
-        
+
         intake.setDefaultCommand(new DefaultIntakeCommand(intake,
                 () -> operatorController.getRightTriggerAxis(),
                 () -> operatorController.getLeftTriggerAxis()));
@@ -103,8 +97,12 @@ public class RobotContainer {
 
         climber.setDefaultCommand(new DefaultClimbCommand(climber, () -> operatorController.getRightY()));
 
-        SpeakerAimCommand.makeShuffleboard();
-        Intake.makeShuffleboard();
+        CameraServer.startAutomaticCapture();
+
+        COMPETITION_TAB.addCamera("LimeLight", LL_NAME, "10.4.24.2")
+                .withPosition(3, 1)
+                .withProperties(Map.of("Show crosshair", false))
+                .withSize(4, 4);
 
         // register commands with pathplanner
         NamedCommands.registerCommand("AprilTagAim", new SpeakerAimCommand(arm, drivetrain));
@@ -121,76 +119,59 @@ public class RobotContainer {
 
     /** Button -> command mappings are defined here. */
     private void configureButtonBindings() {
-        FeedShooterCommand feedShoot = new FeedShooterCommand();
         // Driver Controller Bindings ---
 
         // Pressing A button zeros the gyroscope
         new Trigger(driverController::getAButton).onTrue(new InstantCommand(() -> drivetrain.zeroGyroscope()));
         // Pressing Y button locks the wheels in an X pattern
         new Trigger(driverController::getYButton).onTrue(new InstantCommand(() -> drivetrain.toggleWheelsLocked()));
-
-        // Pressing the X Button toggles between robot oriented and field oriented
-        // new Trigger(driverController::getXButton).toggleOnTrue(new RobotOrientedDriveCommand(drivetrain,
-        //         () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-        //         () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * maxSpeedFactor,
-        //         () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * maxSpeedFactor));
-
         // Automatically aims at speaker while the B button is held
         new Trigger(driverController::getBButton).whileTrue(new SpeakerAimCommand(arm, drivetrain));
-        
-        //TODO: is driver using the buttons?
-        // When left trigger is pressed change center of rotation to front left module
-        new Trigger(driverController.leftTrigger(triggerEventLoop).debounce(0.02)).onTrue(new InstantCommand(() -> drivetrain.setMoves("FL")));
-        // When right trigger is pressed change center of rotation to front right module
-        new Trigger(driverController.rightTrigger(triggerEventLoop).debounce(0.02)).onTrue(new InstantCommand(() -> drivetrain.setMoves("FR"))); 
-        // When neither trigger is pressed drive normal
-        new Trigger(driverController.rightTrigger(triggerEventLoop).debounce(0.02)).negate().and(
-                    driverController.leftTrigger(triggerEventLoop).debounce(0.02)).negate().onTrue(
-                        new InstantCommand(() -> drivetrain.setMoves("default"))
-        );
-        new Trigger(driverController.leftTrigger(triggerEventLoop).debounce(0.02)).negate().and(
-                    driverController.rightTrigger(triggerEventLoop).debounce(0.02)).negate().onTrue(
-                        new InstantCommand(() -> drivetrain.setMoves("default"))
-        );
 
         // Operator Controller Bindings ---
 
         // Pressing the Y Button rotates the arm to the amp pose
-        new Trigger(operatorController::getYButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));        
+        new Trigger(operatorController::getYButton)
+                .whileTrue(new RepeatCommand(new InstantCommand(() -> arm.ampPose())));
         // Pressing the X Button initiates ground intake of a game piece
         new Trigger(operatorController::getXButton).onTrue(gpk);
         // Pressing the A Button rotates the arm to the ground pose
-        new Trigger(operatorController::getAButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.stagePose())));
+        new Trigger(operatorController::getAButton)
+                .whileTrue(new RepeatCommand(new InstantCommand(() -> arm.groundPose())));
         // B button for auto aim shooter
-        new Trigger(operatorController::getBButton).whileTrue(new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
+        new Trigger(operatorController::getBButton)
+                .whileTrue(new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
         // Left bumper stops intake
         new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> gpk.cancel()));
         // Right bumper autofeeds
-        new Trigger(operatorController::getRightBumper).onTrue(new RunCommand(() -> Intake.feedShooter()).until(() -> !Intake.getSwitch()).onlyIf(() -> Shooter.stopped()));
+        new Trigger(operatorController::getRightBumper).onTrue(new RunCommand(() -> Intake.feedShooter())
+                .until(() -> !Intake.getSwitch()).onlyIf(() -> Shooter.stopped()));
+        // Start button locks note for ranged shots
         new Trigger(operatorController::getStartButton).onTrue(new LockNoteCommand());
         // Up D-pad is stop shooter
         new Trigger(o_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.stop()));
         // Left D-pad is amp spool
-        new Trigger(o_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY/2)));
+        new Trigger(o_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY / 2)));
         // Right D-pad is speaker spool
         new Trigger(o_dpadRightButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY)));
         // Down D-pad is relay spool
-        new Trigger(o_dpadDownButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(BARF_SPOOL_VELOCITY)));
+        new Trigger(o_dpadDownButton::getAsBoolean)
+                .onTrue(new InstantCommand(() -> Shooter.spool(BARF_SPOOL_VELOCITY)));
 
-        // Auto shoot when both B buttons are held
-        // new Trigger(operatorController::getBButton).and(() -> driverController.getBButton()).whileTrue(new RepeatCommand(new InstantCommand(() -> Intake.autoShoot())));
-
-        new Trigger(driverController::getBackButton).onTrue(new InstantCommand(() -> forceVisionPose())); //TODO: this is debug code remove it or dont doesnt matter
+        // TODO: this is debug code
+        new Trigger(driverController::getBackButton).onTrue(new InstantCommand(() -> forceVisionPose()));
     }
 
     public void configureAutos() {
         autoChooser = AutoBuilder.buildAutoChooser();
-        SmartDashboard.putData("auto machine", autoChooser);
+        COMPETITION_TAB.add("auto machine", autoChooser).withPosition(0, 0).withSize(2, 1);
+
         startingPos.addOption("1", 1);
         startingPos.addOption("2", 2);
         startingPos.addOption("3", 3);
-        SmartDashboard.putData("where am I?", startingPos);
+        COMPETITION_TAB.add("where am I?", startingPos).withPosition(2, 0);
     }
+
     public static int getPosition() {
         return startingPos.getSelected();
     }
@@ -223,31 +204,33 @@ public class RobotContainer {
         maxSpeedFactor -= .1;
         maxSpeedFactor = MathUtil.clamp(maxSpeedFactor, .1, 1.);
     }
-    public static void pollEventLoop() { 
-        triggerEventLoop.poll(); 
+
+    public static void pollEventLoop() {
+        triggerEventLoop.poll();
     }
 
     public void rumble() {
-        if(Intake.getSwitch()) {
+        if (Intake.getSwitch()) {
             rumble(true);
-        } else { 
+        } else {
             rumble(false);
         }
     }
 
-    public void rumble(boolean set){
-        if (set){
-            operatorController.setRumble(RumbleType.kLeftRumble, .5); 
+    public void rumble(boolean set) {
+        if (set) {
+            operatorController.setRumble(RumbleType.kLeftRumble, .5);
             operatorController.setRumble(RumbleType.kRightRumble, .5);
-            driverController.setRumble(RumbleType.kLeftRumble, .5); 
+            driverController.setRumble(RumbleType.kLeftRumble, .5);
             driverController.setRumble(RumbleType.kRightRumble, .5);
         } else {
-            operatorController.setRumble(RumbleType.kLeftRumble, 0.0); 
+            operatorController.setRumble(RumbleType.kLeftRumble, 0.0);
             operatorController.setRumble(RumbleType.kRightRumble, 0.0);
-            driverController.setRumble(RumbleType.kLeftRumble, 0.0); 
+            driverController.setRumble(RumbleType.kLeftRumble, 0.0);
             driverController.setRumble(RumbleType.kRightRumble, 0.0);
         }
     }
+
     // This is an elegant solution (it took me 2 seconds and it works)
     public void forceVisionPose() {
         drivetrain.forceVisionPose();

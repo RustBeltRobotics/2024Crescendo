@@ -1,22 +1,15 @@
 package frc.robot.commands;
 
+import static frc.robot.Constants.DIAG_TAB;
 import static frc.robot.Constants.DISTANCE_MAP;
 
-import java.util.Map;
-
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -35,10 +28,7 @@ public class SpeakerAimCommand extends Command {
     private static GenericEntry kD;
     private static GenericEntry autoAimWorking;
 
-    private final static Interpolator<Double> doubleInterpolator = Interpolator.forDouble();
-
     private static Arm arm;
-    private static PowerDistribution thePDH;
     private static PIDController steerPID;
     private static SimpleMotorFeedforward steerFF;
     private static Drivetrain drivetrain;
@@ -98,7 +88,6 @@ public class SpeakerAimCommand extends Command {
 
         tx = Math.toDegrees(Math.atan(deltaY / deltaX));
         heading = drivetrain.getPose().getRotation().getDegrees();
-        SmartDashboard.putNumber("calc: ", -heading + tx);
         if (turnAround) { // Hi im blue
             return steerPID.calculate(heading - tx) - steerFF.calculate(heading - tx);
         } else {
@@ -127,13 +116,7 @@ public class SpeakerAimCommand extends Command {
 
         double deltaX = robotX - speakerX;
         double deltaY = robotY - speakerY ;
-
-        SmartDashboard.putNumber("deltaY", deltaY);
-        SmartDashboard.putNumber("deltaX", deltaX);
-        SmartDashboard.putNumber("robotX", robotX);
-        SmartDashboard.putNumber("robotY", robotY);
         
-        SmartDashboard.putNumber("speaker dist, ", Math.hypot(deltaX, deltaY));
         return Math.hypot(Math.abs(deltaX), Math.abs(deltaY));
     }
 
@@ -169,7 +152,7 @@ public class SpeakerAimCommand extends Command {
     }
 
     public final static void makeShuffleboard() {
-        ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
+        ShuffleboardLayout pidvals = DIAG_TAB
                 .getLayout("Pose Aim", BuiltInLayouts.kList)
                 .withSize(2, 2);
         kP = pidvals.add("kP", 0.05)
@@ -183,12 +166,6 @@ public class SpeakerAimCommand extends Command {
         kI = pidvals.add("kS", 0.1)
                 .getEntry();
         kD = pidvals.add("kA", 0.01)
-                .getEntry();
-        autoAimWorking = Shuffleboard.getTab("Competition")
-                .add("pose auto aiming", false)
-                .withWidget("Boolean Box")
-                .withPosition(10, 2)
-                .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
                 .getEntry();
     }
 }

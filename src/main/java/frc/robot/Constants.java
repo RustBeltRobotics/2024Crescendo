@@ -3,6 +3,10 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -181,4 +185,11 @@ public final class Constants {
     public static final double ARM_FF_kG = 0.62;
     public static final double ARM_FF_kV = 1.32;
     public static final double ARM_FF_kS = 1.322;
+
+    // shuffleboard
+    public static final ShuffleboardTab COMPETITION_TAB = Shuffleboard.getTab("Competition");
+    public static final ShuffleboardTab DIAG_TAB = Shuffleboard.getTab("diag");
+
+    // PDH
+    public static final PowerDistribution THE_PDH = new PowerDistribution(PDH, ModuleType.kRev);
 }

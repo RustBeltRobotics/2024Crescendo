@@ -3,10 +3,15 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import static frc.robot.Constants.COMPETITION_TAB;
+import static frc.robot.Constants.DIAG_TAB;
 import static frc.robot.Constants.LEFT_ROTATE;
 import static frc.robot.Constants.NEO_SECONDARY_CURRENT_LIMIT;
 import static frc.robot.Constants.NEO_SMART_CURRENT_LIMIT;
 import static frc.robot.Constants.RIGHT_ROTATE;
+import static frc.robot.Constants.THE_PDH;
+
+import java.util.Map;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
@@ -14,10 +19,6 @@ import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.SpeakerAimCommand;
@@ -30,27 +31,19 @@ public class Arm extends SubsystemBase {
     private static RelativeEncoder throughBoreRelative = armMotor2.getAlternateEncoder(8192);
     private static AbsoluteEncoder throughBoreAbsolute = armMotor1.getAbsoluteEncoder();
 
-    
-    // private static final DutyCycleEncoder bigEncoder = new DutyCycleEncoder(2);
-    // private static final Encoder medEncoder = new Encoder(2, 3);
-
-
-    private static ShuffleboardTab diag = Shuffleboard.getTab("Diag");
-    private static GenericEntry bigEncoderEntry = diag.add("abs arm encoder", 0.0).getEntry();
-    private static GenericEntry medEncoderEntry = diag.add("rel arm encoder", 0.0).getEntry();
-    private static GenericEntry anglesetpoint = diag.add("arm angle control", 0.5).getEntry();
-    // private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
-    //         .getLayout("Arm PID", BuiltInLayouts.kList)
-    //         .withSize(2, 3)
-    //         .withPosition(3, 2);
-    // private static GenericEntry akP = pidvals.add("P", 100)
-    //         .getEntry();
-    // private static GenericEntry akI = pidvals.add("I", 0.0)
-    //         .getEntry();
-    // private static GenericEntry akD = pidvals.add("D", 0.0)
-    //         .getEntry();
-    // private static GenericEntry affkA = pidvals.add("FF_kA", 0)
-    //         .getEntry();
+    private static GenericEntry bigEncoderEntry = COMPETITION_TAB.add("abs arm encoder", 0.0)
+    .withPosition(8, 1)
+    .withSize(2, 1)
+    .getEntry();
+    private static GenericEntry medEncoderEntry = COMPETITION_TAB.add("rel arm encoder", 0.0)
+    .withPosition(8, 2)
+    .withSize(2,1)
+    .getEntry();
+    private static GenericEntry encoderWarningEntry = COMPETITION_TAB.add("!ARM ENCODER!", false)
+    .withWidget("Boolean Box")
+    .withPosition(8, 0)
+    .withProperties(Map.of("colorWhenTrue", "red", "colorWhenFalse", "gray"))
+    .getEntry();
     
     public Arm() {
         anglePIDup = new PIDController(100, 0, 0);
@@ -72,7 +65,6 @@ public class Arm extends SubsystemBase {
     }
     @Override
     public void periodic() {
-        //anglePIDdown.setPID(akP.getDouble(100), akI.getDouble(0), akD.getDouble(0));
         updateshuffle();
     }
     public void setAngle(double angle) { 
@@ -81,13 +73,12 @@ public class Arm extends SubsystemBase {
     public void setAngleDown(double angle) { 
             armMotor1.setVoltage(anglePIDdown.calculate(throughBoreRelative.getPosition(), angle)); 
     }
-
     public double getAngle() {
         return throughBoreRelative.getPosition();
     }
 
     public void rotate(double speed) {
-        armMotor1.setVoltage(speed*12);
+        armMotor1.setVoltage(speed*THE_PDH.getVoltage());
     }
 
     public void ampPose() {
@@ -97,22 +88,20 @@ public class Arm extends SubsystemBase {
     public void groundPose() {
         setAngleDown(Constants.GROUND_POSITION);
     }
-    public void stagePose() {
-        //setAngle(Constants.STAGE_ANGLE);
-        setAngle(anglesetpoint.getDouble(0.5));
-    }
-
     public void stop() {
         armMotor1.setVoltage(0);
     }
     public static void zeroThroughBoreRelative() {
-        //System.out.println("bigenc: " + bigEncoder.getAbsolutePosition());
-        // throughBoreRelative.setPosition(bigEncoder.getAbsolutePosition());
         throughBoreRelative.setPosition(throughBoreAbsolute.getPosition());
     }
     public void updateshuffle(){
-        // bigEncoderEntry.setDouble(bigEncoder.getAbsolutePosition());
+        bigEncoderEntry.setDouble(throughBoreAbsolute.getPosition());
         medEncoderEntry.setDouble(throughBoreRelative.getPosition());
+        if (throughBoreAbsolute.getPosition() == 0.0 || throughBoreRelative.getPosition() == 0.0) {
+            encoderWarningEntry.setBoolean(true);
+        } else {
+            encoderWarningEntry.setBoolean(false);
+        }
     }
     public void autoAim(){
             setAngle(SpeakerAimCommand.armAngleCalculate());

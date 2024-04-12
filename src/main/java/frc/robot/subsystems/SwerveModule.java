@@ -11,10 +11,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Utilities;
 
@@ -32,25 +28,23 @@ public class SwerveModule extends SubsystemBase{
     private final CANcoder absoluteSteerEncoder;
     
     // Shuffling
-    private static ShuffleboardLayout pidvals = Shuffleboard.getTab("Diag")
-            .getLayout("Swerve PID", BuiltInLayouts.kList)
-            .withSize(2, 2);
-    private static GenericEntry kP = pidvals.add("skP", .7)
-            .getEntry();
-    private static GenericEntry kI = pidvals.add("skI", 0.0)
-            .getEntry();
-    private static GenericEntry kD = pidvals.add("skD", 0.005)
-            .getEntry();
-    private static GenericEntry kIz = pidvals.add("skIz", 0.0)
-            .getEntry();
-    private static GenericEntry drive_kFF = pidvals.add("sdrive_kFF", 0.22)
-            .getEntry();
-    private static GenericEntry kMaxOutput = pidvals.add("skMaxOutput", 1.)
-            .getEntry();
-    private static GenericEntry kMinOutput = pidvals.add("skMinOutput", -1.)
-            .getEntry();
-    private static GenericEntry steer_kFF = pidvals.add("ssteer_kFF", 0.0)
-            .getEntry();
+    // private static ShuffleboardLayout pidvals = DIAG_TAB
+    //         .getLayout("Swerve PID", BuiltInLayouts.kList)
+    //         .withSize(2, 2);
+    // private static GenericEntry kP = pidvals.add("skP", .7)
+    //         .getEntry();
+    // private static GenericEntry kI = pidvals.add("skI", 0.0)
+    //         .getEntry();
+    // private static GenericEntry kD = pidvals.add("skD", 0.005)
+    //         .getEntry();
+    // private static GenericEntry kIz = pidvals.add("skIz", 0.0)
+    //         .getEntry();
+    // private static GenericEntry kMaxOutput = pidvals.add("skMaxOutput", 1.)
+    //         .getEntry();
+    // private static GenericEntry kMinOutput = pidvals.add("skMinOutput", -1.)
+    //         .getEntry();
+    // private static GenericEntry steer_kFF = pidvals.add("ssteer_kFF", 0.0)
+    //         .getEntry();
 
     public SwerveModule(int driveID, int steerID, int encoderID) {
         
@@ -102,7 +96,7 @@ public class SwerveModule extends SubsystemBase{
         drivePidController.setI(0);
         drivePidController.setD(0.0);
         drivePidController.setFF(.22);
-        drivePidController.setIZone(kIz.getDouble(0.0));
+        drivePidController.setIZone(0.0);
         //drivePidController.setOutputRange(kMinOutput.getDouble(-1.), kMaxOutput.getDouble(1.));
         drivePidController.setPositionPIDWrappingEnabled(false);
 
@@ -116,12 +110,12 @@ public class SwerveModule extends SubsystemBase{
         // lead to integral windup, which is reeeally bad. as long as our kI is 0, this
         // IZone value is irrelevant, but if we ever want to incorporate an I gain,
         // we'll definitely want to keep an eye on this one.
-        steerPidController.setIZone(0.);
-        steerPidController.setFF(steer_kFF.getDouble(0.));
-        steerPidController.setOutputRange(kMinOutput.getDouble(-1.), kMaxOutput.getDouble(1.));
+        steerPidController.setIZone(0.0);
+        steerPidController.setFF(0.0);
+        steerPidController.setOutputRange(-1.0, 1.0);
         steerPidController.setPositionPIDWrappingEnabled(true);
-        steerPidController.setPositionPIDWrappingMaxInput(360.);
-        steerPidController.setPositionPIDWrappingMinInput(0.);
+        steerPidController.setPositionPIDWrappingMaxInput(360.0);
+        steerPidController.setPositionPIDWrappingMinInput(0.0);
     }
 
     /** @return Drive position, meters, -inf to +inf */

@@ -14,7 +14,7 @@ import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_ENCODER;
 import static frc.robot.Constants.FRONT_RIGHT_MODULE_STEER_MOTOR;
 import static frc.robot.Constants.KINEMATICS;
 import static frc.robot.Constants.MAX_VELOCITY_METERS_PER_SECOND;
-import static frc.robot.Constants.PDH;
+import static frc.robot.Constants.THE_PDH;
 import static frc.robot.Constants.LL_NAME;
 import static frc.robot.Constants.rotation_D;
 import static frc.robot.Constants.rotation_I;
@@ -23,8 +23,9 @@ import static frc.robot.Constants.translation_D;
 import static frc.robot.Constants.translation_I;
 import static frc.robot.Constants.translation_P;
 
-import java.sql.Driver;
 import java.util.Map;
+
+import static frc.robot.Constants.COMPETITION_TAB;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -49,13 +50,7 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -86,71 +81,35 @@ public class Drivetrain extends SubsystemBase {
     // Boolean statement to control locking the wheels in an X-position
     private boolean wheelsLocked = false;
 
-    private double tagDist;
-    private double visionWeight;
-
     private final SwerveDrivePoseEstimator poseEstimator;
 
     private SwerveModuleState[] states;
 
     // The Shuffle
-    ShuffleboardTab comp = Shuffleboard.getTab("Competition");
-    ShuffleboardLayout drivetrainLayout = Shuffleboard.getTab("Competition")
-            .getLayout("Drivetrain", BuiltInLayouts.kList)
-            .withSize(1, 2)
-            .withPosition(0, 2);
-    private final GenericEntry FRA = drivetrainLayout.add("Front Right Absolute", 0)
-            .getEntry();
-    private final GenericEntry FLA = drivetrainLayout.add(
-            "Front Left Absolute", 0)
-            .getEntry();
-    private final GenericEntry BRA = drivetrainLayout.add("Back Right Absolute", 0)
-            .getEntry();
-    private final GenericEntry BLA = drivetrainLayout.add("Back Left Absolute", 0)
-            .getEntry();
-    private final GenericEntry BLV = drivetrainLayout.add("Back Left Velocity", 0)
-            .getEntry();
-    private final GenericEntry BRV = drivetrainLayout.add("Back Right Velocity", 0)
-            .getEntry();
-    private final GenericEntry FLV = drivetrainLayout.add("Front Left Velocity", 0)
-            .getEntry();
-    private final GenericEntry FRV = drivetrainLayout.add("Front Right Velocity", 0)
-            .getEntry();
-    private final GenericEntry Gyro = comp.add("Gryoscope Angle", 0)
+    private static GenericEntry gyroEntry = COMPETITION_TAB.add("Gryoscope Angle", 0)
             .withWidget(BuiltInWidgets.kGyro)
-            .withPosition(1, 3)
+            .withPosition(0, 1)
+            .withSize(3, 4)
             .getEntry();
-    private final GenericEntry defaultEntry = Shuffleboard.getTab("Competition")
-            .add("Center", false)
+    private static GenericEntry gyroWarningEntry = COMPETITION_TAB.add("!GYRO!", false)
             .withWidget("Boolean Box")
-            .withPosition(2, 0)
-            .withProperties(Map.of("colorWhenTrue", "orange", "colorWhenFalse", "grey"))
+            .withPosition(7, 0)
+            .withProperties(Map.of("colorWhenTrue", "red", "colorWhenFalse", "gray"))
             .getEntry();
-    private final GenericEntry FLEntry = Shuffleboard.getTab("Competition")
-            .add("FL", false)
-            .withWidget("Boolean Box")
-            .withPosition(1, 0)
-            .withProperties(Map.of("colorWhenTrue", "orange", "colorWhenFalse", "grey"))
-            .getEntry();
-    private final GenericEntry FREntry = Shuffleboard.getTab("Competition")
-            .add("FR", false)
-            .withWidget("Boolean Box")
-            .withPosition(3, 0)
-            .withProperties(Map.of("colorWhenTrue", "orange", "colorWhenFalse", "grey"))
+    private static GenericEntry megaTagEntry = COMPETITION_TAB.add("Use Megatag 2", true)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .withPosition(8, 3)
+            .withSize(2, 1)
             .getEntry();
 
     // networktables publisher for advantagescope swerve visualization
-    private final StructArrayPublisher<SwerveModuleState> statePublisher;
+    StructArrayPublisher<SwerveModuleState> statePublisher = NetworkTableInstance.getDefault()
+            .getStructArrayTopic("/SwerveStates", SwerveModuleState.struct).publish();;
     // networktables publisher for advantagescope 2d pose visualization
     StructPublisher<Pose2d> posePublisher = NetworkTableInstance.getDefault()
             .getStructTopic("/MyPose", Pose2d.struct).publish();
-           
-    PowerDistribution thePDH = new PowerDistribution(PDH, ModuleType.kRev);
-        public Drivetrain() {
-        // Start publishing an array of module states with the "/SwerveStates" key
-        statePublisher = NetworkTableInstance.getDefault()
-                .getStructArrayTopic("/SwerveStates", SwerveModuleState.struct).publish();
 
+    public Drivetrain() {
         // Configure AutoBuilder last
         AutoBuilder.configureHolonomic(
                 this::getPose, // Robot pose supplier
@@ -210,15 +169,14 @@ public class Drivetrain extends SubsystemBase {
         // Initialize and zero gyro
         navx = new AHRS(SPI.Port.kMXP);
         zeroGyroscope();
-        
+
         // Create the poseEstimator with vectors to weight our vision measurements
         poseEstimator = new SwerveDrivePoseEstimator(
-            KINEMATICS, 
-            getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(), 
-            VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
-            VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30))
-        );
-        
+                KINEMATICS,
+                getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(),
+                VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+                VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+
         theMove = "default";
     }
 
@@ -262,7 +220,8 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public static double getTagDistance() {
-        return (Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT) / Math.tan((Constants.LL_ANGLE + LimelightHelpers.getTY(LL_NAME)) * Math.PI / 180);
+        return (Constants.SPEAKER_HEIGHT - Constants.LL_HEIGHT)
+                / Math.tan((Constants.LL_ANGLE + LimelightHelpers.getTY(LL_NAME)) * Math.PI / 180);
     }
 
     public SwerveModulePosition[] getSwerveModulePositions() {
@@ -275,6 +234,7 @@ public class Drivetrain extends SubsystemBase {
     public void resetPose(Pose2d pose) {
         poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), pose);
     }
+
     public Rotation2d getPoseRotation() {
         return poseEstimator.getEstimatedPosition().getRotation();
     }
@@ -284,8 +244,8 @@ public class Drivetrain extends SubsystemBase {
         poseEstimator.update(
                 getGyroscopeRotation(),
                 getSwerveModulePositions());
-                
-        boolean useMegaTag2 = true; // set to false to use MegaTag1
+
+        boolean useMegaTag2 = megaTagEntry.getBoolean(false); // set to false to use MegaTag1
         boolean doRejectUpdate = false;
         if (useMegaTag2 == false) {
             LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(LL_NAME);
@@ -312,7 +272,8 @@ public class Drivetrain extends SubsystemBase {
             LimelightHelpers.SetRobotOrientation(LL_NAME,
                     poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
             LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LL_NAME);
-            // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+            // if our angular velocity is greater than 720 degrees per second, ignore vision
+            // updates
             if (Math.abs(navx.getRate()) > 720) {
                 doRejectUpdate = true;
             }
@@ -326,6 +287,7 @@ public class Drivetrain extends SubsystemBase {
                         mt2.timestampSeconds);
             }
         }
+        THE_PDH.setSwitchableChannel(!doRejectUpdate);
     }
 
     public Pose2d getPose() {
@@ -394,22 +356,13 @@ public class Drivetrain extends SubsystemBase {
             case "FL":
                 states = KINEMATICS.toSwerveModuleStates(chassisSpeeds, new Translation2d(
                         Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2., Constants.DRIVETRAIN_WHEELBASE_METERS / 2.));
-                defaultEntry.setBoolean(false);
-                FLEntry.setBoolean(true);
-                FREntry.setBoolean(false);
                 break;
             case "FR":
                 states = KINEMATICS.toSwerveModuleStates(chassisSpeeds, new Translation2d(
                         Constants.DRIVETRAIN_TRACKWIDTH_METERS / 2., -Constants.DRIVETRAIN_WHEELBASE_METERS / 2.));
-                defaultEntry.setBoolean(false);
-                FLEntry.setBoolean(false);
-                FREntry.setBoolean(true);
                 break;
             case "default":
                 states = KINEMATICS.toSwerveModuleStates(chassisSpeeds);
-                defaultEntry.setBoolean(true);
-                FLEntry.setBoolean(false);
-                FREntry.setBoolean(false);
                 break;
         }
     }
@@ -420,30 +373,38 @@ public class Drivetrain extends SubsystemBase {
         if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LL_NAME).tagCount >= 1) {
             poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), visionPose2d);
             System.out.println("force vision heading successful");
-        } else if (DriverStation.getAlliance().get() == Alliance.Blue) { // Take a guess as to where we are based on alliance and DS position, hope vision kicks in
+        } else if (DriverStation.getAlliance().get() == Alliance.Blue) { // Take a guess as to where we are based on
+                                                                         // alliance and DS position, hope vision kicks
+                                                                         // in
             System.err.println("NO TAG FOUND, DEFUALTING TO SUBWOOFER POSITIONS");
             switch (RobotContainer.getPosition()) {
                 case 1:
-                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(0.78, 6.63, new Rotation2d(Math.toRadians(60))));
+                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(),
+                            new Pose2d(0.78, 6.63, new Rotation2d(Math.toRadians(60))));
                     break;
                 case 2:
-                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(1.34, 5.55, new Rotation2d(Math.toRadians(0))));
+                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(),
+                            new Pose2d(1.34, 5.55, new Rotation2d(Math.toRadians(0))));
                     break;
                 case 3:
-                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(0.82, 4.51, new Rotation2d(Math.toRadians(-60))));
+                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(),
+                            new Pose2d(0.82, 4.51, new Rotation2d(Math.toRadians(-60))));
                     break;
             }
         } else if (DriverStation.getAlliance().get() == Alliance.Red) {
             System.err.println("NO TAG FOUND, DEFUALTING TO SUBWOOFER POSITIONS");
             switch (RobotContainer.getPosition()) {
                 case 3:
-                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(15.74, 6.59, new Rotation2d(Math.toRadians(120))));
+                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(),
+                            new Pose2d(15.74, 6.59, new Rotation2d(Math.toRadians(120))));
                     break;
                 case 2:
-                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(15.24, 5.55, new Rotation2d(Math.toRadians(180))));
+                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(),
+                            new Pose2d(15.24, 5.55, new Rotation2d(Math.toRadians(180))));
                     break;
                 case 1:
-                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(15.74, 4.52, new Rotation2d(Math.toRadians(-120))));
+                    poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(),
+                            new Pose2d(15.74, 4.52, new Rotation2d(Math.toRadians(-120))));
                     break;
             }
         } else {
@@ -471,45 +432,23 @@ public class Drivetrain extends SubsystemBase {
     }
 
     private void updateTelemetry() {
+        // Publish gyro angle to shuffleboard
+        gyroEntry.setDouble(poseEstimator.getEstimatedPosition().getRotation().getDegrees());
 
+        if (poseEstimator.getEstimatedPosition().getRotation().getDegrees() == 0.0) {
+            gyroWarningEntry.setBoolean(true);
+        } else {
+            gyroWarningEntry.setBoolean(false);
+        }
+
+        // Advantage scope things
         posePublisher.set(poseEstimator.getEstimatedPosition());
 
-
-        // FLA.setDouble(frontLeftModule.getAbsolutePosition());
-        // FRA.setDouble(frontRightModule.getAbsolutePosition());
-        // BLA.setDouble(backLeftModule.getAbsolutePosition());
-        // BRA.setDouble(backRightModule.getAbsolutePosition());
-        // FLA.setDouble(states[0].angle.getDegrees());
-        // FRA.setDouble(states[1].angle.getDegrees());
-        // BLA.setDouble(states[2].angle.getDegrees());
-        // BRA.setDouble(states[3].angle.getDegrees());
-        // FLV.setDouble(frontLeftModule.getSteerPosition());
-        // FRV.setDouble(frontRightModule.getSteerPosition());
-        // BLV.setDouble(backLeftModule.getSteerPosition());
-        // BRV.setDouble(backRightModule.getSteerPosition());
-
-        FLA.setDouble(states[0].speedMetersPerSecond);
-        FRA.setDouble(states[1].speedMetersPerSecond);
-        BLA.setDouble(states[2].speedMetersPerSecond);
-        BRA.setDouble(states[3].speedMetersPerSecond);
-        FLV.setDouble(frontLeftModule.getDriveVelocity());
-        FRV.setDouble(frontRightModule.getDriveVelocity());
-        BLV.setDouble(backLeftModule.getDriveVelocity());
-        BRV.setDouble(backRightModule.getDriveVelocity());
-        Gyro.setDouble(getGyroscopeAngle() + getGyroOffset());
-
-        // SmartDashboard.putNumber("navx angle", navx.getAngle());
-        // SmartDashboard.putNumber("navx yaw", navx.getYaw());
-        // SmartDashboard.putNumber("displacement X", navx.getDisplacementX());
-        // SmartDashboard.putNumber("displacement Y", navx.getDisplacementY());
-        // SmartDashboard.putNumber("getGyroscopeAngle()", getGyroscopeAngle());
-
-        // Periodically send a set of module states (I hope) I love the confidince!
         statePublisher.set(new SwerveModuleState[] {
-        states[0],
-        states[1],
-        states[2],
-        states[3]
+                states[0],
+                states[1],
+                states[2],
+                states[3]
         });
     }
 }

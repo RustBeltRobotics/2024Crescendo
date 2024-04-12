@@ -1,6 +1,9 @@
 package frc.robot;
 
+import static frc.robot.Constants.COMPETITION_TAB;
 import static frc.robot.Constants.LL_NAME;
+
+import java.util.Map;
 
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.GenericEntry;
@@ -9,13 +12,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.SpeakerAimCommand;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.util.LimelightHelpers;
 
@@ -30,12 +30,13 @@ public class Robot extends TimedRobot {
     private RobotContainer robotContainer;
     private Command autonomousCommand;
 
-    private ShuffleboardTab matchTab = Shuffleboard.getTab("Competition");
-    private GenericEntry timeEntry = matchTab.add("Time Left", 0.0)
+    private GenericEntry timeEntry = COMPETITION_TAB.add("Time Left", 0.0)
             .withWidget(BuiltInWidgets.kNumberBar)
-            .withPosition(4, 0)
-            .withSize(2, 1)
+            .withPosition(3, 0)
+            .withSize(4, 1)
+            .withProperties(Map.of("min", 0, "max", 165))
             .getEntry();
+    
     /**
      * This function is run once when the robot is first started up and should be
      * used for any initialization code.
@@ -48,6 +49,9 @@ public class Robot extends TimedRobot {
         for (int port = 5800; port <= 5807; port++) {
             PortForwarder.add(port, "limelight.local", port);
         }
+
+        //Shuffleboard things belong here
+        Intake.makeShuffleboard();
 
         // Set our relative encoder offset based on the position of the absolute encoder
         Arm.zeroThroughBoreRelative();
@@ -71,7 +75,6 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
         timeEntry.setDouble(DriverStation.getMatchTime());
-        SmartDashboard.putNumber("dist: ", SpeakerAimCommand.getTagDistance());
     }
 
     /**

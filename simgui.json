@@ -3,9 +3,13 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/Shuffleboard/Competition/Auto Chooser": "String Chooser",
+      "/Shuffleboard/Competition/auto machine": "String Chooser",
       "/Shuffleboard/Competition/autoChooser": "String Chooser",
+      "/Shuffleboard/Competition/where am I?": "String Chooser",
       "/SmartDashboard/Auto Chooser": "String Chooser",
-      "/SmartDashboard/Scheduler": "Scheduler"
+      "/SmartDashboard/Scheduler": "Scheduler",
+      "/SmartDashboard/auto machine": "String Chooser",
+      "/SmartDashboard/where am I?": "String Chooser"
     }
   },
   "NetworkTables": {

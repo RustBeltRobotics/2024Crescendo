@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.ARM_INTAKE;
+import static frc.robot.Constants.COMPETITION_TAB;
 import static frc.robot.Constants.GROUND_INTAKE;
 import static frc.robot.Constants.NEO_SECONDARY_CURRENT_LIMIT;
 import static frc.robot.Constants.NEO_SMART_CURRENT_LIMIT;
@@ -13,7 +14,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.SpeakerAimCommand;
 
@@ -74,8 +74,7 @@ public class Intake extends SubsystemBase{
     }
 
     public static void makeShuffleboard() {
-        limitSwitch = Shuffleboard.getTab("Competition")
-                .add("Limit Switch", false)
+        COMPETITION_TAB.add("Limit Switch", false)
                 .withWidget("Boolean Box")
                 .withPosition(9, 0)
                 .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))

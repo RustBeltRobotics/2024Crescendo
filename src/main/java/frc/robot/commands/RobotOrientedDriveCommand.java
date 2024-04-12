@@ -1,12 +1,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
-
-import java.util.Map;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -20,13 +16,6 @@ public class RobotOrientedDriveCommand extends Command {
     private final DoubleSupplier translationXSupplier;
     private final DoubleSupplier translationYSupplier;
     private final DoubleSupplier rotationSupplier;
-
-    GenericEntry robotOrientEntry = Shuffleboard.getTab("Competition")
-            .add("Robot Oriented", false)
-            .withWidget("Boolean Box")
-            .withPosition(0, 1)
-            .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
-            .getEntry();
 
     public RobotOrientedDriveCommand(Drivetrain drivetrain,
             DoubleSupplier translationXSupplier,
@@ -49,7 +38,6 @@ public class RobotOrientedDriveCommand extends Command {
      */
     @Override
     public void execute() {
-        robotOrientEntry.setBoolean(true);
         drivetrain.drive(new ChassisSpeeds(
             translationXSupplier.getAsDouble(),
             translationYSupplier.getAsDouble(),
@@ -61,6 +49,5 @@ public class RobotOrientedDriveCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         drivetrain.drive(new ChassisSpeeds(0, 0, 0));
-        robotOrientEntry.setBoolean(false);
     }
 }
