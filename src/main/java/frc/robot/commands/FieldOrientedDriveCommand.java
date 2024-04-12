@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
@@ -51,7 +50,7 @@ public class FieldOrientedDriveCommand extends Command {
                     translationXSupplier.getAsDouble() * LL_SPEED_LIMIT,
                     translationYSupplier.getAsDouble() * LL_SPEED_LIMIT,
                     SpeakerAimCommand.rotationCalculate(),
-                    Rotation2d.fromDegrees((drivetrain.getGyroscopeAngle() + drivetrain.getGyroOffset()))), 0.020));
+                    drivetrain.getPoseRotation()), 0.020));
         } else {
             drivetrain.drive(ChassisSpeeds.discretize(ChassisSpeeds.fromFieldRelativeSpeeds(
                     translationXSupplier.getAsDouble(),

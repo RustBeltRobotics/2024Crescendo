@@ -123,8 +123,6 @@ public class RobotContainer {
 
         // Pressing A button zeros the gyroscope
         new Trigger(driverController::getAButton).onTrue(new InstantCommand(() -> drivetrain.zeroGyroscope()));
-        // Pressing Y button locks the wheels in an X pattern
-        new Trigger(driverController::getYButton).onTrue(new InstantCommand(() -> drivetrain.toggleWheelsLocked()));
         // Automatically aims at speaker while the B button is held
         new Trigger(driverController::getBButton).whileTrue(new SpeakerAimCommand(arm, drivetrain));
 

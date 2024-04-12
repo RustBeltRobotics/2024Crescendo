@@ -66,7 +66,6 @@ public class Drivetrain extends SubsystemBase {
      * For user to reset zero for "forward" on the robot while maintaining absolute
      * field zero for odometry
      */
-    private double gyroOffset;
 
     // These are our modules. We initialize them in the constructor.
     private final SwerveModule frontLeftModule;
@@ -185,11 +184,7 @@ public class Drivetrain extends SubsystemBase {
      * robot is currently facing to the 'forwards' direction.
      */
     public void zeroGyroscope() {
-        gyroOffset = -getGyroscopeAngle(); // we were calling the getgyrosocpe function shich was also negated
-    }
-
-    public double getGyroOffset() {
-        return gyroOffset;
+        poseEstimator.resetPosition(getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(poseEstimator.getEstimatedPosition().getTranslation(), new Rotation2d(0)));
     }
 
     /**
