@@ -282,35 +282,49 @@ public class Drivetrain extends SubsystemBase {
     public void updateOdometry() {
         // Update odometry from swerve states
         poseEstimator.update(
-            getGyroscopeRotation(),
-            getSwerveModulePositions()
-        );
+                getGyroscopeRotation(),
+                getSwerveModulePositions());
+                
+        boolean useMegaTag2 = true; // set to false to use MegaTag1
+        boolean doRejectUpdate = false;
+        if (useMegaTag2 == false) {
+            LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(LL_NAME);
 
-        // Update odometry from vision if we can see two or more apriltags
-        // LimelightHelpers.SetRobotOrientation(LL_NAME, poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
-        LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue(LL_NAME);
-            tagDist = getTagDistance();
-            if (limelightMeasurement.tagCount >= 1) {
-                if (tagDist < 450) {
-                    thePDH.setSwitchableChannel(true);
-                    // Desmos format equation for comp tuning: \frac{1}{3.6}\left(x-600\right)^{\frac{1}{5}}+1
-                    /** How to craft the java function:
-                     *  change the 600 to the distance the LL pose starts jumping
-                     *  adjust the denominator of the amplitude so that the line just about hits zero making sure it doesnt go below that
-                     *  replace the 1 on the end with the value of the numerator from the amplitude
-                     */
-                    visionWeight = (1/3.6) * (Math.pow(Math.abs(tagDist-600), 1.0 / 5.0) * -1 + 3.6);
-                    // From LL example:  poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
-                    // (higher number -> trust vision less)
-                    // 9999999 is our gyro weight because we trust that a whole bunch
-                    poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(visionWeight, visionWeight, 9999999));
-                    poseEstimator.addVisionMeasurement(
-                        limelightMeasurement.pose,
-                        limelightMeasurement.timestampSeconds
-                    );
+            if (mt1.tagCount == 1 && mt1.rawFiducials.length == 1) {
+                if (mt1.rawFiducials[0].ambiguity > .7) {
+                    doRejectUpdate = true;
                 }
-        } else {
-            thePDH.setSwitchableChannel(false);
+                if (mt1.rawFiducials[0].distToCamera > 3) {
+                    doRejectUpdate = true;
+                }
+            }
+            if (mt1.tagCount == 0) {
+                doRejectUpdate = true;
+            }
+
+            if (!doRejectUpdate) {
+                poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.5, .5, 9999999));
+                poseEstimator.addVisionMeasurement(
+                        mt1.pose,
+                        mt1.timestampSeconds);
+            }
+        } else if (useMegaTag2 == true) {
+            LimelightHelpers.SetRobotOrientation(LL_NAME,
+                    poseEstimator.getEstimatedPosition().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+            LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LL_NAME);
+            // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+            if (Math.abs(navx.getRate()) > 720) {
+                doRejectUpdate = true;
+            }
+            if (mt2.tagCount == 0) {
+                doRejectUpdate = true;
+            }
+            if (!doRejectUpdate) {
+                poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+                poseEstimator.addVisionMeasurement(
+                        mt2.pose,
+                        mt2.timestampSeconds);
+            }
         }
     }
 
