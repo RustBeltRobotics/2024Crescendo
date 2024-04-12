@@ -29,7 +29,7 @@ public class DefaultArmCommand extends Command {
     @Override
     public void execute() {
         if (DriverStation.isTeleopEnabled() && Robot.armEntry.getBoolean(false)) {
-            if (rotationSupplier.getAsDouble() > 0.05 || rotationSupplier.getAsDouble() < -0.05) {
+            if ((rotationSupplier.getAsDouble() > 0.05 || rotationSupplier.getAsDouble() < -0.05) && (arm.getAngle() <= 0.75 || rotationSupplier.getAsDouble() < 0)) {
                 arm.rotate(rotationSupplier.getAsDouble());
             } else { arm.stop(); }
         }

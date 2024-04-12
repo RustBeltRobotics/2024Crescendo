@@ -26,10 +26,10 @@ public class FieldOrientedDriveCommand extends Command {
     private final DoubleSupplier rotationSupplier;
     private final BooleanSupplier BbuttonSupplier;
 
-    GenericEntry feildOrientEntry = Shuffleboard.getTab("Competition")
+    GenericEntry feildOrientEntry = Shuffleboard.getTab("demo")
             .add("Field Oriented", false)
             .withWidget("Boolean Box")
-            .withPosition(0, 0)
+            .withPosition(4, 0)
             .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
             .getEntry();
 

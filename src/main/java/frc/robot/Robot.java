@@ -39,10 +39,12 @@ public class Robot extends TimedRobot {
     public static GenericEntry armSetpointsEntry = demo.add("Arm Setpoints", false).withWidget(BuiltInWidgets.kToggleSwitch).withPosition(2, 1).getEntry();
     public static GenericEntry intakeLockEntry = demo.add("Intake lock button", false).withWidget(BuiltInWidgets.kToggleSwitch).withPosition(2, 0).getEntry();
     public static GenericEntry climberEntry = demo.add("climber", false).withWidget(BuiltInWidgets.kToggleSwitch).withPosition(3, 3).getEntry();
-    public static GenericEntry shooterVelEntry = demo.add("Shooter vel", 0).withWidget(BuiltInWidgets.kNumberSlider).withPosition(0, 2).withProperties(Map.of("min", 0, "max", 5000)).getEntry();
+    public static GenericEntry shooterVelEntry = demo.add("Shooter vel", 2000).withWidget(BuiltInWidgets.kNumberSlider).withPosition(0, 2).withProperties(Map.of("min", 0, "max", 5000)).getEntry();
     public static GenericEntry driveEntry = demo.add("Drive Speed Control", 0.2).withWidget(BuiltInWidgets.kNumberSlider).withPosition(0, 3).withProperties(Map.of("min", 0, "max", 1)).getEntry();
     public static GenericEntry intakeSpeedEntry = demo.add("Intake Speed Control", 0.5).withWidget(BuiltInWidgets.kNumberSlider).withPosition(0, 0).withProperties(Map.of("min", 0, "max", 1)).getEntry();
     public static GenericEntry armSpeedEntry = demo.add("Arm Speed Control", 0.5).withWidget(BuiltInWidgets.kNumberSlider).withPosition(0, 1).withProperties(Map.of("min", 0, "max", 1)).getEntry();
+    public static GenericEntry godModeEntry = demo.add("Creative Mode", false).withWidget(BuiltInWidgets.kToggleSwitch).withPosition(0, 4).getEntry();
+
 
     /**
      * This function is run once when the robot is first started up and should be
@@ -79,6 +81,12 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
         SmartDashboard.putNumber("dist: ", SpeakerAimCommand.getTagDistance());
+
+        if (godModeEntry.getBoolean(false)) {
+            driveEntry.setDouble(1);
+            intakeSpeedEntry.setDouble(1);
+            armSpeedEntry.setDouble(1);
+        }
     }
 
     /**

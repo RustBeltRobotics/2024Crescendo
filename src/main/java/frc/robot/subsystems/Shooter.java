@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 
 public class Shooter extends SubsystemBase {
     private static CANSparkMax shooterMotor1;
@@ -97,8 +98,10 @@ public class Shooter extends SubsystemBase {
         // don't understand it, it could be an issue elsewhere as well and we're
         // currently unaware.
         // REV hardware client might be able to shed some insight
-        shooter1PidController.setReference(velocity*4, ControlType.kVelocity);
-        setpoint = velocity;
+        if (Robot.shooterEntry.getBoolean(false)) {
+            shooter1PidController.setReference(velocity*4, ControlType.kVelocity);
+            setpoint = velocity;
+        }
     }
     public static void stop(){
         shooter1PidController.setReference(0., ControlType.kVoltage);

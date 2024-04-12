@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Robot;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 public class GroundPickUpCommand extends Command {
     private Arm arm = new Arm();
@@ -23,11 +24,14 @@ public class GroundPickUpCommand extends Command {
     
     @Override
     public void execute() {
-        if (Robot.intakeEntry.getBoolean(false))
-        intake.runBothIntakes(Robot.intakeSpeedEntry.getDouble(0));
-        switchEventLoop.poll();
-        loaded.ifHigh(() -> finished = true);
-        loaded.ifHigh(() -> new InstantCommand(() -> Intake.stopBothIntakes()));
+        if (Robot.intakeEntry.getBoolean(false)) {
+            Shooter.stop();
+            arm.groundPose();
+            intake.runBothIntakes(Robot.intakeSpeedEntry.getDouble(0));
+            switchEventLoop.poll();
+            loaded.ifHigh(() -> finished = true);
+            loaded.ifHigh(() -> new InstantCommand(() -> Intake.stopBothIntakes()));
+        }
     }
 
     @Override

@@ -21,10 +21,10 @@ public class RobotOrientedDriveCommand extends Command {
     private final DoubleSupplier translationYSupplier;
     private final DoubleSupplier rotationSupplier;
 
-    GenericEntry robotOrientEntry = Shuffleboard.getTab("Competition")
+    GenericEntry robotOrientEntry = Shuffleboard.getTab("demo")
             .add("Robot Oriented", false)
             .withWidget("Boolean Box")
-            .withPosition(0, 1)
+            .withPosition(4, 1)
             .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))
             .getEntry();
 

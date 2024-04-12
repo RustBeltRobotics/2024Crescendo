@@ -119,15 +119,15 @@ public class RobotContainer {
         // Driver Controller Bindings ---
 
         // Pressing A button zeros the gyroscope
-        new Trigger(driverController::getAButton).onTrue(new InstantCommand(() -> drivetrain.zeroGyroscope()));
+        new Trigger(driverController::getAButton).onTrue(new InstantCommand(() -> drivetrain.zeroGyroscope()).onlyIf(driverController::getBButton));
         // Pressing Y button locks the wheels in an X pattern
-        new Trigger(driverController::getYButton).onTrue(new InstantCommand(() -> drivetrain.toggleWheelsLocked()));
+        // new Trigger(driverController::getYButton).onTrue(new InstantCommand(() -> drivetrain.toggleWheelsLocked()));
 
         // Pressing the X Button toggles between robot oriented and field oriented
-        new Trigger(driverController::getXButton).toggleOnTrue(new RobotOrientedDriveCommand(drivetrain,
-                () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * Robot.driveEntry.getDouble(0),
-                () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * Robot.driveEntry.getDouble(0),
-                () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * Robot.driveEntry.getDouble(0)));
+        // new Trigger(driverController::getXButton).toggleOnTrue(new RobotOrientedDriveCommand(drivetrain,
+        //        () -> -modifyAxis(driverController.getLeftY()) * MAX_VELOCITY_METERS_PER_SECOND * Robot.driveEntry.getDouble(0),
+        //        () -> -modifyAxis(driverController.getLeftX()) * MAX_VELOCITY_METERS_PER_SECOND * Robot.driveEntry.getDouble(0),
+        //        () -> -modifyAxis(driverController.getRightX()) * MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND * Robot.driveEntry.getDouble(0)));
 
 
         // Operator Controller Bindings ---
@@ -142,7 +142,10 @@ public class RobotContainer {
         // Up D-pad is stop shooter
         new Trigger(o_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.stop()));
         // Left D-pad is amp spool
-        new Trigger(o_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(SPOOL_VELOCITY)));
+        new Trigger(o_dpadLeftButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.spool(Robot.shooterVelEntry.getDouble(0))));
+        new Trigger(this::survivalMode).onTrue(new InstantCommand(() -> Robot.driveEntry.setDouble(.2)));
+        new Trigger(this::survivalMode).onTrue(new InstantCommand(() -> Robot.intakeSpeedEntry.setDouble(.6)));
+        new Trigger(this::survivalMode).onTrue(new InstantCommand(() -> Robot.armSpeedEntry.setDouble(.5)));
     }
 
     public void configureAutos() {
@@ -206,5 +209,8 @@ public class RobotContainer {
     // This is an elegant solution (it took me 2 seconds and it works)
     public void forceVisionPose() {
         drivetrain.forceVisionPose();
+    }
+    public boolean survivalMode() {
+        return !Robot.godModeEntry.getBoolean(false);
     }
 }
