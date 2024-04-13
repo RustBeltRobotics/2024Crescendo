@@ -19,6 +19,7 @@ import frc.robot.commands.DefaultIntakeCommand;
 import frc.robot.commands.FieldOrientedDriveCommand;
 import frc.robot.commands.GroundPickUpCommand;
 import frc.robot.commands.LockNoteCommand;
+import frc.robot.commands.RangedPoseAutoCommand;
 import frc.robot.commands.SpeakerAimCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Climber;
@@ -104,13 +105,15 @@ public class RobotContainer {
                 .withProperties(Map.of("Show crosshair", false))
                 .withSize(4, 4);
 
+        RangedPoseAutoCommand rangedPoseAuto = new RangedPoseAutoCommand(arm);
+
         // register commands with pathplanner
         NamedCommands.registerCommand("AprilTagAim", new SpeakerAimCommand(arm, drivetrain));
         NamedCommands.registerCommand("SpoolShooter", new InstantCommand(() -> Shooter.spool(Constants.SPOOL_VELOCITY)));
         NamedCommands.registerCommand("StopShooter", new InstantCommand(() -> Shooter.stop()));
         NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
-        NamedCommands.registerCommand("FeedShooter", new RunCommand(() -> Intake.feedShooter()).until(() -> !Intake.getSwitch()));
-        NamedCommands.registerCommand("RangedPose", new RepeatCommand(new InstantCommand(() -> arm.autoAim())));
+        NamedCommands.registerCommand("FeedShooter", new RunCommand(() -> Intake.feedShooter()).until(() -> !Intake.getSwitch()).finallyDo(() -> rangedPoseAuto.cancel()));
+        NamedCommands.registerCommand("RangedPose", rangedPoseAuto);
         NamedCommands.registerCommand("LockNote", new LockNoteCommand());
 
         configureButtonBindings();

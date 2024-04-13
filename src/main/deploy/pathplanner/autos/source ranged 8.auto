@@ -12,7 +12,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.5
+                  "waitTime": 0.65
                 }
               },
               {
@@ -31,9 +31,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "source - bottom midfield start"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "source - bottom midfield start"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "StopShooter"
+                }
+              }
+            ]
           }
         },
         {
@@ -43,37 +56,13 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Source midfield break- source layup"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedShooter"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "source layup - source midfield break"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ranged7"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "RangedPose"
+                  "pathName": "ranged8end - source shooting position"
                 }
               },
               {
@@ -81,21 +70,33 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "named",
                       "data": {
-                        "pathName": "New Path"
+                        "name": "LockNote"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "FeedShooter"
+                        "name": "SpoolShooter"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "RangedPose"
                       }
                     }
                   ]
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
           }
         }
       ]

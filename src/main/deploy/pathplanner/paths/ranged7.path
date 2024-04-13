@@ -3,45 +3,61 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.850038041819203,
-        "y": 1.4336260553255058
+        "x": 6.789193124227143,
+        "y": 2.1552673071864
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.850038041819203,
-        "y": 1.4336260553255062
+        "x": 6.8276610192432905,
+        "y": 2.154270865461374
       },
       "isLocked": false,
-      "linkedName": "bottomMidfieldBreak"
+      "linkedName": "ranged7start"
     },
     {
       "anchor": {
-        "x": 7.415133755152831,
-        "y": 2.4169087730377306
+        "x": 7.568971343299829,
+        "y": 2.436473650849088
       },
       "prevControl": {
-        "x": 7.1207493033360025,
-        "y": 2.4225321808161473
+        "x": 7.164416002939149,
+        "y": 2.403145297362023
       },
       "nextControl": {
-        "x": 7.9021969347713314,
-        "y": 2.407604766471001
+        "x": 7.654842256432766,
+        "y": 2.4435479268791607
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.066230341176277,
-        "y": 2.4169087730377306
+        "x": 8.09115925151493,
+        "y": 2.436473650849088
       },
       "prevControl": {
-        "x": 7.904053784024999,
-        "y": 2.4048098870280317
+        "x": 8.055444682317935,
+        "y": 2.4362376514931605
+      },
+      "nextControl": {
+        "x": 8.126873820711927,
+        "y": 2.436709650205015
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.568971343299829,
+        "y": 2.1552673071864
+      },
+      "prevControl": {
+        "x": 7.914762844034616,
+        "y": 2.284542509933234
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "ranged7end"
     }
   ],
   "rotationTargets": [],
@@ -49,7 +65,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 1.3,
+      "waypointRelativePos": 0,
       "command": {
         "type": "parallel",
         "data": {
@@ -72,7 +88,7 @@
     "maxAngularAcceleration": 2291.0
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 1.0,
     "rotation": 0,
     "rotateFast": false
   },
@@ -80,7 +96,7 @@
   "folder": null,
   "previewStartingState": {
     "rotation": 0,
-    "velocity": 0
+    "velocity": 2.0
   },
   "useDefaultConstraints": true
 }

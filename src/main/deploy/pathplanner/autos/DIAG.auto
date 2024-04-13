@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 2.0480024107369643,
+      "y": 7.041293083702239
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "diag"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GroundPickUp"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "LockNote"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
