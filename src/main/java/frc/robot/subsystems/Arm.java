@@ -44,8 +44,6 @@ public class Arm extends SubsystemBase {
     .withPosition(8, 0)
     .withProperties(Map.of("colorWhenTrue", "red", "colorWhenFalse", "gray"))
     .getEntry();
-    private static GenericEntry setpoint = DIAG_TAB.add("setpoint", 0.5)
-    .getEntry();
     
     public Arm() {
         anglePIDup = new PIDController(100, 0, 0);
@@ -88,8 +86,7 @@ public class Arm extends SubsystemBase {
     }
 
     public void groundPose() {
-        //setAngleDown(Constants.GROUND_POSITION);
-        setAngle(setpoint.getDouble(0.5));
+        setAngleDown(Constants.GROUND_POSITION);
     }
     public void stop() {
         armMotor1.setVoltage(0);

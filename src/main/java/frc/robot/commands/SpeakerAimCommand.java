@@ -42,7 +42,6 @@ public class SpeakerAimCommand extends Command {
 
     @Override
     public void execute() {
-        System.out.println(getTagDistance());
         // Get PID gains from shuffleboard and apply them.
         steerPID.setPID(0.1, 0.0, 0.01);
 
@@ -63,7 +62,6 @@ public class SpeakerAimCommand extends Command {
                 // arm.autoAim();
                 // Auto shoot
                 if (rotationTargetMet() && armAngleTargetMet()) {
-                    System.out.println("aim successful");
                     Intake.feedShooter();
                     finished = true;
                 }
@@ -98,12 +96,10 @@ public class SpeakerAimCommand extends Command {
                 turnAround = true;
             }
         if (getTagDistance() < 1.6) {
-            System.out.println("layup mode");
             return 0.5;
         } else {
             armTarget = DISTANCE_MAP.get(getTagDistance());
             if (armTarget < 0.75 && armTarget > 0.5) {
-                System.out.println(armTarget + ", " + getTagDistance());
                 return armTarget;
             }
         }

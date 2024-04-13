@@ -30,8 +30,9 @@ public class DefaultArmCommand extends Command {
         if (DriverStation.isTeleopEnabled()) {
             if (rotationSupplier.getAsDouble() > 0.05 || rotationSupplier.getAsDouble() < -0.05) {
                 arm.rotate(rotationSupplier.getAsDouble());
-            } else {arm.stop();
-             }
+            } else {
+                arm.stop();
+            }
         }
     }
 

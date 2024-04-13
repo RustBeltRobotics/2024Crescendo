@@ -17,7 +17,6 @@ public class FeedShooterCommand extends Command {
         if (!intake.getSwitch()) {
             intake.stopBothIntakes();
             finished = true;
-            System.out.println("finished");
         }
     }
     @Override
