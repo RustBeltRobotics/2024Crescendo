@@ -16,32 +16,32 @@
     },
     {
       "anchor": {
-        "x": 8.077336309489132,
+        "x": 7.996165708784566,
         "y": 7.431805087234028
       },
       "prevControl": {
-        "x": 7.925817895991951,
+        "x": 7.844647295287385,
         "y": 7.445454097012798
       },
       "nextControl": {
-        "x": 8.430092629168572,
+        "x": 8.348922028464003,
         "y": 7.4000282599448655
       },
       "isLocked": false,
-      "linkedName": "note4"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.652373870688108,
-        "y": 6.7601882021424595
+        "x": 7.383764910878445,
+        "y": 7.18746491901466
       },
       "prevControl": {
-        "x": 6.520999548695527,
-        "y": 6.777887682449472
+        "x": 7.75079992059006,
+        "y": 7.262099082007937
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "topMidfieldBreak"
+      "linkedName": "ranged4end"
     }
   ],
   "rotationTargets": [
@@ -69,23 +69,6 @@
               "type": "named",
               "data": {
                 "name": "GroundPickUp"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 1.4,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "LockNote"
               }
             }
           ]

@@ -31,9 +31,77 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "StopShooter"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "ranged1 amp"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "GroundPickUp"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "LockNote"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "RangedPose"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "SpoolShooter"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FeedShooter"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShooter"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "amp - top midfield start avoid"
+            "pathName": "1shootingpose - topmidfieldstart"
           }
         },
         {
@@ -84,6 +152,12 @@
           "type": "named",
           "data": {
             "name": "FeedShooter"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShooter"
           }
         },
         {

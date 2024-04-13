@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import static frc.robot.Constants.COMPETITION_TAB;
+import static frc.robot.Constants.DIAG_TAB;
 import static frc.robot.Constants.LEFT_ROTATE;
 import static frc.robot.Constants.NEO_SECONDARY_CURRENT_LIMIT;
 import static frc.robot.Constants.NEO_SMART_CURRENT_LIMIT;
@@ -42,6 +43,8 @@ public class Arm extends SubsystemBase {
     .withWidget("Boolean Box")
     .withPosition(8, 0)
     .withProperties(Map.of("colorWhenTrue", "red", "colorWhenFalse", "gray"))
+    .getEntry();
+    private static GenericEntry setpoint = DIAG_TAB.add("setpoint", 0.5)
     .getEntry();
     
     public Arm() {
@@ -85,7 +88,8 @@ public class Arm extends SubsystemBase {
     }
 
     public void groundPose() {
-        setAngleDown(Constants.GROUND_POSITION);
+        //setAngleDown(Constants.GROUND_POSITION);
+        setAngle(setpoint.getDouble(0.5));
     }
     public void stop() {
         armMotor1.setVoltage(0);
@@ -103,6 +107,6 @@ public class Arm extends SubsystemBase {
         }
     }
     public void autoAim(){
-            setAngle(SpeakerAimCommand.armAngleCalculate());
+        setAngle(SpeakerAimCommand.armAngleCalculate());
     }
 }

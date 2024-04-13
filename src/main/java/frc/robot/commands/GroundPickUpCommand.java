@@ -27,16 +27,16 @@ public class GroundPickUpCommand extends Command {
     
     @Override
     public void execute() {
-        arm.groundPose();
+        //arm.groundPose();
         intake.runBothIntakes(.9);
         switchEventLoop.poll();
-        loaded.ifHigh(() -> new InstantCommand(() -> Intake.stopBothIntakes()));
+        loaded.ifHigh(() -> new InstantCommand(() -> intake.stopBothIntakes()));
         loaded.ifHigh(() -> finished = true);
     }
 
     @Override
     public void end(boolean interrupted) {
-        Intake.stopBothIntakes();
+        intake.stopBothIntakes();
     }
 
     @Override

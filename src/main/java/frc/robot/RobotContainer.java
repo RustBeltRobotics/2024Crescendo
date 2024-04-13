@@ -100,7 +100,7 @@ public class RobotContainer {
 
         CameraServer.startAutomaticCapture();
 
-        COMPETITION_TAB.addCamera("LimeLight", LL_NAME, "10.4.24.2")
+        COMPETITION_TAB.addCamera("LimeLight", "limeelight", "10.4.24.2")
                 .withPosition(3, 1)
                 .withProperties(Map.of("Show crosshair", false))
                 .withSize(4, 4);
@@ -114,7 +114,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("GroundPickUp", new GroundPickUpCommand());
         NamedCommands.registerCommand("FeedShooter", new RunCommand(() -> Intake.feedShooter()).until(() -> !Intake.getSwitch()).finallyDo(() -> rangedPoseAuto.cancel()));
         NamedCommands.registerCommand("RangedPose", rangedPoseAuto);
-        NamedCommands.registerCommand("LockNote", new LockNoteCommand());
+        NamedCommands.registerCommand("LockNote", new LockNoteCommand(intake));
 
         configureButtonBindings();
         configureAutos();
@@ -146,9 +146,9 @@ public class RobotContainer {
         new Trigger(operatorController::getLeftBumper).onTrue(new InstantCommand(() -> gpk.cancel()));
         // Right bumper autofeeds
         new Trigger(operatorController::getRightBumper).onTrue(new RunCommand(() -> Intake.feedShooter())
-                .until(() -> !Intake.getSwitch()).onlyIf(() -> Shooter.stopped()));
+                .until(() -> !Intake.getSwitch()).onlyIf(() -> !Shooter.stopped()));
         // Start button locks note for ranged shots
-        new Trigger(operatorController::getStartButton).onTrue(new LockNoteCommand());
+        new Trigger(operatorController::getStartButton).onTrue(new LockNoteCommand(intake));
         // Up D-pad is stop shooter
         new Trigger(o_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.stop()));
         // Left D-pad is amp spool

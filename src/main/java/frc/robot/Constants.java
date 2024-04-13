@@ -65,7 +65,7 @@ public final class Constants {
             
     /** Conversion between motor rotations and drive meters */
     public static final double DRIVE_POSITION_CONVERSION = Math.PI
-            * 0.0967 // wheel diameter in meters
+            * 0.1016 // wheel diameter in meters
             * (14.0 / 50.0) * (28.0 / 16.0) * (15.0 / 45.0);
             
     /** Conversion between motor rotations per minute and drive meters per seconds */
@@ -176,7 +176,7 @@ public final class Constants {
 
     static {
         DISTANCE_MAP.put(2.77, 0.55);
-        DISTANCE_MAP.put(4.1, 0.57);
+        DISTANCE_MAP.put(4.1, 0.59);
         DISTANCE_MAP.put(5.06439, 0.576);
     }
 

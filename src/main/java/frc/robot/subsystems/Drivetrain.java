@@ -167,7 +167,6 @@ public class Drivetrain extends SubsystemBase {
 
         // Initialize and zero gyro
         navx = new AHRS(SPI.Port.kMXP);
-        zeroGyroscope();
 
         // Create the poseEstimator with vectors to weight our vision measurements
         poseEstimator = new SwerveDrivePoseEstimator(
@@ -175,6 +174,8 @@ public class Drivetrain extends SubsystemBase {
                 getGyroscopeRotation(), getSwerveModulePositions(), new Pose2d(),
                 VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
                 VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+        
+        zeroGyroscope();
 
         theMove = "default";
     }
@@ -276,7 +277,7 @@ public class Drivetrain extends SubsystemBase {
                 doRejectUpdate = true;
             }
             if (!doRejectUpdate) {
-                poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+                poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.07, .07, 9999999));
                 poseEstimator.addVisionMeasurement(
                         mt2.pose,
                         mt2.timestampSeconds);

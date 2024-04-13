@@ -23,7 +23,6 @@ public class Intake extends SubsystemBase{
     private static DigitalInput noteSwitch = new DigitalInput(1);
     static GenericEntry limitSwitch;
 
-
     public Intake() {
         floorMotor.restoreFactoryDefaults();
         floorMotor.setIdleMode(IdleMode.kCoast);
@@ -43,7 +42,7 @@ public class Intake extends SubsystemBase{
         intakeMotor.set(speed);
     }
 
-    public static void stopBothIntakes() {
+    public void stopBothIntakes() {
         floorMotor.set(0.);
         intakeMotor.set(0.);
     }
@@ -74,7 +73,7 @@ public class Intake extends SubsystemBase{
     }
 
     public static void makeShuffleboard() {
-        COMPETITION_TAB.add("Limit Switch", false)
+        limitSwitch = COMPETITION_TAB.add("Limit Switch", false)
                 .withWidget("Boolean Box")
                 .withPosition(9, 0)
                 .withProperties(Map.of("colorWhenTrue", "lime", "colorWhenFalse", "gray"))

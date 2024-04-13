@@ -5,11 +5,17 @@ import frc.robot.subsystems.Intake;
 
 public class FeedShooterCommand extends Command {
     boolean finished = false;
+
+    private Intake intake;
+    public FeedShooterCommand(Intake intake) {
+        this.intake = intake;
+    }
+
     @Override
     public void execute() {
-        Intake.feedShooter();
-        if (!Intake.getSwitch()) {
-            Intake.stopBothIntakes();
+        intake.feedShooter();
+        if (!intake.getSwitch()) {
+            intake.stopBothIntakes();
             finished = true;
             System.out.println("finished");
         }

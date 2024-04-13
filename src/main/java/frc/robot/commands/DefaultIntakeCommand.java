@@ -42,6 +42,6 @@ public class DefaultIntakeCommand extends Command {
     /** When the intake method is interupted, set all velocities to zero. */
     @Override
     public void end(boolean interrupted) {
-        Intake.stopBothIntakes();
+        intake.stopBothIntakes();
     }
 }
