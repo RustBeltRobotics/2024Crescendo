@@ -33,19 +33,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dillan2 mid"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedShooter"
+            "pathName": "sourceLayup - ranged7"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "holy path 6"
+            "pathName": "ranged7"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged7 - sourceLayup"
           }
         },
         {

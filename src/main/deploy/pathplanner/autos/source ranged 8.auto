@@ -12,7 +12,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.65
+                  "waitTime": 1.5
                 }
               },
               {
@@ -31,22 +31,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "source - bottom midfield start"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "StopShooter"
-                }
-              }
-            ]
+            "name": "StopShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "source - bottom midfield start"
           }
         },
         {

@@ -100,15 +100,15 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "source shooting position - ranged7"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "StopShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "source shooting position - ranged7"
           }
         },
         {

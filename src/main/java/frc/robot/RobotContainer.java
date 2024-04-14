@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -24,13 +25,12 @@ import frc.robot.commands.SpeakerAimCommand;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Fan;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
 import static frc.robot.Constants.*;
 import static frc.robot.util.Utilities.*;
-
-import java.util.Map;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -52,6 +52,7 @@ public class RobotContainer {
     public static final Arm arm = new Arm();
     public static final Climber climber = new Climber();
     public static final Shooter shooter = new Shooter();
+    public static final Fan fan = new Fan();
     static SendableChooser<Integer> startingPos = new SendableChooser<>();
 
     // The drive team controllers are defined here
@@ -99,11 +100,8 @@ public class RobotContainer {
         climber.setDefaultCommand(new DefaultClimbCommand(climber, () -> operatorController.getRightY()));
 
         CameraServer.startAutomaticCapture();
-
-        COMPETITION_TAB.addCamera("LimeLight", "limeelight", "10.4.24.2")
-                .withPosition(3, 1)
-                .withProperties(Map.of("Show crosshair", false))
-                .withSize(4, 4);
+        HttpCamera limelightHttp = new HttpCamera("limelight", "http://limelight.local:5800");
+        COMPETITION_TAB.add("LimeLight", limelightHttp).withPosition(3, 1).withSize(5, 4);
 
         RangedPoseAutoCommand rangedPoseAuto = new RangedPoseAutoCommand(arm);
 
@@ -149,6 +147,8 @@ public class RobotContainer {
                 .until(() -> !Intake.getSwitch()).onlyIf(() -> !Shooter.stopped()));
         // Start button locks note for ranged shots
         new Trigger(operatorController::getStartButton).onTrue(new LockNoteCommand(intake));
+        // Pressing down on left stick turns on the fans
+        new Trigger(operatorController::getLeftStickButton).onTrue(new InstantCommand(() -> fan.fanOn()));
         // Up D-pad is stop shooter
         new Trigger(o_dpadUpButton::getAsBoolean).onTrue(new InstantCommand(() -> Shooter.stop()));
         // Left D-pad is amp spool

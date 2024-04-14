@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
         if (DriverStation.getAlliance().get() == Alliance.Blue){
             LimelightHelpers.setPipelineIndex(LL_NAME, 0);
         } else if (DriverStation.getAlliance().get() == Alliance.Red) {
-            LimelightHelpers.setPipelineIndex(LL_NAME, 1);
+            LimelightHelpers.setPipelineIndex(LL_NAME, 0);
         } else {
             System.err.println("NO ALLIANCE, LL PIPELINE NOT SET");
         }

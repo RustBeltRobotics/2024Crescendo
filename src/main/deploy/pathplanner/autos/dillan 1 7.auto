@@ -33,7 +33,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "dillan2 mid"
+            "pathName": "dillan1 source"
           }
         },
         {
@@ -45,7 +45,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "holy path 6"
+            "pathName": "sourceLayup - ranged7"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged7"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged7 - sourceLayup"
           }
         },
         {
