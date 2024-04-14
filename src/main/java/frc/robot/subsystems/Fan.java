@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Fan extends SubsystemBase {
     private final PWM fan1 = new PWM(0);
-    private final PWM fan2 = new PWM(0); 
-    private final PWM fan3 = new PWM(0); 
+    private final PWM fan2 = new PWM(1); 
+    private final PWM fan3 = new PWM(2); 
 
     public void fanOn(){
         fan1.setSpeed(1);
