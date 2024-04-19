@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.SpeakerAimCommand;
 
@@ -64,6 +65,9 @@ public class Intake extends SubsystemBase{
         runArmIntake(.25);
         if (!getSwitch()) {
             stopArmIntake();
+            if (!DriverStation.isAutonomous()){
+                Shooter.stop();
+            }
         }
     }
 

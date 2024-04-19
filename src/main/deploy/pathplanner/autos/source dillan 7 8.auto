@@ -1,0 +1,86 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.5
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SpoolShooter"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "source - bottom midfield start"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged8"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Source midfield break - source layup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "sourceLayup - ranged7"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged7"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ranged7 - sourceLayup"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedShooter"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

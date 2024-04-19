@@ -108,9 +108,10 @@ public final class Constants {
     public static final double translation_I = 0.0;
     public static final double translation_D = 0.0;
 
-    public static final double rotation_P = 1.0;
+    public static final double rotation_P = 1.5;
     public static final double rotation_I = 0.0;
     public static final double rotation_D = 0.0;
+
 
     // CAN IDs
     // FIXME: re-assign CANcoders to 2-5 (or something other than 1) and reassign PDH to 1, per REV suggestion

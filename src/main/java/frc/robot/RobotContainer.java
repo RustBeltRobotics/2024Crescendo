@@ -48,10 +48,10 @@ public class RobotContainer {
     // The robot's subsystems are defined here
 
     public static final Drivetrain drivetrain = new Drivetrain();
-    public static final Intake intake = new Intake();
     public static final Arm arm = new Arm();
     public static final Climber climber = new Climber();
     public static final Shooter shooter = new Shooter();
+    public static final Intake intake = new Intake();
     public static final Fan fan = new Fan();
     static SendableChooser<Integer> startingPos = new SendableChooser<>();
 

@@ -1,14 +1,18 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 public class FeedShooterCommand extends Command {
-    boolean finished = false;
-
+    private boolean finished = false;
     private Intake intake;
-    public FeedShooterCommand(Intake intake) {
+    private Shooter shooter;
+
+    public FeedShooterCommand(Intake intake, Shooter shooter) {
         this.intake = intake;
+        this.shooter = shooter;
     }
 
     @Override
@@ -16,6 +20,9 @@ public class FeedShooterCommand extends Command {
         intake.feedShooter();
         if (!intake.getSwitch()) {
             intake.stopBothIntakes();
+            if(!DriverStation.isAutonomous()){
+                shooter.stop();
+            }
             finished = true;
         }
     }

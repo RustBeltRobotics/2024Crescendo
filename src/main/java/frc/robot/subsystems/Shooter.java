@@ -12,6 +12,8 @@ import static frc.robot.Constants.RIGHT_SHOOTER;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
@@ -46,6 +48,11 @@ public class Shooter extends SubsystemBase {
     public static double getShooterVelocity() {
         return shooterMotor1.getEncoder().getVelocity();
     }
+
+    @Override
+    public void periodic(){
+        SmartDashboard.putNumber("actual", getShooterVelocity());
+    }
     
 
     public static void spool(double velocity){
@@ -60,7 +67,7 @@ public class Shooter extends SubsystemBase {
         shooter1PidController.setReference(0., ControlType.kVoltage);
     }
     public static boolean stopped() {
-        if (getShooterVelocity() == 0.0) {
+        if (getShooterVelocity() < 0.01) {
             return true;
         } else {
             return false;
