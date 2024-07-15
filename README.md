@@ -22,4 +22,4 @@ FRC 424 Rust Belt Robotics robot for for the 2024 game, CRESCENDO
 - https://pdocs.kauailabs.com/navx-mxp/software/roborio-libraries/java/ (NavX)
 - https://v6.docs.ctr-electronics.com/en/stable/ (CTRe Phoenix v6 - for absolute steer encoders used in Swerve modules)
 - https://pathplanner.dev/home.html
-- https://docs.photonvision.org/en/latest/docs/programming/photonlib/adding-vendordep.html
+- https://docs.limelightvision.io/docs/docs-limelight/getting-started/summary
