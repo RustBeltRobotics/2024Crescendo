@@ -16,6 +16,9 @@ import frc.robot.util.Utilities;
 
 import static frc.robot.Constants.*;
 
+/**
+ * Models an individual wheel swerve module: drive motor, steer motor, encoders (for reading distance traveled, turn angle, steer velocity, etc.)
+ */
 public class SwerveModule extends SubsystemBase{
     private final CANSparkMax driveMotor;
     private final CANSparkMax steerMotor;

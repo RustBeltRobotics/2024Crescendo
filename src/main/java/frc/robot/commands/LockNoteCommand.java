@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Intake;
 
+/**
+ * This command is used to lock a note in the intake for ranged shots (puts it in the correct position to avoid getting stuck in the shooter)
+ */
 public class LockNoteCommand extends Command {
     boolean finished = false;
     Intake intake;

@@ -18,6 +18,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.SpeakerAimCommand;
 
+/**
+ * Controls the ground intake (note pickup) and arm intake (feeder to the shooter), beam breaker switch is used to indicate if note is in position
+ */
 public class Intake extends SubsystemBase{
     private static final CANSparkMax floorMotor = new CANSparkMax(GROUND_INTAKE, MotorType.kBrushless);;
     private static final CANSparkMax intakeMotor = new CANSparkMax(ARM_INTAKE, MotorType.kBrushless);;

@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Controls flywheel/shooter mechanism that fires game notes
+ */
 public class Shooter extends SubsystemBase {
     private static CANSparkMax shooterMotor1;
     private static CANSparkMax shooterMotor2;

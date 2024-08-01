@@ -5,6 +5,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Climber;
 import java.util.function.DoubleSupplier;
 
+/**
+ * This command is used to perform climbing with a joystick (speedSupplier is the joystick input value )
+ */
 public class DefaultClimbCommand extends Command {
     private final Climber climber;
 

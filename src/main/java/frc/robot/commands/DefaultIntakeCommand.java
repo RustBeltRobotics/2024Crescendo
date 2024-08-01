@@ -5,6 +5,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 import java.util.function.DoubleSupplier;
 
+/**
+ * This command is used to operate the intakes with a joystick (speedSuppliers are the joystick L/R trigger input values)
+ */
 public class DefaultIntakeCommand extends Command {
     private final Intake intake;
 

@@ -10,6 +10,9 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 
+/**
+ * Command used for aiming the robot arm at the Speaker opening
+ */
 public class SpeakerAimCommand extends Command {
     private static double tx;
     private static double speakerX;

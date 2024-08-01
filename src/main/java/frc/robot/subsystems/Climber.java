@@ -11,6 +11,9 @@ import static frc.robot.Constants.RIGHT_CLIMB;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Basic functionality for climbing at the end portion of Tele-op mode
+ */
 public class Climber extends SubsystemBase {
     private final CANSparkMax climberMotor1;
     private final CANSparkMax climberMotor2;

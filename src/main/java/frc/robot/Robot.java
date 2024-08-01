@@ -26,6 +26,8 @@ import frc.robot.util.LimelightHelpers;
  * documentation. If you change the name of this class or the package after
  * creating this project, you must also update the build.gradle file in the
  * project.
+ * 
+ * Framework lifecycle hooks to initialize the robot and run the command scheduler.
  */
 public class Robot extends TimedRobot {
     private RobotContainer robotContainer;

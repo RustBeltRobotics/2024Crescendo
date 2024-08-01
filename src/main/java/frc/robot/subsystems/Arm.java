@@ -22,6 +22,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.SpeakerAimCommand;
 
+/**
+ * Controls moving the arm, defines pre-defined setpoints/methods for moving to known game poses (Amp shot, ground pickup)
+ */
 public class Arm extends SubsystemBase {
     private PIDController anglePIDup;
     private PIDController anglePIDdown;

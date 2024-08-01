@@ -57,6 +57,14 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.SpeakerAimCommand;
 import frc.robot.util.LimelightHelpers;
 
+/**
+	- Contains majority of logic for driving the robot / controls the 4 SwerveModule instance (one for each wheel)
+	- Publishes robot pose and swerve module state data to network tables (for use by AdvantageScope / PathPlanner)
+	- Configures Auto chooser for selecting PathPlanner paths for Autonomous mode
+	- Reads Gyro readings for robot angle (yaw) and angular velocity (using NavX AHRS - Altitude and Heading Reference System)
+	- Updates robot odometry (estimation of location based on sensors) from swerve drive module states and vision system AprilTag readings (Limelight)
+	- Handles special drive modes from driver controller (evasion and wheel locking)
+ */
 public class Drivetrain extends SubsystemBase {
     private String theMove;
     // NavX connected over MXP
@@ -283,6 +291,8 @@ public class Drivetrain extends SubsystemBase {
                         mt2.timestampSeconds);
             }
         }
+
+        //turn the LED strip on if we got a good/usable vision reading, otherwise leave it off
         THE_PDH.setSwitchableChannel(!doRejectUpdate);
     }
 

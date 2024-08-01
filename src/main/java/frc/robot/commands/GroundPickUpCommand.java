@@ -9,6 +9,9 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
+/**
+ * This command is used to pick up game notes from the ground
+ */
 public class GroundPickUpCommand extends Command {
     private Arm arm = new Arm();
     private Intake intake = new Intake();
